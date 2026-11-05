@@ -465,6 +465,51 @@ body.sheet-open { overflow: hidden; }
 .hd-kcal { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; font-size: 13px; }
 .hd-kcal span { flex: 1 1 100%; color: var(--muted); }
 .hd-kcal input { font: inherit; font-size: 16px; width: 140px; max-width: 100%; padding: 7px 10px; border-radius: 10px; border: 1px solid var(--line); background: var(--surface-2); color: var(--fg); }
+/* Me / avatar */
+.me-hero { display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr); gap: 14px; align-items: center;
+  background: radial-gradient(120% 90% at 30% 10%, color-mix(in srgb, var(--dawn-2) 26%, var(--surface)), var(--surface) 70%); }
+@media (max-width: 400px) { .me-hero { grid-template-columns: 1fr 1fr; gap: 10px; } }
+.me-stage-wrap { position: relative; }
+.me-avatar svg { width: 100%; height: auto; display: block; overflow: visible; transform-origin: 50% 95%; animation: breathe 3.8s ease-in-out infinite; }
+.me-zoe { position: absolute; right: -6%; bottom: 2%; width: 38%; }
+.me-zoe svg { width: 100%; height: auto; display: block; animation: bob 1.8s ease-in-out infinite; }
+.lv-badge { position: absolute; left: 0; top: 0; background: var(--fg); color: var(--bg); border-radius: 14px; padding: 4px 9px; display: flex; flex-direction: column; align-items: center; line-height: 1; box-shadow: 0 6px 16px -8px rgba(0,0,0,.5); }
+.lv-badge span { font-size: 9px; font-weight: 800; letter-spacing: .12em; }
+.lv-badge b { font-family: var(--font-display); font-size: 24px; font-weight: 800; }
+.me-info { min-width: 0; }
+.me-stage-name { font-family: var(--font-display); font-weight: 800; font-size: 24px; letter-spacing: -0.02em; line-height: 1.1; text-wrap: balance; }
+.stage-dots { display: flex; gap: 4px; margin-top: 8px; }
+.stage-dots i { flex: 1; height: 6px; border-radius: 99px; background: var(--track); }
+.stage-dots i.on { background: linear-gradient(90deg, var(--dawn-1), var(--dawn-2)); }
+.quests { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px; }
+.quest { display: grid; grid-template-columns: 40px 1fr auto; gap: 10px; align-items: center; padding: 10px 12px; border-radius: 16px; background: var(--surface-2); }
+.quest.ok { background: color-mix(in srgb, var(--good) 16%, transparent); }
+.q-ic { font-size: 24px; text-align: center; }
+.q-body { min-width: 0; }
+.q-t { font-weight: 700; font-size: 14px; }
+.q-bar { height: 6px; border-radius: 99px; background: var(--track); overflow: hidden; margin-top: 5px; }
+.q-bar i { display: block; height: 100%; border-radius: inherit; background: linear-gradient(90deg, var(--dusk), var(--dawn-1)); }
+.quest.ok .q-bar i { background: var(--good); }
+.q-p { font-size: 11px; color: var(--muted); font-family: var(--font-mono); margin-top: 2px; }
+.q-exp { font-size: 12px; font-weight: 800; color: var(--dawn-1); white-space: nowrap; }
+.quest.ok .q-exp { color: var(--good); }
+.radar svg { width: 100%; max-width: 340px; height: auto; display: block; margin: 0 auto; overflow: visible; }
+.radar .rl { font-size: 11px; font-weight: 700; fill: var(--fg); font-family: var(--font-body); }
+.radar .rv { fill: var(--dawn-1); font-family: var(--font-mono); font-weight: 500; }
+.st-list { display: flex; flex-direction: column; gap: 6px; margin-top: 6px; }
+.st-row { display: grid; grid-template-columns: 92px 1fr 44px; gap: 10px; align-items: center; font-size: 13px; font-weight: 600; }
+.st-row b { font-family: var(--font-mono); font-weight: 500; font-size: 12px; text-align: right; }
+.st-bar { height: 7px; border-radius: 99px; background: var(--track); overflow: hidden; }
+.st-bar i { display: block; height: 100%; border-radius: inherit; background: var(--dusk); }
+.cz { display: flex; flex-direction: column; gap: 14px; }
+.cz-row { display: flex; flex-direction: column; gap: 6px; }
+.sw-row { display: flex; gap: 8px; flex-wrap: wrap; }
+.swatch { width: 32px; height: 32px; padding: 0; border-radius: 50%; background: var(--c); border: 2px solid var(--line); }
+.swatch[aria-pressed="true"] { outline: 3px solid var(--dusk); outline-offset: 2px; }
+.gear small { font-weight: 600; opacity: .8; font-size: 10px; }
+.gear:disabled { opacity: .5; cursor: not-allowed; transform: none; }
+.health-note { background: color-mix(in srgb, var(--dusk) 12%, transparent); padding: 10px 12px; border-radius: 12px; margin: 10px 0 0; color: var(--fg); }
+
 .foot { font-size: 12px; color: var(--muted); text-align: center; max-width: 52ch; margin: 4px auto 0; }
 
 .toast { position: fixed; left: 50%; bottom: calc(24px + env(safe-area-inset-bottom, 0px)); transform: translate(-50%, 20px); background: var(--fg); color: var(--bg); padding: 10px 18px; border-radius: 999px; font-weight: 700; font-size: 14px; opacity: 0; transition: all .3s ease; pointer-events: none; z-index: 20; max-width: calc(100% - 32px); text-align: center; }
@@ -799,6 +844,66 @@ body.sheet-open { overflow: hidden; }
   </div>
 
   <div class="panel" id="tab-zoe" data-tab="zoe" hidden>
+  <section class="card me-hero">
+    <div class="me-stage-wrap">
+      <div class="me-avatar" id="meAvatar"></div>
+      <div class="me-zoe" id="meZoe"></div>
+      <div class="lv-badge"><span>LV</span><b id="meLevel">1</b></div>
+    </div>
+    <div class="me-info">
+      <div class="eyebrow">Body stage</div>
+      <div class="me-stage-name" id="meStage">Starting out</div>
+      <div class="stage-dots" id="meStageDots" aria-hidden="true"></div>
+      <div class="xp-bar" style="margin-top:10px"><i id="meExpFill"></i></div>
+      <div class="sub" id="meExpText"></div>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>Daily quests<span class="badge-count" id="questReset"></span></h2>
+    <ul class="quests" id="questList"></ul>
+  </section>
+
+  <section class="card">
+    <h2>Muscle stats</h2>
+    <p class="sub" style="margin:0 0 6px">Each set you finish trains the matching muscle. Higher stats make your avatar's muscles grow.</p>
+    <div class="radar" id="meRadar"></div>
+    <div class="st-list" id="meStatList"></div>
+  </section>
+
+  <section class="card">
+    <h2>Weight journey</h2>
+    <div class="body-sum">
+      <div class="stat"><div class="v" id="meStartV">—</div><div class="l">Start (kg)</div></div>
+      <div class="stat"><div class="v" id="meNowV">—</div><div class="l">Now (kg)</div></div>
+      <div class="stat"><div class="v" id="meGoalV">—</div><div class="l">Goal (kg)</div></div>
+    </div>
+    <div class="xp-bar" id="meWeightBarWrap" hidden><i id="meWeightBar"></i></div>
+    <p class="sub" id="meWeightMsg" style="margin:8px 0 12px"></p>
+    <div class="form-grid three">
+      <label class="field"><span>Start (kg)</span><input type="number" id="meStartIn" min="25" max="300" step="0.1" inputmode="decimal"></label>
+      <label class="field"><span>Goal (kg)</span><input type="number" id="meGoalIn" min="25" max="300" step="0.1" inputmode="decimal" placeholder="optional"></label>
+      <label class="field"><span>Height (cm)</span><input type="number" id="meHeightIn" min="100" max="230" step="0.5" inputmode="decimal"></label>
+    </div>
+    <p class="sub health-note" id="meHealthNote" hidden>That goal is below the healthy range for your height. Your avatar can reach its fittest look at a healthy weight, so there's no need to go lower. If you'd like guidance, a doctor or dietitian can help you pick a goal that's right for you.</p>
+    <div class="set-actions"><button type="button" class="save-pill" id="meWeightSave">Save</button><button type="button" class="chip-btn" id="meLogWeight">Log today's weight</button></div>
+  </section>
+
+  <section class="card">
+    <h2>Customize<span class="badge-count" id="gearCount"></span></h2>
+    <div class="cz">
+      <div class="cz-row"><span class="eyebrow">Body</span><div class="chips-row" id="bodyRow"></div></div>
+      <div class="cz-row"><span class="eyebrow">Skin tone</span><div class="sw-row" id="skinRow"></div></div>
+      <div class="cz-row"><span class="eyebrow">Hair</span><div class="chips-row" id="hairRow"></div><div class="sw-row" id="hairColorRow"></div></div>
+      <div class="cz-row"><span class="eyebrow">Top</span><div class="chips-row" id="topRow"></div><div class="sw-row" id="topColorRow"></div></div>
+      <div class="cz-row"><span class="eyebrow">Bottoms</span><div class="chips-row" id="botRow"></div><div class="sw-row" id="botColorRow"></div></div>
+      <div class="cz-row"><span class="eyebrow">Shoes</span><div class="chips-row" id="shoeRow"></div></div>
+      <div class="cz-row"><span class="eyebrow">Gear</span><div class="chips-row" id="accRowMe"></div></div>
+      <div class="cz-row"><span class="eyebrow">Buddy</span><div class="chips-row"><button type="button" class="chip-btn" id="zoeToggle" aria-pressed="true">🐣 Show Zoe beside me</button></div></div>
+    </div>
+    <p class="sub" style="margin:12px 0 0"><b>How you earn EXP:</b> 5 per set, 20 per workout, 25 per PR, 20 per fasting goal, 10 per water or protein goal, plus daily quests.</p>
+  </section>
+
   <section class="card">
     <div class="pet-card">
       <div class="pet-art" id="petArt"></div>
@@ -1840,6 +1945,7 @@ Stretching|Full body|Bodyweight|dur|2.3
     });
     const after = stageOf(state.pet.xp);
     if (after > before) items.push({ evo: true, kicker: "Evolution!", art: petSVG(after, state.pet.wearing, "happy"), title: state.pet.name + " is now a " + PET_STAGES[after].n + "!", text: PET_STAGES[after].x.replace("{n}", state.pet.name) });
+    if (typeof meEvents === "function") items.push(...meEvents());
     return items;
   }
   function freshRewards() { return { badges: [], acc: [], freezes: 1, lastGrant: weekKey(Date.now()), frozen: [], waterDays: [], proteinDays: [] }; }
@@ -1918,6 +2024,7 @@ Stretching|Full body|Bodyweight|dur|2.3
     $("sunChip").textContent = "☀️ " + xp + " sunlight";
     $("freezeChip").textContent = "🧊 " + state.rw.freezes + " streak freeze" + (state.rw.freezes === 1 ? "" : "s");
     renderNavPet();
+    if (state.me && !$("tab-zoe").hidden && typeof renderMe === "function") renderMe();
 
     const row = $("accRow"); row.innerHTML = "";
     Object.keys(ACC).forEach(k => {
@@ -2986,6 +3093,363 @@ Stretching|Full body|Bodyweight|dur|2.3
 
   const exerciseKcalOn = k => state.wk.history.filter(h => dayKey(h.end) === k).reduce((a, h) => a + sessionStats(h).kcal, 0);
 
+  /* ---------- Me: avatar, EXP, stats, quests, gear ---------- */
+  const SKINS = [["Light", "#f3cfae"], ["Fair", "#e2ae86"], ["Morena", "#c48a5c"], ["Kayumanggi", "#9c6640"], ["Deep", "#6a4329"]];
+  const HAIR_COLORS = [["Black", "#1c1411"], ["Dark brown", "#3a2317"], ["Brown", "#6b4226"], ["Auburn", "#8c3a22"], ["Blonde", "#c9a15b"]];
+  const OUTFIT_COLORS = ["#ff8a5b", "#7a5cff", "#1f9d6b", "#3aa0e8", "#e0569b", "#ffc46b", "#2b2546", "#f2f0f8"];
+  const HAIR_STYLES = [["long", "Long"], ["pony", "Ponytail"], ["bun", "Bun"], ["short", "Short"]];
+  const STATS = [
+    { k: "arms", n: "Arms", ic: "💪" }, { k: "chest", n: "Chest", ic: "🛡️" }, { k: "back", n: "Back", ic: "🦅" },
+    { k: "core", n: "Core", ic: "🔥" }, { k: "legs", n: "Legs", ic: "🦵" }, { k: "glutes", n: "Glutes", ic: "🍑" }, { k: "cardio", n: "Cardio", ic: "❤️" }
+  ];
+  const MUSCLE_STAT = { Biceps: ["arms"], Triceps: ["arms"], Forearms: ["arms"], Shoulders: ["arms"], Chest: ["chest"], Back: ["back"], Traps: ["back"],
+    Abs: ["core"], Quads: ["legs"], Hamstrings: ["legs"], Calves: ["legs"], Glutes: ["glutes"], Cardio: ["cardio"], "Full body": ["core", "legs", "cardio", "arms"] };
+  const BODY_STAGES = ["Starting out", "Getting active", "Toned", "Fit", "Athlete"];
+  /* Gear: [id, slot, name, icon, requirement text, test(me-stats)] */
+  const GEAR = [
+    ["tank", "top", "Tank top", "🎽", "Starter", () => true],
+    ["tee", "top", "T-shirt", "👕", "Starter", () => true],
+    ["crop", "top", "Sports bra", "🩱", "Reach level 3", s => s.level >= 3],
+    ["hoodie", "top", "Hoodie", "🧥", "Reach level 5", s => s.level >= 5],
+    ["compress", "top", "Compression top", "🦾", "Reach level 8", s => s.level >= 8],
+    ["jersey", "top", "Champion jersey", "🏅", "Reach level 12", s => s.level >= 12],
+    ["leggings", "bottom", "Leggings", "🩳", "Starter", () => true],
+    ["shorts", "bottom", "Gym shorts", "🩳", "Reach level 2", s => s.level >= 2],
+    ["joggers", "bottom", "Joggers", "👖", "Reach level 6", s => s.level >= 6],
+    ["sneakers", "shoes", "Sneakers", "👟", "Starter", () => true],
+    ["runners", "shoes", "Running shoes", "🏃", "Reach level 4", s => s.level >= 4],
+    ["gold", "shoes", "Gold kicks", "✨", "Reach level 15", s => s.level >= 15],
+    ["headband", "acc", "Headband", "🎀", "Reach level 2", s => s.level >= 2],
+    ["dumbbell", "acc", "Dumbbell", "🏋️", "Reach level 3", s => s.level >= 3],
+    ["bottle", "acc", "Water bottle", "💧", "Hit your water goal 3 times", s => s.waterDays >= 3],
+    ["gloves", "acc", "Lifting gloves", "🧤", "Reach level 7", s => s.level >= 7],
+    ["kettlebell", "acc", "Kettlebell", "🔔", "Reach level 10", s => s.level >= 10],
+    ["medal", "acc", "PR medal", "🥇", "Set 5 personal records", s => s.prs >= 5]
+  ];
+  const levelFromExp = x => Math.floor((1 + Math.sqrt(1 + x / 12.5)) / 2);
+  const expForLevel = L => 50 * L * (L - 1);
+  function migrateMe() {
+    if (!state.me) {
+      state.me = { gender: "f", hair: "long", skin: SKINS[2][1], hairColor: HAIR_COLORS[0][1], top: "tank", bottom: "leggings", shoes: "sneakers",
+        acc: [], topColor: OUTFIT_COLORS[0], bottomColor: OUTFIT_COLORS[6], startKg: 59, goalKg: null, heightCm: 161, createdAt: Date.now(),
+        lastLevel: null, questExp: 0, quests: {}, gearSeen: [], zoe: true, baseBody: {} };
+      (state.body || []).forEach(b => { state.me.baseBody[b.t] = b.kg; });
+      state.me.lastLevel = meStats().level;
+      state.me.gearSeen = GEAR.filter(g => g[5](meStats())).map(g => g[0]);
+      save();
+    }
+  }
+  function statPoints() {
+    const pts = { arms: 0, chest: 0, back: 0, core: 0, legs: 0, glutes: 0, cardio: 0 };
+    if (!state.wk) return pts;
+    state.wk.history.forEach(h => h.items.forEach(i => {
+      const ex = exById(i.ex), keys = MUSCLE_STAT[ex.m] || ["core"];
+      i.sets.forEach(s => {
+        if (!s.done) return;
+        let p = 1;
+        if (ex.t === "cardio") p = 1 + (+s.min || 0) / 5;
+        else if (ex.t === "dur" && ex.m === "Cardio") p = 1 + (+s.sec || 0) / 300;
+        if (s.pr) p += 2;
+        const share = keys.length > 1 ? p / 2 : p;
+        keys.forEach(k => pts[k] += share);
+      });
+    }));
+    return pts;
+  }
+  const statLevel = p => Math.min(10, Math.floor(Math.sqrt(p * 1.1)));
+  function meStats() {
+    const h = state.wk ? state.wk.history : [];
+    const sets = h.reduce((a, x) => a + x.items.reduce((b, i) => b + i.sets.filter(s => s.done).length, 0), 0);
+    const prs = h.reduce((a, x) => a + (x.prs || 0), 0);
+    const fasts = state.history.filter(isHit).length;
+    const waterDays = (state.rw.waterDays || []).length, proteinDays = (state.rw.proteinDays || []).length;
+    const exp = sets * 5 + h.length * 20 + prs * 25 + fasts * 20 + waterDays * 10 + proteinDays * 10 + ((state.me && state.me.questExp) || 0);
+    return { exp, level: levelFromExp(exp), sets, prs, fasts, waterDays, workouts: h.length };
+  }
+  function currentKg() {
+    const me = state.me;
+    const base = me.baseBody || {};
+    const after = (state.body || []).filter(b => !(b.t in base) || base[b.t] !== b.kg).sort((a, b) => b.t - a.t)[0];
+    return after ? after.kg : me.startKg;
+  }
+  function fitness() {
+    const me = state.me, st = meStats();
+    const lvF = Math.min(1, (st.level - 1) / 14);
+    let wp = null;
+    if (me.goalKg && me.goalKg < me.startKg) wp = Math.max(0, Math.min(1, (me.startKg - currentKg()) / (me.startKg - me.goalKg)));
+    const F = wp == null ? lvF : 0.6 * wp + 0.4 * lvF;
+    return { F, wp, lvF, stage: Math.min(4, Math.floor(F * 5 - 1e-9 < 0 ? 0 : F * 4.999)) };
+  }
+  function shade(hex, amt) {
+    const n = parseInt(hex.slice(1), 16);
+    const c = [n >> 16, (n >> 8) & 255, n & 255].map(v => Math.max(0, Math.min(255, Math.round(v * (1 + amt)))));
+    return "#" + c.map(v => v.toString(16).padStart(2, "0")).join("");
+  }
+
+  let avUid = 0;
+  function avatarSVG(me, opts) {
+    opts = opts || {};
+    const u = "av" + (++avUid);
+    const pts = statPoints(), s = k => Math.min(1, pts[k] / 100);
+    const { F } = fitness();
+    const fem = me.gender === "f";
+    const skin = me.skin, skinD = shade(skin, -0.14), hair = me.hairColor, hairD = shade(hair, 0.25);
+    const top = me.topColor, topD = shade(top, -0.18), bot = me.bottomColor, botD = shade(bot, -0.2);
+    const ink = "#2a1a16";
+    const sh = (fem ? 27 : 32) + 3 * Math.max(s("back"), s("chest")) + 2 * s("arms");
+    const wa = (fem ? 22 : 26) - 3 * F + 1 * s("core") * 0;
+    const belly = (1 - F) * 3.5;
+    const hp = (fem ? 29 : 27) + 3 * s("glutes") + (1 - F) * 1.5;
+    const aw = 6.5 + 3.2 * s("arms") + (1 - F) * 0.8;
+    const tw = 12 + 3.5 * s("legs") + 1.5 * s("glutes") + (1 - F) * 1.2;
+    const X = (x, side) => side < 0 ? x : 200 - x;
+    const has = id => (me.acc || []).includes(id);
+    let o = '<svg viewBox="0 0 200 300" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="' + esc(opts.label || "Your avatar") + '">';
+    o += '<defs><clipPath id="' + u + 'torso"><path d="' + torsoPath() + '"/></clipPath>' +
+      '<linearGradient id="' + u + 'g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".18"/><stop offset="1" stop-color="#000" stop-opacity=".08"/></linearGradient></defs>';
+    o += '<ellipse cx="100" cy="284" rx="56" ry="8" fill="var(--fg)" opacity=".08"/>';
+    // back hair
+    if (me.hair === "long") o += '<path d="M70 46 C 62 92 64 132 74 160 Q 100 170 126 160 C 136 132 138 92 130 46 Z" fill="' + hair + '"/>';
+    if (me.hair === "pony") o += '<path d="M122 36 C 146 40 150 80 140 120 C 136 132 128 130 130 118 C 136 92 134 62 120 48 Z" fill="' + hair + '"/>';
+    if (me.hair === "bun") o += '<circle cx="100" cy="24" r="13" fill="' + hair + '"/>';
+    function torsoPath() {
+      return "M" + (100 - sh) + " 103 C " + (100 - sh + 1) + " 124 " + (100 - wa - belly) + " 134 " + (100 - wa) + " 150 C " + (100 - wa) + " 160 " + (100 - hp) + " 166 " + (100 - hp) + " 184 L " + (100 + hp) + " 184 C " + (100 + hp) + " 166 " + (100 + wa) + " 160 " + (100 + wa) + " 150 C " + (100 + wa + belly) + " 134 " + (100 + sh - 1) + " 124 " + (100 + sh) + " 103 C " + (100 + sh - 2) + " 96 " + (100 + sh - 8) + " 95 " + (100 + 10) + " 94 L " + (100 - 10) + " 94 C " + (100 - sh + 8) + " 95 " + (100 - sh + 2) + " 96 " + (100 - sh) + " 103 Z";
+    }
+    function legPath(side) {
+      const lx0 = 100 - hp / 2 - 1, lx1 = 100 - 15;
+      const p = [[100 - hp, 180], [lx0 - tw, 206], [lx1 - 9, 236], [lx1 - 7, 268], [lx1 + 5, 268], [lx1 + 7, 238], [100 - 4, 214], [100 - 1, 182]];
+      const q = p.map(([x, y]) => [X(x, side), y]);
+      return "M" + q[0].join(" ") + " C " + q[1].join(" ") + " " + q[2].join(" ") + " " + q[3].join(" ") + " L " + q[4].join(" ") + " C " + q[5].join(" ") + " " + q[6].join(" ") + " " + q[7].join(" ") + " Z";
+    }
+    function armPath(side) {
+      const sx = 100 - sh;
+      const p = [[sx + 5, 99], [sx - aw - 2, 102], [sx - aw - 3, 128], [sx - aw + 1, 142], [sx - aw - 1, 160], [sx - 11, 174], [sx - 12, 180], [sx - 3, 180], [sx - 2, 166], [sx + 3, 152], [sx + 4, 141], [sx + 5, 128], [sx + 7, 112], [sx + 8, 104]];
+      const q = p.map(([x, y]) => [X(x, side), y]);
+      return "M" + q[0].join(" ") + " C " + q[1].join(" ") + " " + q[2].join(" ") + " " + q[3].join(" ") + " C " + q[4].join(" ") + " " + q[5].join(" ") + " " + q[6].join(" ") + " L " + q[7].join(" ") + " C " + q[8].join(" ") + " " + q[9].join(" ") + " " + q[10].join(" ") + " C " + q[11].join(" ") + " " + q[12].join(" ") + " " + q[13].join(" ") + " Z";
+    }
+    // legs
+    [-1, 1].forEach(side => {
+      o += '<path d="' + legPath(side) + '" fill="' + skin + '"/>';
+      if (s("legs") > 0.45) o += '<path d="M' + X(100 - hp / 2 - 3, side) + ' 204 q ' + (side < 0 ? 3 : -3) + ' 10 ' + (side < 0 ? 1 : -1) + ' 20" fill="none" stroke="' + skinD + '" stroke-width="1.4" stroke-linecap="round" opacity=".7"/>';
+    });
+    const legClip = (y0, y1) => '<clipPath id="' + u + 'L' + y0 + '"><rect x="0" y="' + y0 + '" width="200" height="' + (y1 - y0) + '"/></clipPath>';
+    const bLen = me.bottom === "shorts" ? 210 : me.bottom === "joggers" ? 268 : 262;
+    o += '<defs>' + legClip(150, bLen) + '</defs>';
+    [-1, 1].forEach(side => { o += '<path d="' + legPath(side) + '" fill="' + bot + '" clip-path="url(#' + u + 'L150)"/>'; });
+    if (me.bottom === "joggers") [-1, 1].forEach(side => { o += '<rect x="' + (X(100 - 15, side) - 9) + '" y="260" width="18" height="6" rx="3" fill="' + botD + '"/>'; });
+    if (me.bottom === "leggings") [-1, 1].forEach(side => { o += '<path d="M' + X(100 - hp + 4, side) + ' 190 L ' + X(100 - 18, side) + ' 258" stroke="' + botD + '" stroke-width="1.6" opacity=".6"/>'; });
+    // shoes
+    const shoeC = me.shoes === "gold" ? "#e6b63b" : me.shoes === "runners" ? "#3aa0e8" : "#f5f3fb";
+    [-1, 1].forEach(side => {
+      const sx = X(100 - 15, side);
+      o += '<path d="M' + (sx - 11) + ' 276 Q ' + (sx - 11) + ' 266 ' + sx + ' 266 Q ' + (sx + 12) + ' 266 ' + (sx + 13) + ' 276 Z" fill="' + shoeC + '" stroke="' + shade(shoeC, -0.35) + '" stroke-width="1.2"/>' +
+        '<rect x="' + (sx - 12) + '" y="275" width="26" height="4" rx="2" fill="' + shade(shoeC, -0.3) + '"/>';
+    });
+    // torso skin + bottoms waist + top
+    o += '<path d="' + torsoPath() + '" fill="' + skin + '"/>';
+    o += '<rect x="0" y="160" width="200" height="30" fill="' + bot + '" clip-path="url(#' + u + 'torso)"/>';
+    o += '<rect x="0" y="158" width="200" height="4" fill="' + botD + '" clip-path="url(#' + u + 'torso)"/>';
+    const topRange = { tank: [101, 164], tee: [96, 166], crop: [104, 127], hoodie: [94, 176], compress: [96, 168], jersey: [96, 170] }[me.top] || [101, 164];
+    if (me.top === "crop" && s("core") > 0.35) {
+      o += '<g stroke="' + skinD + '" stroke-width="1.3" stroke-linecap="round" opacity=".75" fill="none"><path d="M100 132 L100 156"/><path d="M93 138 q7 2 14 0"/><path d="M93 146 q7 2 14 0"/></g>';
+    } else if (me.top === "crop") o += '<path d="M100 142 v6" stroke="' + skinD + '" stroke-width="1.4" stroke-linecap="round" opacity=".6"/>';
+    o += '<rect x="0" y="' + topRange[0] + '" width="200" height="' + (topRange[1] - topRange[0]) + '" fill="' + top + '" clip-path="url(#' + u + 'torso)"/>';
+    o += '<rect x="0" y="' + topRange[0] + '" width="200" height="' + (topRange[1] - topRange[0]) + '" fill="url(#' + u + 'g)" clip-path="url(#' + u + 'torso)"/>';
+    if (me.top === "tank") o += '<path d="M' + (100 - sh + 7) + ' 98 L ' + (100 - 9) + ' 104 M ' + (100 + sh - 7) + ' 98 L ' + (100 + 9) + ' 104" stroke="' + top + '" stroke-width="5" stroke-linecap="round"/>';
+    if (me.top === "crop") o += '<path d="M' + (100 - sh + 8) + ' 97 L ' + (100 - 6) + ' 106 M ' + (100 + sh - 8) + ' 97 L ' + (100 + 6) + ' 106" stroke="' + top + '" stroke-width="4" stroke-linecap="round"/>';
+    if (me.top === "jersey") o += '<text x="100" y="140" text-anchor="middle" font-family="var(--font-display)" font-weight="800" font-size="20" fill="' + shade(top, -0.4) + '">1</text>';
+    if (me.top === "hoodie") o += '<path d="M90 104 L 92 122 M110 104 L 108 122" stroke="' + topD + '" stroke-width="1.6" stroke-linecap="round"/><rect x="86" y="150" width="28" height="12" rx="4" fill="' + topD + '" opacity=".5"/>';
+    if (fem && (me.top !== "hoodie")) o += '<path d="M' + (100 - 16) + ' 118 q 8 6 15 0 M' + (100 + 1) + ' 118 q 7 6 15 0" fill="none" stroke="' + topD + '" stroke-width="1.4" stroke-linecap="round" opacity=".55"/>';
+    if (!fem && s("chest") > 0.45) o += '<path d="M' + (100 - 15) + ' 122 q 7 4 14 0 M' + (100 + 1) + ' 122 q 7 4 14 0" fill="none" stroke="' + (me.top === "crop" ? skinD : topD) + '" stroke-width="1.4" stroke-linecap="round" opacity=".6"/>';
+    // arms
+    const sleeve = { tee: 124, hoodie: 176, compress: 172, jersey: 112 }[me.top];
+    [-1, 1].forEach(side => {
+      o += '<path d="' + armPath(side) + '" fill="' + skin + '"/>';
+      if (sleeve) o += '<defs><clipPath id="' + u + 'S' + side + '"><rect x="0" y="90" width="200" height="' + (sleeve - 90) + '"/></clipPath></defs><path d="' + armPath(side) + '" fill="' + top + '" clip-path="url(#' + u + 'S' + side + ')"/>';
+      if (s("arms") > 0.4 && (!sleeve || sleeve < 128)) { const bx = X(100 - sh - aw / 2 - 1, side); o += '<path d="M' + bx + ' 122 q ' + (side < 0 ? -3 : 3) + ' 6 0 13" fill="none" stroke="' + skinD + '" stroke-width="1.3" stroke-linecap="round" opacity=".7"/>'; }
+      const hx = X(100 - sh - 7, side);
+      o += '<circle cx="' + hx + '" cy="183" r="6.2" fill="' + (has("gloves") ? "#2b2546" : skin) + '"/>';
+    });
+    // held gear
+    const rhx = X(100 - sh - 7, 1), lhx = X(100 - sh - 7, -1);
+    if (has("dumbbell")) o += '<g><rect x="' + (rhx - 13) + '" y="181" width="26" height="4" rx="2" fill="#6b6690"/><rect x="' + (rhx - 17) + '" y="174" width="7" height="18" rx="2" fill="#2b2546"/><rect x="' + (rhx + 10) + '" y="174" width="7" height="18" rx="2" fill="#2b2546"/></g><circle cx="' + rhx + '" cy="183" r="5.6" fill="' + (has("gloves") ? "#2b2546" : skin) + '"/>';
+    if (has("kettlebell")) o += '<g><path d="M' + (lhx - 6) + ' 186 q 6 -10 12 0" fill="none" stroke="#2b2546" stroke-width="3"/><circle cx="' + lhx + '" cy="197" r="10" fill="#2b2546"/></g>';
+    else if (has("bottle")) o += '<g><rect x="' + (lhx - 5) + '" y="183" width="10" height="24" rx="4" fill="#5fb8ff" opacity=".9"/><rect x="' + (lhx - 4) + '" y="179" width="8" height="6" rx="2" fill="#2b2546"/></g>';
+    // neck + head
+    o += '<rect x="93" y="80" width="14" height="18" rx="5" fill="' + skinD + '"/>';
+    o += '<circle cx="73" cy="60" r="5" fill="' + skin + '"/><circle cx="127" cy="60" r="5" fill="' + skin + '"/>';
+    o += '<ellipse cx="100" cy="56" rx="27" ry="29" fill="' + skin + '"/>';
+    // face
+    o += '<ellipse cx="89" cy="61" rx="3.3" ry="4.2" fill="' + ink + '"/><ellipse cx="111" cy="61" rx="3.3" ry="4.2" fill="' + ink + '"/>' +
+      '<circle cx="90.2" cy="59.4" r="1.2" fill="#fff"/><circle cx="112.2" cy="59.4" r="1.2" fill="#fff"/>' +
+      '<path d="M84 52 q5 -3 10 -1 M106 51 q5 -2 10 1" stroke="' + shade(hair, 0.1) + '" stroke-width="2" stroke-linecap="round" fill="none"/>' +
+      '<ellipse cx="83" cy="70" rx="4.5" ry="2.6" fill="#ff6f8f" opacity=".35"/><ellipse cx="117" cy="70" rx="4.5" ry="2.6" fill="#ff6f8f" opacity=".35"/>' +
+      '<path d="M99 66 q1 2 2 0" stroke="' + skinD + '" stroke-width="1.4" fill="none" stroke-linecap="round"/>' +
+      '<path d="M93 73 Q100 ' + (opts.happy ? 81 : 78) + ' 107 73" stroke="' + ink + '" stroke-width="2.2" fill="' + (opts.happy ? "#b2344c" : "none") + '" stroke-linecap="round" stroke-linejoin="round"/>';
+    if (fem) o += '<path d="M85.5 57.5 l-2 -1.5 M114.5 57.5 l2 -1.5" stroke="' + ink + '" stroke-width="1.2" stroke-linecap="round"/>';
+    // front hair
+    if (me.hair === "short" && !fem) o += '<path d="M72 54 C 70 30 88 22 102 24 C 120 24 132 34 128 54 C 124 44 112 38 100 40 C 88 40 78 46 72 54 Z" fill="' + hair + '"/>';
+    else if (me.hair === "short") o += '<path d="M71 62 C 66 30 88 20 102 22 C 122 22 136 34 129 62 C 126 48 118 40 106 40 C 98 46 86 48 76 50 Z" fill="' + hair + '"/>';
+    else {
+      o += '<path d="M72 58 C 68 30 88 20 102 22 C 122 22 134 34 128 58 C 124 46 114 38 104 39 C 96 46 84 50 72 58 Z" fill="' + hair + '"/>';
+      o += '<path d="M96 30 q 10 -4 22 4" stroke="' + hairD + '" stroke-width="2" fill="none" opacity=".5" stroke-linecap="round"/>';
+      if (me.hair === "long") o += '<path d="M73 56 C 69 84 72 112 79 130 L 85 128 C 81 108 79 84 80 62 Z" fill="' + hair + '"/><path d="M127 56 C 131 84 128 112 121 130 L 115 128 C 119 108 121 84 120 62 Z" fill="' + hair + '"/>';
+    }
+    if (has("headband")) o += '<path d="M73 47 C 85 37 115 37 127 47" stroke="#ff5a6e" stroke-width="5" fill="none" stroke-linecap="round"/>';
+    if (has("medal")) o += '<path d="M93 96 L 100 116 L 107 96" stroke="#3aa0e8" stroke-width="3" fill="none"/><circle cx="100" cy="119" r="6" fill="#e6b63b" stroke="#b98a1e" stroke-width="1.2"/>';
+    if (opts.sparkle) o += '<path d="M156 70 l3 7 7 3 -7 3 -3 7 -3 -7 -7 -3 7 -3z" fill="var(--dawn-2)"/><path d="M40 110 l2 5 5 2 -5 2 -2 5 -2 -5 -5 -2 5 -2z" fill="var(--dawn-2)" opacity=".8"/>';
+    return o + "</svg>";
+  }
+
+  /* Daily quests */
+  const QUESTS = [
+    { id: "push30", ic: "💪", t: "Do 30 push ups", exp: 40, p: () => [repsToday(e => /push-up/.test(e.id)), 30] },
+    { id: "squat40", ic: "🦵", t: "Do 40 squats", exp: 40, p: () => [repsToday(e => /squat/.test(e.id)), 40] },
+    { id: "plank60", ic: "🧱", t: "Hold planks for 60 seconds total", exp: 35, p: () => [secToday(e => /plank/.test(e.id)), 60] },
+    { id: "sets12", ic: "📈", t: "Complete 12 sets today", exp: 40, p: () => [setsToday(() => true), 12] },
+    { id: "legday", ic: "🍑", t: "Do 3 sets for legs or glutes", exp: 35, p: () => [setsToday(e => ["Quads", "Hamstrings", "Glutes", "Calves"].includes(e.m)), 3] },
+    { id: "upper", ic: "🛡️", t: "Do 4 sets for chest, back or arms", exp: 35, p: () => [setsToday(e => ["Chest", "Back", "Biceps", "Triceps", "Shoulders"].includes(e.m)), 4] },
+    { id: "cardio15", ic: "❤️", t: "Do 15 minutes of cardio", exp: 40, p: () => [cardioMinToday(), 15] },
+    { id: "workout", ic: "🏋️", t: "Finish a workout", exp: 50, p: () => [state.wk.history.filter(h => dayKey(h.end) === todayKey()).length, 1] },
+    { id: "water", ic: "💧", t: "Hit your water goal", exp: 30, p: () => [waterTotal(todayKey()), state.water.goal] },
+    { id: "fast", ic: "🌅", t: "Reach your fasting goal", exp: 45, p: () => [hitDaySet().has(todayKey()) ? 1 : 0, 1] },
+    { id: "meals3", ic: "🍽️", t: "Log 3 meals or snacks", exp: 25, p: () => [state.meals.filter(m => dayKey(m.t) === todayKey()).length, 3] },
+    { id: "protein", ic: "🍗", t: "Eat 80 g of protein", exp: 35, p: () => [Math.round(dayTotals(todayKey()).p), 80] }
+  ];
+  function todaySets(pred) {
+    const out = [], k = todayKey();
+    const sessions = state.wk.history.filter(h => dayKey(h.end) === k).concat(state.wk.active ? [state.wk.active] : []);
+    sessions.forEach(h => h.items.forEach(i => { const ex = exById(i.ex); if (pred(ex)) i.sets.forEach(s => { if (s.done) out.push([ex, s]); }); }));
+    return out;
+  }
+  const repsToday = pred => todaySets(pred).reduce((a, [, s]) => a + (+s.r || 0), 0);
+  const secToday = pred => todaySets(pred).reduce((a, [, s]) => a + (+s.sec || 0), 0);
+  const setsToday = pred => todaySets(pred).length;
+  const cardioMinToday = () => Math.round(todaySets(e => e.m === "Cardio").reduce((a, [ex, s]) => a + (ex.t === "cardio" ? (+s.min || 0) : (+s.sec || 0) / 60), 0));
+  function hashStr(str) { let h = 2166136261; for (let i = 0; i < str.length; i++) { h ^= str.charCodeAt(i); h = Math.imul(h, 16777619); } return h >>> 0; }
+  function todaysQuests() {
+    let seed = hashStr("dawnfast-" + todayKey());
+    const pool = QUESTS.slice(), pick = [];
+    while (pick.length < 3 && pool.length) { seed = Math.imul(seed ^ (seed >>> 15), 2246822507) >>> 0; pick.push(pool.splice(seed % pool.length, 1)[0]); }
+    return pick;
+  }
+  /* Called from evaluate(): quest completions, gear unlocks, level-ups */
+  function meEvents() {
+    if (!state.me || !state.wk) return [];
+    const items = [], k = todayKey();
+    const done = state.me.quests[k] = state.me.quests[k] || [];
+    todaysQuests().forEach(q => {
+      if (done.includes(q.id)) return;
+      const [cur, tgt] = q.p();
+      if (cur >= tgt) { done.push(q.id); state.me.questExp += q.exp; items.push({ kicker: "Quest complete", art: '<div class="big-ic">' + q.ic + '</div>', title: q.t + " ✓", text: "+" + q.exp + " EXP for you" }); }
+    });
+    Object.keys(state.me.quests).forEach(d => { if (d !== k && Object.keys(state.me.quests).length > 14) delete state.me.quests[d]; });
+    const st = meStats();
+    if (st.level > state.me.lastLevel) {
+      items.push({ evo: true, kicker: "Level up!", art: avatarSVG(state.me, { happy: true, sparkle: true }), title: "You reached level " + st.level + "!", text: BODY_STAGES[fitness().stage] + " · Keep it up. Every set makes your avatar stronger." });
+      state.me.lastLevel = st.level;
+    }
+    GEAR.forEach(g => {
+      if (!state.me.gearSeen.includes(g[0]) && g[5](st)) { state.me.gearSeen.push(g[0]); items.push({ kicker: "New gear unlocked", art: '<div class="big-ic">' + g[3] + '</div>', title: g[2], text: "Put it on in the Me tab." }); }
+    });
+    return items;
+  }
+
+  /* Render Me tab */
+  function radarSVG(pts) {
+    const n = STATS.length, cx = 130, cy = 118, R = 84;
+    const ang = i => -Math.PI / 2 + i * 2 * Math.PI / n;
+    const P = (i, r) => [cx + r * Math.cos(ang(i)), cy + r * Math.sin(ang(i))];
+    let s = '<svg viewBox="0 0 260 240" role="img" aria-label="Muscle stats radar chart">';
+    [0.25, 0.5, 0.75, 1].forEach(f => { s += '<polygon points="' + STATS.map((_, i) => P(i, R * f).join(",")).join(" ") + '" fill="none" stroke="var(--line)" stroke-width="1"/>'; });
+    STATS.forEach((st, i) => { const [x, y] = P(i, R); s += '<line x1="' + cx + '" y1="' + cy + '" x2="' + x + '" y2="' + y + '" stroke="var(--line)" stroke-width="1"/>'; });
+    const vals = STATS.map(st => Math.max(0.06, statLevel(pts[st.k]) / 10));
+    s += '<polygon points="' + vals.map((v, i) => P(i, R * v).join(",")).join(" ") + '" fill="var(--dusk)" fill-opacity=".28" stroke="var(--dusk)" stroke-width="2.2" stroke-linejoin="round"/>';
+    vals.forEach((v, i) => { const [x, y] = P(i, R * v); s += '<circle cx="' + x + '" cy="' + y + '" r="3.5" fill="var(--dawn-1)" stroke="var(--surface)" stroke-width="1.5"/>'; });
+    STATS.forEach((st, i) => {
+      const [x, y] = P(i, R + 18), lv = statLevel(pts[st.k]);
+      const anchor = Math.abs(x - cx) < 8 ? "middle" : x < cx ? "end" : "start";
+      s += '<text x="' + x + '" y="' + (y + 4) + '" text-anchor="' + anchor + '" class="rl">' + st.n + ' <tspan class="rv">' + lv + '</tspan></text>';
+    });
+    return s + "</svg>";
+  }
+  function renderMe() {
+    if (!state.me) return;
+    const me = state.me, st = meStats(), fit = fitness(), pts = statPoints();
+    $("meAvatar").innerHTML = avatarSVG(me, { label: "Your avatar, level " + st.level });
+    $("meZoe").innerHTML = me.zoe ? petSVG(stageOf(state.pet.xp), state.pet.wearing, state.active ? null : "happy") : "";
+    $("meZoe").hidden = !me.zoe;
+    $("meLevel").textContent = st.level;
+    const base = expForLevel(st.level), next = expForLevel(st.level + 1);
+    $("meExpFill").style.width = ((st.exp - base) / (next - base) * 100) + "%";
+    $("meExpText").textContent = nf.format(st.exp - base) + " / " + nf.format(next - base) + " EXP to level " + (st.level + 1);
+    $("meStage").textContent = BODY_STAGES[fit.stage];
+    $("meStageDots").innerHTML = BODY_STAGES.map((n, i) => '<i class="' + (i <= fit.stage ? "on" : "") + '" title="' + n + '"></i>').join("");
+    // weight
+    const cur = currentKg();
+    $("meStartV").textContent = me.startKg.toFixed(1);
+    $("meNowV").textContent = cur.toFixed(1);
+    $("meGoalV").textContent = me.goalKg ? me.goalKg.toFixed(1) : "—";
+    if (document.activeElement !== $("meGoalIn")) $("meGoalIn").value = me.goalKg || "";
+    if (document.activeElement !== $("meStartIn")) $("meStartIn").value = me.startKg;
+    if (document.activeElement !== $("meHeightIn")) $("meHeightIn").value = me.heightCm || "";
+    let msg;
+    if (!me.goalKg) msg = "Set a goal weight to let your avatar's body follow your real progress. Until then, it changes with your workouts.";
+    else if (me.goalKg >= me.startKg) msg = "Your goal isn't to lose weight, so your avatar changes with your workouts and stats instead.";
+    else msg = Math.max(0, (cur - me.goalKg)).toFixed(1) + " kg to go · " + Math.round((fit.wp || 0) * 100) + "% of the way. Log your weight in Progress to update it.";
+    $("meWeightMsg").textContent = msg;
+    $("meWeightBar").style.width = ((fit.wp || 0) * 100) + "%";
+    $("meWeightBarWrap").hidden = !(me.goalKg && me.goalKg < me.startKg);
+    // stats
+    $("meRadar").innerHTML = radarSVG(pts);
+    $("meStatList").innerHTML = STATS.map(s => { const lv = statLevel(pts[s.k]), nextP = Math.pow(lv + 1, 2) / 1.1, prevP = Math.pow(lv, 2) / 1.1, pc = lv >= 10 ? 100 : (pts[s.k] - prevP) / (nextP - prevP) * 100;
+      return '<div class="st-row"><span>' + s.ic + " " + s.n + '</span><span class="st-bar"><i style="width:' + Math.max(0, Math.min(100, pc)) + '%"></i></span><b>Lv ' + lv + '</b></div>'; }).join("");
+    // quests
+    const k = todayKey(), done = (me.quests[k] || []);
+    $("questList").innerHTML = todaysQuests().map(q => {
+      const [cur, tgt] = q.p(), ok = done.includes(q.id) || cur >= tgt;
+      return '<li class="quest' + (ok ? " ok" : "") + '"><span class="q-ic">' + q.ic + '</span><div class="q-body"><div class="q-t">' + esc(q.t) + '</div><div class="q-bar"><i style="width:' + Math.min(100, cur / tgt * 100) + '%"></i></div><div class="q-p">' + nf.format(Math.min(cur, tgt)) + " / " + nf.format(tgt) + '</div></div><span class="q-exp">' + (ok ? "✓ Done" : "+" + q.exp + " EXP") + '</span></li>';
+    }).join("");
+    const midnight = new Date(); midnight.setHours(24, 0, 0, 0);
+    $("questReset").textContent = "New quests in " + fmtMin(midnight - Date.now());
+    // customize
+    const sw = (el, list, cur, key, label) => { el.innerHTML = list.map(([n, c]) => '<button type="button" class="swatch" style="--c:' + c + '" aria-pressed="' + (cur === c) + '" aria-label="' + esc(label + ": " + n) + '" title="' + esc(n) + '" data-k="' + key + '" data-v="' + c + '"></button>').join(""); };
+    sw($("skinRow"), SKINS, me.skin, "skin", "Skin tone");
+    sw($("hairColorRow"), HAIR_COLORS, me.hairColor, "hairColor", "Hair color");
+    sw($("topColorRow"), OUTFIT_COLORS.map(c => [c, c]), me.topColor, "topColor", "Top color");
+    sw($("botColorRow"), OUTFIT_COLORS.map(c => [c, c]), me.bottomColor, "bottomColor", "Bottom color");
+    $("bodyRow").innerHTML = [["f", "Female"], ["m", "Male"]].map(([v, n]) => '<button type="button" class="chip-btn" data-k="gender" data-v="' + v + '" aria-pressed="' + (me.gender === v) + '">' + n + '</button>').join("");
+    $("hairRow").innerHTML = HAIR_STYLES.map(([v, n]) => '<button type="button" class="chip-btn" data-k="hair" data-v="' + v + '" aria-pressed="' + (me.hair === v) + '">' + n + '</button>').join("");
+    const gearRow = (el, slot) => {
+      el.innerHTML = GEAR.filter(g => g[1] === slot).map(g => {
+        const owned = g[5](st), on = slot === "acc" ? me.acc.includes(g[0]) : me[slot] === g[0];
+        return '<button type="button" class="chip-btn gear" data-slot="' + slot + '" data-v="' + g[0] + '" aria-pressed="' + on + '"' + (owned ? "" : ' disabled title="' + esc(g[4]) + '"') + '>' + (owned ? g[3] + " " + esc(g[2]) : "🔒 " + esc(g[2]) + ' <small>' + esc(g[4]) + '</small>') + '</button>';
+      }).join("");
+    };
+    gearRow($("topRow"), "top"); gearRow($("botRow"), "bottom"); gearRow($("shoeRow"), "shoes"); gearRow($("accRowMe"), "acc");
+    $("zoeToggle").setAttribute("aria-pressed", String(!!me.zoe));
+    $("gearCount").textContent = GEAR.filter(g => g[5](st)).length + " of " + GEAR.length + " unlocked";
+  }
+  $("tab-zoe").addEventListener("click", e => {
+    const b = e.target.closest("button"); if (!b || !state.me) return;
+    const me = state.me;
+    if (b.dataset.k) { me[b.dataset.k] = b.dataset.v; if (b.dataset.k === "gender" && b.dataset.v === "m" && me.hair === "long") me.hair = "short"; save(); renderMe(); renderNavPet(); return; }
+    if (b.dataset.slot) { const slot = b.dataset.slot, v = b.dataset.v; if (slot === "acc") { me.acc = me.acc.includes(v) ? me.acc.filter(x => x !== v) : me.acc.concat(v); } else me[slot] = v; save(); renderMe(); return; }
+  });
+  $("zoeToggle").onclick = () => { state.me.zoe = !state.me.zoe; save(); renderMe(); };
+  $("meWeightSave").onclick = () => {
+    const me = state.me, st0 = +$("meStartIn").value, g = $("meGoalIn").value === "" ? null : +$("meGoalIn").value, hcm = $("meHeightIn").value === "" ? null : +$("meHeightIn").value;
+    if (!(st0 >= 25 && st0 <= 300)) { toast("Starting weight should be between 25 and 300 kg"); return; }
+    if (g != null && !(g >= 25 && g <= 300)) { toast("Goal weight should be between 25 and 300 kg"); return; }
+    if (hcm != null && !(hcm >= 100 && hcm <= 230)) { toast("Height should be between 100 and 230 cm"); return; }
+    me.startKg = st0; me.goalKg = g; me.heightCm = hcm;
+    save(); renderMe();
+    const low = g && hcm && g / Math.pow(hcm / 100, 2) < 18.5;
+    $("meHealthNote").hidden = !low;
+    toast("Saved");
+  };
+  $("meLogWeight").onclick = () => go("progress");
+
   /* ---------- Tabs ---------- */
   const TABS = ["fast", "water", "meals", "workout", "progress", "zoe"];
   function go(tab, fromHash) {
@@ -2994,7 +3458,7 @@ Stretching|Full body|Bodyweight|dur|2.3
     if (tab === "water") renderWater();
     if (tab === "meals") renderMeals();
     if (tab === "progress") { renderBody(); renderStats(); }
-    if (tab === "zoe") { renderPet(); renderBadges(); }
+    if (tab === "zoe") { renderMe(); renderPet(); renderBadges(); }
     if (tab === "workout") renderWorkout();
     if (state.wk) renderResumePill();
     if (!fromHash && location.hash !== "#" + tab) { try { history.replaceState(null, "", "#" + tab); } catch (e) { try { location.hash = tab; } catch (e2) {} } }
@@ -3003,8 +3467,8 @@ Stretching|Full body|Bodyweight|dur|2.3
   document.querySelectorAll(".tab").forEach(b => b.onclick = () => go(b.dataset.go));
   window.addEventListener("hashchange", () => go(location.hash.slice(1), true));
   function renderNavPet() {
-    $("navZoeIc").textContent = ["🥚", "🐣", "🐥", "🐤", "🌞"][stageOf(state.pet.xp)];
-    $("navZoeName").textContent = state.pet.name.length > 9 ? state.pet.name.slice(0, 8) + "…" : state.pet.name;
+    $("navZoeIc").textContent = state.me && state.me.gender === "m" ? "🧍‍♂️" : "🧍‍♀️";
+    $("navZoeName").textContent = "Me";
   }
 
   $("mainBtn").onclick = () => {
@@ -3059,7 +3523,8 @@ Stretching|Full body|Bodyweight|dur|2.3
     state = { demo: false, goal: state.goal || 16, active: null, history: [],
       pet: { name: state.pet.name, xp: 0, wearing: null }, rw: freshRewards(), sound: state.sound,
       water: { glass: state.water.glass, goal: state.water.goal, log: {} }, meals: [], body: [], kcalTarget: state.kcalTarget, macroSplit: state.macroSplit,
-      wk: { routines: state.wk.routines, history: [], active: null, custom: state.wk.custom, addToBudget: state.wk.addToBudget, filter: state.wk.filter } };
+      wk: { routines: state.wk.routines, history: [], active: null, custom: state.wk.custom, addToBudget: state.wk.addToBudget, filter: state.wk.filter, kcalOn: state.wk.kcalOn },
+      me: Object.assign({}, state.me, { questExp: 0, quests: {}, lastLevel: 1, createdAt: Date.now(), baseBody: {}, gearSeen: GEAR.filter(g => g[4] === "Starter").map(g => g[0]), acc: [], top: "tank", bottom: "leggings", shoes: "sneakers" }) };
     stopRest(); renderResumePill();
     if (!$("tab-workout").hidden) renderWorkout();
     if (!$("tab-water").hidden) renderWater();
@@ -3069,7 +3534,7 @@ Stretching|Full body|Bodyweight|dur|2.3
     toast("All clear! " + state.pet.name + " is a fresh egg. Start your first fast!");
   };
 
-  migrate(); migrateWorkouts(); renderSoundBtn();
+  migrate(); migrateWorkouts(); migrateMe(); renderSoundBtn();
   renderProtocols(); renderMarkers(); tick(); renderStats();
   go(location.hash.slice(1), true);
   setInterval(tick, 1000);

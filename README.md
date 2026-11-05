@@ -3,7 +3,7 @@
 A visually motivating intermittent fasting tracker. A fast is a night that ends in sunrise — the ring fills with dawn colors as you get closer to your goal.
 
 ## Features
-Six tabs: **Fast · Water · Meals · Workout · Progress · Zoe**
+Six tabs: **Fast · Water · Meals · Workout · Progress · Me**
 
 - **Water tracker:** set your own glass size and daily goal, quick-add buttons, 7-day chart (+3 sunlight for Zoe when you hit your goal)
 - **Meal & calorie log:** built-in list of common foods (including Filipino dishes) with estimated calories; log by weight in grams (or by servings), tags, daily calorie target, and eating-window status
@@ -15,6 +15,7 @@ Six tabs: **Fast · Water · Meals · Workout · Progress · Zoe**
 - **Body-stage timeline** (fed state → fat burning → ketosis → autophagy) showing where you are now
 - **Motivational messages** that change as you progress, plus a toast when you hit a new stage
 - **Streak counter**, stats (total, longest, average), weekly bar chart vs. your goal
+- **Your avatar (Me tab):** a customizable character whose body follows your real weight progress toward your goal and whose muscles grow with the exercises you log. Level & EXP, per-muscle stats (Arms, Chest, Back, Core, Legs, Glutes, Cardio), 3 daily quests, and unlockable outfits and gym gear
 - **Zoe, your pet:** she grows from an egg to a Sun Spirit (5 stages) as you earn sunlight by hitting goals
 - **Badges** for goals, streaks (3/7/14/30 days) and milestones (fasts and total hours), some unlock outfits for Zoe
 - **Streak freeze:** 1 per week, used automatically if you miss a day
