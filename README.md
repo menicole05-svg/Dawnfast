@@ -7,6 +7,7 @@ Five tabs: **Fast · Water · Meals · Progress · Zoe**
 
 - **Water tracker:** set your own glass size and daily goal, quick-add buttons, 7-day chart (+3 sunlight for Zoe when you hit your goal)
 - **Meal & calorie log:** built-in list of common foods (including Filipino dishes) with estimated calories; log by weight in grams (or by servings), tags, daily calorie target, and eating-window status
+- **Macros (MyFitnessPal-inspired):** Goal − Food = Remaining calories, protein/carbs/fat bars and donut, meals grouped into Breakfast/Lunch/Dinner/Snacks, recent foods, and macro goal presets (Balanced, High protein, Low carb, Keto)
 - **Weight & waist log:** kg and cm check-ins with a trend chart and change since your first log
 - **Live fasting ring** with elapsed time, time remaining, and % of goal
 - **Plans:** 13:11, 16:8, 18:6, 20:4, OMAD, 36h

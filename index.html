@@ -277,6 +277,51 @@ section h2 { font-family: var(--font-display); font-size: 17px; font-weight: 700
 .line-chart svg { width: 100%; height: auto; display: block; overflow: visible; }
 .line-chart text { font-family: var(--font-mono); font-size: 10px; fill: var(--muted); }
 
+/* Meals: MFP-style summary */
+.equation { display: grid; grid-template-columns: 1fr auto 1fr auto 1.2fr; align-items: end; gap: 6px; margin: 14px 0 12px; text-align: center; }
+.eq { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.eq b { font-family: var(--font-display); font-weight: 800; font-size: 22px; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; }
+.eq span { font-size: 11px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: .08em; }
+.eq.left b { font-size: 30px; color: var(--good); }
+.eq.left.over b { color: #ff5a6e; }
+.op { font-family: var(--font-display); font-size: 20px; color: var(--muted); padding-bottom: 16px; }
+.macro-wrap { display: grid; grid-template-columns: 110px 1fr; gap: 16px; align-items: center; margin-top: 16px; }
+@media (max-width: 400px) { .macro-wrap { grid-template-columns: 92px 1fr; gap: 12px; } .eq b { font-size: 19px; } .eq.left b { font-size: 25px; } }
+.donut svg { width: 100%; height: auto; display: block; }
+.donut .d-big { font-family: var(--font-display); font-weight: 800; font-size: 20px; fill: var(--fg); }
+.donut .d-small { font-size: 10px; font-weight: 700; fill: var(--muted); }
+.macro-bars { display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+.mhead { display: flex; justify-content: space-between; gap: 8px; font-size: 13px; }
+.mname { font-weight: 700; display: inline-flex; align-items: center; gap: 6px; }
+.mname i { width: 9px; height: 9px; border-radius: 50%; display: inline-block; }
+.mval { font-variant-numeric: tabular-nums; color: var(--muted); font-family: var(--font-mono); font-size: 12px; }
+.mval b { color: var(--fg); font-weight: 500; }
+.mbar { height: 7px; border-radius: 99px; background: var(--track); overflow: hidden; margin-top: 4px; }
+.mbar i { display: block; height: 100%; border-radius: inherit; transition: width .7s cubic-bezier(.2,.8,.2,1); }
+.mleft { font-size: 11px; color: var(--muted); margin-top: 2px; }
+.meal-groups { display: flex; flex-direction: column; gap: 6px; }
+.mgroup { border-top: 1px solid var(--line); padding-top: 10px; }
+.mgroup:first-child { border-top: none; padding-top: 0; }
+.mg-head { display: flex; justify-content: space-between; align-items: baseline; font-weight: 800; }
+.mg-name { font-family: var(--font-display); font-size: 16px; }
+.mg-kcal { font-family: var(--font-mono); font-weight: 500; font-size: 14px; font-variant-numeric: tabular-nums; }
+.mg-list li { padding: 8px 0; }
+.mg-add { display: inline-block; padding: 6px 0 4px; font-size: 13px; }
+.mm { font-family: var(--font-mono); font-size: 11px; font-weight: 500; }
+.mm.p { color: var(--dawn-1); } .mm.c { color: #3aa0e8; } .mm.f { color: var(--dusk); }
+.seg.four { display: grid; grid-template-columns: repeat(4, 1fr); width: 100%; margin: 0; }
+.seg.four button { padding: 8px 4px; font-size: 12px; white-space: nowrap; }
+@media (max-width: 400px) { .seg.four button { font-size: 11px; } }
+.form-grid.three.macros-in { grid-template-columns: repeat(3, 1fr); }
+.form-grid.three.macros-in .field:last-child { grid-column: auto; }
+.macros-in .field span { display: flex; align-items: center; gap: 5px; }
+.macros-in .field span::before { content: ""; width: 8px; height: 8px; border-radius: 50%; }
+.macros-in .m-pro span::before { background: var(--dawn-1); }
+.macros-in .m-carb span::before { background: #3aa0e8; }
+.macros-in .m-fat span::before { background: var(--dusk); }
+.macro-legend { font-size: 13px; color: var(--muted); margin-top: 10px; display: flex; flex-wrap: wrap; gap: 4px 10px; align-items: baseline; }
+.macro-legend b { color: var(--fg); }
+
 .foot { font-size: 12px; color: var(--muted); text-align: center; max-width: 52ch; margin: 4px auto 0; }
 
 .toast { position: fixed; left: 50%; bottom: calc(24px + env(safe-area-inset-bottom, 0px)); transform: translate(-50%, 20px); background: var(--fg); color: var(--bg); padding: 10px 18px; border-radius: 999px; font-weight: 700; font-size: 14px; opacity: 0; transition: all .3s ease; pointer-events: none; z-index: 20; max-width: calc(100% - 32px); text-align: center; }
@@ -407,56 +452,81 @@ section h2 { font-family: var(--font-display); font-size: 17px; font-weight: 700
   <div class="panel" id="tab-meals" data-tab="meals" hidden>
   <section class="card">
     <div class="kcal-head">
-      <div>
-        <div class="eyebrow">Today's calories</div>
-        <div class="big-num"><span id="kcalNow">0</span><small id="kcalOf"> kcal</small></div>
-      </div>
+      <h2 style="margin:0">Calories remaining</h2>
       <div class="window-chip" id="windowChip"></div>
     </div>
+    <div class="equation">
+      <div class="eq"><b id="eqGoal">—</b><span>Goal</span></div>
+      <div class="op" aria-hidden="true">−</div>
+      <div class="eq"><b id="eqFood">0</b><span>Food</span></div>
+      <div class="op" aria-hidden="true">=</div>
+      <div class="eq left"><b id="eqLeft">—</b><span id="eqLeftLbl">Remaining</span></div>
+    </div>
     <div class="xp-bar" id="kcalBarWrap"><i id="kcalBar"></i></div>
-    <div class="sub" id="kcalMsg"></div>
-    <div class="macro-row" id="tagSummary"></div>
+    <div class="macro-wrap">
+      <div class="donut" id="macroDonut"></div>
+      <div class="macro-bars" id="macroBars"></div>
+    </div>
   </section>
 
   <section class="card">
-    <h2>Log a meal</h2>
+    <h2>Today's food<span class="badge-count" id="foodCount"></span></h2>
+    <div class="meal-groups" id="mealGroups"></div>
+  </section>
+
+  <section class="card" id="addFoodCard">
+    <h2>Add food</h2>
     <form id="mealForm" class="meal-form" autocomplete="off">
-      <label class="field wide"><span>What did you eat?</span><input id="mealName" list="foods" placeholder="Try: chicken adobo, rice, pandesal" maxlength="60" required></label>
+      <div class="seg four" id="typeSeg" role="group" aria-label="Which meal"></div>
+      <div id="recentWrap" hidden>
+        <div class="field"><span>Recent foods · tap to fill in</span></div>
+        <div class="chips-row" id="recentRow" style="margin-top:4px"></div>
+      </div>
+      <label class="field wide"><span>Search food</span><input id="mealName" list="foods" placeholder="Try: chicken adobo, rice, pandesal" maxlength="60" required></label>
       <datalist id="foods"></datalist>
-      <div class="form-grid">
-        <div class="field wide">
-          <span>Measure by</span>
-          <div class="seg" role="group" aria-label="Measure by" style="margin:0">
-            <button type="button" id="unitG" aria-pressed="true">⚖️ Grams</button>
-            <button type="button" id="unitS" aria-pressed="false">🍽️ Servings</button>
-          </div>
+      <div class="field wide">
+        <span>Measure by</span>
+        <div class="seg" role="group" aria-label="Measure by" style="margin:0">
+          <button type="button" id="unitG" aria-pressed="true">⚖️ Grams</button>
+          <button type="button" id="unitS" aria-pressed="false">🍽️ Servings</button>
         </div>
+      </div>
+      <div class="form-grid">
         <label class="field"><span id="qtyLabel">Weight (g)</span><input type="number" id="mealQty" min="1" max="5000" step="1" inputmode="decimal" placeholder="e.g. 150"></label>
         <label class="field"><span>Calories (kcal)</span><input type="number" id="mealKcal" min="0" max="5000" step="1" inputmode="numeric" placeholder="auto"></label>
       </div>
-      <div class="sub" id="foodHint">Pick a food from the list to fill in calories, or type your own.</div>
+      <div class="form-grid three macros-in">
+        <label class="field m-pro"><span>Protein (g)</span><input type="number" id="mealP" min="0" max="500" step="0.1" inputmode="decimal" placeholder="0"></label>
+        <label class="field m-carb"><span>Carbs (g)</span><input type="number" id="mealC" min="0" max="1000" step="0.1" inputmode="decimal" placeholder="0"></label>
+        <label class="field m-fat"><span>Fat (g)</span><input type="number" id="mealF" min="0" max="500" step="0.1" inputmode="decimal" placeholder="0"></label>
+      </div>
+      <div class="sub" id="foodHint">Pick a food from the list to fill in calories and macros, or type your own.</div>
       <div class="chips-row" id="tagRow" role="group" aria-label="Meal tags"></div>
-      <button class="cta" type="submit" id="addMeal">Add meal</button>
+      <button class="cta" type="submit" id="addMeal">Add to Breakfast</button>
     </form>
   </section>
 
   <section class="card">
-    <h2>Today's meals</h2>
-    <ul class="history" id="mealList"></ul>
-  </section>
-
-  <section class="card">
-    <h2>Daily calorie target</h2>
-    <div class="form-grid">
-      <label class="field"><span>Target (kcal / day)</span><input type="number" id="kcalTargetInput" min="800" max="6000" step="10" inputmode="numeric" placeholder="e.g. 1600"></label>
-      <button type="button" id="saveKcal" class="save-btn" style="align-self:end">Save target</button>
+    <h2>Nutrition goals</h2>
+    <div class="meal-form">
+      <label class="field"><span>Daily calories (kcal)</span><input type="number" id="kcalTargetInput" min="800" max="6000" step="10" inputmode="numeric" placeholder="e.g. 1600"></label>
+      <div class="field"><span>Macro split</span></div>
+      <div class="chips-row" id="presetRow" role="group" aria-label="Macro presets"></div>
+      <div class="form-grid three macros-in">
+        <label class="field m-pro"><span>Protein %</span><input type="number" id="pctP" min="0" max="100" step="1" inputmode="numeric"></label>
+        <label class="field m-carb"><span>Carbs %</span><input type="number" id="pctC" min="0" max="100" step="1" inputmode="numeric"></label>
+        <label class="field m-fat"><span>Fat %</span><input type="number" id="pctF" min="0" max="100" step="1" inputmode="numeric"></label>
+      </div>
+      <div class="sub" id="goalPreview"></div>
+      <button type="button" id="saveKcal" class="save-btn" style="margin-top:0">Save goals</button>
+      <p class="sub" style="margin:0">Calories and macros in the food list are rough estimates for a typical serving. Adjust them to match your portions.</p>
     </div>
-    <p class="sub" style="margin:10px 0 0">Calories from the food list are rough estimates for a typical serving. Adjust them to match your portions.</p>
   </section>
 
   <section class="card">
     <h2>Last 7 days<span class="badge-count" id="kcalWeekNote"></span></h2>
     <div class="chart" id="kcalChart"></div>
+    <div class="macro-legend" id="weekMacros"></div>
   </section>
   </div>
 
@@ -624,45 +694,99 @@ section h2 { font-family: var(--font-display); font-size: 17px; font-weight: 700
     { id: "m1",  ic: "🍽️", t: "First bite",     x: "Log your first meal", xp: 5,  test: s => s.meals >= 1 },
     { id: "m25", ic: "📒", t: "Food diary",     x: "25 meals logged",     xp: 25, test: s => s.meals >= 25 },
     { id: "b1",  ic: "⚖️", t: "Check-in",       x: "First weight log",    xp: 5,  test: s => s.weighIns >= 1 },
-    { id: "b8",  ic: "📉", t: "Consistent",     x: "8 weight logs",       xp: 30, test: s => s.weighIns >= 8 }
+    { id: "b8",  ic: "📉", t: "Consistent",     x: "8 weight logs",       xp: 30, test: s => s.weighIns >= 8 },
+    { id: "pr1", ic: "💪", t: "Protein pro",    x: "Hit your protein goal", xp: 10, test: s => s.proteinDays >= 1 },
+    { id: "pr7", ic: "🏋️", t: "Strong week",    x: "7 protein-goal days",  xp: 30, acc: "headband", test: s => s.proteinDays >= 7 }
   );
   ACC.umbrella = { n: "Umbrella", ic: "☂️" };
-  const WATER_XP = 3;
+  ACC.headband = { n: "Sweatband", ic: "🎽" };
+  const WATER_XP = 3, PROTEIN_XP = 3;
   const MEAL_TAGS = [
     { id: "healthy", n: "🥗 Healthy" }, { id: "protein", n: "🍗 Protein" },
     { id: "veggies", n: "🥦 Veggies" }, { id: "cheat", n: "🍩 Cheat meal" }
   ];
   /* Approximate calories for one typical serving */
-  /* [name, kcal per typical serving, grams per serving] — rough estimates */
+  /* [name, kcal, grams, protein g, carbs g, fat g] per typical serving — rough estimates */
   const FOODS = [
-    ["Rice (1 cup)", 205, 158], ["Garlic rice (1 cup)", 270, 160], ["Brown rice (1 cup)", 215, 195],
-    ["Chicken adobo (1 serving)", 330, 200], ["Pork adobo (1 serving)", 450, 200], ["Sinigang na baboy (1 bowl)", 300, 400],
-    ["Sinigang na hipon (1 bowl)", 200, 400], ["Tinolang manok (1 bowl)", 250, 400], ["Nilagang baka (1 bowl)", 320, 400],
-    ["Bulalo (1 bowl)", 450, 450], ["Kare-kare (1 serving)", 450, 250], ["Bicol express (1 serving)", 450, 200],
-    ["Pork sisig (1 serving)", 450, 150], ["Lechon kawali (100 g)", 500, 100], ["Inihaw na liempo (100 g)", 400, 100],
-    ["Chicken inasal (1 pc)", 350, 200], ["Fried chicken (1 pc)", 320, 130], ["Grilled chicken breast (100 g)", 165, 100],
-    ["Daing na bangus (1/2 fish)", 300, 150], ["Fried tilapia (1 pc)", 230, 150], ["Grilled fish (100 g)", 150, 100],
-    ["Menudo (1 serving)", 350, 200], ["Afritada (1 serving)", 330, 200], ["Caldereta (1 serving)", 400, 200],
-    ["Giniling (1 serving)", 300, 180], ["Tortang talong (1 pc)", 220, 150], ["Ginisang monggo (1 bowl)", 250, 300],
-    ["Pinakbet (1 serving)", 200, 200], ["Chopsuey (1 serving)", 150, 200], ["Laing (1 serving)", 280, 150],
-    ["Lumpiang shanghai (5 pcs)", 300, 100], ["Lumpiang sariwa (1 pc)", 180, 150], ["Pancit canton (1 plate)", 400, 250],
-    ["Pancit bihon (1 plate)", 330, 250], ["Spaghetti, sweet style (1 plate)", 450, 300], ["Arroz caldo (1 bowl)", 300, 350],
-    ["Lugaw (1 bowl)", 180, 350], ["Goto (1 bowl)", 320, 350], ["Tapsilog", 750, 400],
-    ["Longsilog", 800, 400], ["Tocilog", 750, 400], ["Bangsilog", 650, 400],
-    ["Hotsilog", 650, 350], ["Boiled egg (1 pc)", 78, 50], ["Fried egg (1 pc)", 90, 46],
-    ["Hotdog (1 pc)", 150, 45], ["Corned beef (1/2 can)", 220, 130], ["Canned tuna in water (1 can)", 120, 120],
-    ["Pandesal (1 pc)", 120, 40], ["Ensaymada (1 pc)", 350, 90], ["Bread slice (1 pc)", 80, 30],
-    ["Peanut butter (1 tbsp)", 95, 16], ["Siopao asado (1 pc)", 300, 120], ["Siomai (4 pcs)", 200, 100],
-    ["Turon (1 pc)", 200, 90], ["Banana cue (1 stick)", 250, 120], ["Kamote, boiled (1 medium)", 115, 130],
-    ["Saging na saba, boiled (1 pc)", 110, 100], ["Lakatan banana (1 pc)", 105, 100], ["Mango (1 pc)", 150, 200],
-    ["Apple (1 pc)", 95, 180], ["Papaya (1 cup)", 60, 145], ["Oatmeal (1 cup cooked)", 160, 234],
-    ["Greek yogurt (150 g)", 130, 150], ["Taho (1 cup)", 200, 250], ["Halo-halo (1 glass)", 450, 400],
-    ["Leche flan (1 slice)", 220, 100], ["Milk tea with pearls (large)", 450, 700], ["Black coffee (1 cup)", 5, 240],
-    ["3-in-1 coffee (1 sachet)", 90, 20], ["Soft drink (1 can)", 140, 330], ["Fresh milk (1 cup)", 150, 244],
-    ["Salad with dressing (1 bowl)", 200, 200], ["Burger (1 pc)", 500, 200], ["Pizza (1 slice)", 285, 107],
-    ["French fries (medium)", 340, 117], ["Chicharon (30 g)", 160, 30]
+    ["Rice (1 cup)", 205, 158, 4.3, 45, 0.4],
+    ["Garlic rice (1 cup)", 270, 160, 5, 46, 7],
+    ["Brown rice (1 cup)", 215, 195, 5, 45, 1.8],
+    ["Chicken adobo (1 serving)", 330, 200, 30, 5, 21],
+    ["Pork adobo (1 serving)", 450, 200, 28, 5, 35],
+    ["Sinigang na baboy (1 bowl)", 300, 400, 22, 12, 18],
+    ["Sinigang na hipon (1 bowl)", 200, 400, 24, 12, 5],
+    ["Tinolang manok (1 bowl)", 250, 400, 26, 10, 11],
+    ["Nilagang baka (1 bowl)", 320, 400, 30, 15, 15],
+    ["Bulalo (1 bowl)", 450, 450, 35, 12, 29],
+    ["Kare-kare (1 serving)", 450, 250, 25, 15, 32],
+    ["Bicol express (1 serving)", 450, 200, 20, 8, 38],
+    ["Pork sisig (1 serving)", 450, 150, 22, 5, 38],
+    ["Lechon kawali (100 g)", 500, 100, 20, 0, 46],
+    ["Inihaw na liempo (100 g)", 400, 100, 18, 3, 35],
+    ["Chicken inasal (1 pc)", 350, 200, 38, 4, 20],
+    ["Fried chicken (1 pc)", 320, 130, 24, 11, 20],
+    ["Grilled chicken breast (100 g)", 165, 100, 31, 0, 3.6],
+    ["Daing na bangus (1/2 fish)", 300, 150, 30, 0, 20],
+    ["Fried tilapia (1 pc)", 230, 150, 30, 2, 11],
+    ["Grilled fish (100 g)", 150, 100, 26, 0, 5],
+    ["Menudo (1 serving)", 350, 200, 22, 15, 22],
+    ["Afritada (1 serving)", 330, 200, 24, 14, 19],
+    ["Caldereta (1 serving)", 400, 200, 26, 12, 27],
+    ["Giniling (1 serving)", 300, 180, 20, 12, 19],
+    ["Tortang talong (1 pc)", 220, 150, 10, 10, 16],
+    ["Ginisang monggo (1 bowl)", 250, 300, 14, 30, 8],
+    ["Pinakbet (1 serving)", 200, 200, 8, 18, 11],
+    ["Chopsuey (1 serving)", 150, 200, 10, 14, 6],
+    ["Laing (1 serving)", 280, 150, 7, 12, 23],
+    ["Lumpiang shanghai (5 pcs)", 300, 100, 12, 20, 19],
+    ["Lumpiang sariwa (1 pc)", 180, 150, 6, 28, 5],
+    ["Pancit canton (1 plate)", 400, 250, 15, 55, 13],
+    ["Pancit bihon (1 plate)", 330, 250, 12, 55, 7],
+    ["Spaghetti, sweet style (1 plate)", 450, 300, 16, 65, 14],
+    ["Arroz caldo (1 bowl)", 300, 350, 18, 40, 7],
+    ["Lugaw (1 bowl)", 180, 350, 4, 38, 1],
+    ["Goto (1 bowl)", 320, 350, 18, 40, 9],
+    ["Tapsilog", 750, 400, 40, 65, 35],
+    ["Longsilog", 800, 400, 28, 70, 45],
+    ["Tocilog", 750, 400, 30, 80, 33],
+    ["Bangsilog", 650, 400, 35, 60, 28],
+    ["Hotsilog", 650, 350, 22, 60, 35],
+    ["Boiled egg (1 pc)", 78, 50, 6.3, 0.6, 5.3],
+    ["Fried egg (1 pc)", 90, 46, 6, 0.4, 7],
+    ["Hotdog (1 pc)", 150, 45, 5, 3, 13],
+    ["Corned beef (1/2 can)", 220, 130, 20, 3, 14],
+    ["Canned tuna in water (1 can)", 120, 120, 26, 0, 1],
+    ["Pandesal (1 pc)", 120, 40, 3.5, 22, 2],
+    ["Ensaymada (1 pc)", 350, 90, 6, 42, 17],
+    ["Bread slice (1 pc)", 80, 30, 2.7, 14, 1],
+    ["Peanut butter (1 tbsp)", 95, 16, 3.5, 3.5, 8],
+    ["Siopao asado (1 pc)", 300, 120, 11, 45, 8],
+    ["Siomai (4 pcs)", 200, 100, 12, 12, 11],
+    ["Turon (1 pc)", 200, 90, 1.5, 38, 5],
+    ["Banana cue (1 stick)", 250, 120, 1.5, 52, 5],
+    ["Kamote, boiled (1 medium)", 115, 130, 2, 27, 0.1],
+    ["Saging na saba, boiled (1 pc)", 110, 100, 1.3, 29, 0.3],
+    ["Lakatan banana (1 pc)", 105, 100, 1.3, 27, 0.4],
+    ["Mango (1 pc)", 150, 200, 1.6, 37, 0.8],
+    ["Apple (1 pc)", 95, 180, 0.5, 25, 0.3],
+    ["Papaya (1 cup)", 60, 145, 0.7, 16, 0.4],
+    ["Oatmeal (1 cup cooked)", 160, 234, 6, 27, 3.5],
+    ["Greek yogurt (150 g)", 130, 150, 14, 6, 5],
+    ["Taho (1 cup)", 200, 250, 8, 38, 2.5],
+    ["Halo-halo (1 glass)", 450, 400, 8, 85, 10],
+    ["Leche flan (1 slice)", 220, 100, 6, 32, 7.5],
+    ["Milk tea with pearls (large)", 450, 700, 3, 85, 11],
+    ["Black coffee (1 cup)", 5, 240, 0.3, 0, 0],
+    ["3-in-1 coffee (1 sachet)", 90, 20, 0.7, 15, 3],
+    ["Soft drink (1 can)", 140, 330, 0, 35, 0],
+    ["Fresh milk (1 cup)", 150, 244, 8, 12, 8],
+    ["Salad with dressing (1 bowl)", 200, 200, 4, 12, 15],
+    ["Burger (1 pc)", 500, 200, 25, 40, 26],
+    ["Pizza (1 slice)", 285, 107, 12, 36, 10],
+    ["French fries (medium)", 340, 117, 4, 44, 16],
+    ["Chicharon (30 g)", 160, 30, 18, 0, 10]
   ];
-  const FOOD_MAP = new Map(FOODS.map(f => [f[0].toLowerCase(), { kcal: f[1], g: f[2] }]));
+  const FOOD_MAP = new Map(FOODS.map(f => [f[0].toLowerCase(), { name: f[0], kcal: f[1], g: f[2], p: f[3], c: f[4], f: f[5] }]));
   const stageOf = xp => { let i = 0; PET_STAGES.forEach((s, k) => { if (xp >= s.min) i = k; }); return i; };
 
   let svgUid = 0;
@@ -995,7 +1119,8 @@ section h2 { font-family: var(--font-display); font-size: 17px; font-weight: 700
       streak: computeStreak(),
       waterDays: (state.rw.waterDays || []).length,
       meals: (state.meals || []).length,
-      weighIns: (state.body || []).length
+      weighIns: (state.body || []).length,
+      proteinDays: (state.rw.proteinDays || []).length
     };
   }
   function applyFreeze() {
@@ -1026,7 +1151,7 @@ section h2 { font-family: var(--font-display); font-size: 17px; font-weight: 700
     if (after > before) items.push({ evo: true, kicker: "Evolution!", art: petSVG(after, state.pet.wearing, "happy"), title: state.pet.name + " is now a " + PET_STAGES[after].n + "!", text: PET_STAGES[after].x.replace("{n}", state.pet.name) });
     return items;
   }
-  function freshRewards() { return { badges: [], acc: [], freezes: 1, lastGrant: weekKey(Date.now()), frozen: [], waterDays: [] }; }
+  function freshRewards() { return { badges: [], acc: [], freezes: 1, lastGrant: weekKey(Date.now()), frozen: [], waterDays: [], proteinDays: [] }; }
   function seedDemoExtras() {
     const day = 24 * H, now = Date.now();
     const today0 = new Date(); today0.setHours(0, 0, 0, 0);
@@ -1034,17 +1159,22 @@ section h2 { font-family: var(--font-display); font-size: 17px; font-weight: 700
     [2250, 2000, 1500, 2500, 1750, 2000].forEach((ml, i) => {
       const k = dayKey(now - (i + 1) * day);
       state.water.log[k] = Array(Math.round(ml / 250)).fill(250);
-      if (ml >= state.water.goal) { state.rw.waterDays.push(k); state.pet.xp += WATER_XP; }
+      if (ml >= state.water.goal && !state.rw.waterDays.includes(k)) { state.rw.waterDays.push(k); state.pet.xp += WATER_XP; }
     });
     state.water.log[dayKey(now)] = [250, 250, 500];
     const y0 = today0.getTime() - day;
+    const mk = (t, name, type, tags) => { const f = FOOD_MAP.get(name.toLowerCase()); return { t, type, name, kcal: f.kcal, grams: f.g, servings: null, p: f.p, c: f.c, f: f.f, tags }; };
+    const t0 = today0.getTime();
     state.meals = [
-      { t: y0 + 13 * H, name: "Chicken adobo (1 serving)", grams: 200, kcal: 330, tags: ["protein"] },
-      { t: y0 + 13 * H + 60000, name: "Rice (1 cup)", grams: 158, kcal: 205, tags: [] },
-      { t: y0 + 16.5 * H, name: "Mango (1 pc)", grams: 200, kcal: 150, tags: ["healthy"] },
-      { t: y0 + 19.5 * H, name: "Sinigang na hipon (1 bowl)", grams: 400, kcal: 200, tags: ["healthy", "protein"] },
-      { t: y0 + 19.5 * H + 60000, name: "Pinakbet (1 serving)", grams: 200, kcal: 200, tags: ["veggies"] }
-    ];
+      mk(y0 + 13 * H, "Chicken adobo (1 serving)", "lunch", ["protein"]),
+      mk(y0 + 13 * H + 60000, "Rice (1 cup)", "lunch", []),
+      mk(y0 + 16.5 * H, "Mango (1 pc)", "snack", ["healthy"]),
+      mk(y0 + 19.5 * H, "Sinigang na hipon (1 bowl)", "dinner", ["healthy", "protein"]),
+      mk(y0 + 19.5 * H + 60000, "Pinakbet (1 serving)", "dinner", ["veggies"]),
+      mk(t0 + 12.2 * H, "Grilled chicken breast (100 g)", "lunch", ["protein"]),
+      mk(t0 + 12.2 * H + 60000, "Brown rice (1 cup)", "lunch", ["healthy"]),
+      mk(t0 + 12.2 * H + 120000, "Chopsuey (1 serving)", "lunch", ["veggies"])
+    ].filter(m => m.t <= now);
     state.kcalTarget = 1600;
     state.body = [];
     [[68.6, 82], [68.1, 81.5], [67.9, 81], [67.2, 80.5], [66.9, 80], [66.4, 79.5]].forEach(([kg, w], i) => {
@@ -1056,12 +1186,15 @@ section h2 { font-family: var(--font-display); font-size: 17px; font-weight: 700
     let extras = false;
     if (!state.water) { state.water = { glass: 250, goal: 2000, log: {} }; extras = true; }
     if (!state.meals) { state.meals = []; extras = true; }
+    if (state.demo && state.meals.length && state.meals.every(m => m.p == null)) extras = true;
     if (!state.body) { state.body = []; extras = true; }
     if (state.kcalTarget === undefined) state.kcalTarget = null;
     if (!state.pet) { state.pet = { name: "Zoe", xp: 0, wearing: null }; fresh = true; }
     if (!state.rw) { state.rw = freshRewards(); fresh = true; }
     if (state.sound === undefined) state.sound = true;
     if (!state.rw.waterDays) state.rw.waterDays = [];
+    if (!state.rw.proteinDays) state.rw.proteinDays = [];
+    if (!state.macroSplit) state.macroSplit = { p: 30, c: 40, f: 30 };
     if (fresh) state.pet.xp += state.history.filter(isHit).length * GOAL_XP;
     if (extras && state.demo) seedDemoExtras();
     if (fresh || extras) { evaluate(); save(); }
@@ -1278,46 +1411,113 @@ section h2 { font-family: var(--font-display); font-size: 17px; font-weight: 700
     state.water.glass = g; state.water.goal = goal; save(); renderWater(); toast("Water settings saved");
   };
 
-  /* ---------- Meals ---------- */
-  let mealTags = new Set();
+  /* ---------- Meals (calories + macros) ---------- */
+  const MEAL_TYPES = [
+    { id: "breakfast", n: "Breakfast", ic: "🌅" }, { id: "lunch", n: "Lunch", ic: "☀️" },
+    { id: "dinner", n: "Dinner", ic: "🌙" }, { id: "snack", n: "Snacks", ic: "🍪" }
+  ];
+  const PRESETS = [
+    { id: "bal", n: "Balanced", p: 30, c: 40, f: 30 }, { id: "hp", n: "High protein", p: 40, c: 30, f: 30 },
+    { id: "lc", n: "Low carb", p: 35, c: 20, f: 45 }, { id: "keto", n: "Keto", p: 25, c: 5, f: 70 }
+  ];
+  const MACROS = [
+    { k: "p", n: "Protein", cal: 4, col: "var(--dawn-1)" },
+    { k: "c", n: "Carbs", cal: 4, col: "#3aa0e8" },
+    { k: "f", n: "Fat", cal: 9, col: "var(--dusk)" }
+  ];
+  const round1 = x => Math.round(x * 10) / 10;
+  function typeByHour(t) {
+    const d = new Date(t), h = d.getHours() + d.getMinutes() / 60;
+    return h >= 4 && h < 10.5 ? "breakfast" : h < 15 ? "lunch" : h < 17.5 ? "snack" : h < 22 ? "dinner" : "snack";
+  }
+  const mealType = m => m.type || typeByHour(m.t);
+  let mealTags = new Set(), formType = typeByHour(Date.now());
+  function macroGoals() {
+    const k = state.kcalTarget, sp = state.macroSplit;
+    if (!k) return null;
+    return { p: k * sp.p / 100 / 4, c: k * sp.c / 100 / 4, f: k * sp.f / 100 / 9 };
+  }
+  function dayTotals(k) {
+    const ms = state.meals.filter(m => dayKey(m.t) === k);
+    return ms.reduce((a, m) => ({ kcal: a.kcal + m.kcal, p: a.p + (m.p || 0), c: a.c + (m.c || 0), f: a.f + (m.f || 0) }), { kcal: 0, p: 0, c: 0, f: 0 });
+  }
   function eatingWindow() {
     const now = Date.now();
     if (state.active) return { cls: "closed", text: "🌙 Fasting · window opens " + timeFmt.format(state.active.start + state.active.goal * H) };
     const last = state.history[0];
     if (last && last.goal < 24) {
       const closes = last.end + (24 - last.goal) * H;
-      if (now < closes) return { cls: "open", text: "🍽️ Eating window open · closes " + timeFmt.format(closes) };
-      return { cls: "closed", text: "⏳ Window closed · time to start your fast" };
+      if (now < closes) return { cls: "open", text: "🍽️ Window open · closes " + timeFmt.format(closes) };
+      return { cls: "closed", text: "⏳ Window closed" };
     }
     return { cls: "", text: "🍽️ No fast running" };
   }
-  function renderMeals() {
-    const k = todayKey();
-    const today = state.meals.filter(m => dayKey(m.t) === k).sort((a, b) => b.t - a.t);
-    const tot = today.reduce((a, m) => a + m.kcal, 0), tgt = state.kcalTarget;
-    $("kcalNow").textContent = nf.format(tot);
-    $("kcalOf").textContent = tgt ? " / " + nf.format(tgt) + " kcal" : " kcal";
-    $("kcalBarWrap").hidden = !tgt;
-    if (tgt) {
-      $("kcalBar").style.width = Math.min(100, tot / tgt * 100) + "%";
-      $("kcalBarWrap").classList.toggle("over", tot > tgt);
-      $("kcalMsg").textContent = tot > tgt ? nf.format(tot - tgt) + " kcal over your target today" : nf.format(tgt - tot) + " kcal left for today";
-    } else $("kcalMsg").textContent = "Set a daily target below to see how much you have left.";
-    const w = eatingWindow(); const wc = $("windowChip"); wc.textContent = w.text; wc.className = "window-chip " + w.cls;
-    const ts = $("tagSummary"); ts.innerHTML = "";
-    MEAL_TAGS.forEach(t => { const n = today.filter(m => m.tags.includes(t.id)).length; if (n) { const s = document.createElement("span"); s.className = "meal-tag"; s.textContent = t.n + " × " + n; ts.appendChild(s); } });
-    const ul = $("mealList"); ul.innerHTML = "";
-    if (!today.length) ul.innerHTML = '<li class="empty">No meals logged today yet.</li>';
-    today.forEach(m => {
-      const li = document.createElement("li");
-      const amt = m.grams ? nf.format(m.grams) + " g" + (m.servings && m.servings !== 1 ? " (" + m.servings + " servings)" : "") : m.servings && m.servings !== 1 ? m.servings + " servings" : "";
-      li.innerHTML = '<div style="min-width:0"><div class="meal-name"></div><div class="when">' + timeFmt.format(m.t) + (amt ? " · ⚖️ " + amt : "") + (m.tags.length ? " · " : "") +
-        m.tags.map(id => (MEAL_TAGS.find(t => t.id === id) || { n: id }).n).join(", ") + '</div></div>' +
-        '<div class="dur">' + nf.format(m.kcal) + '<small style="font-size:11px;color:var(--muted)">kcal</small><button class="del" type="button" aria-label="Delete this meal">×</button></div>';
-      li.querySelector(".meal-name").textContent = m.name;
-      li.querySelector(".del").onclick = () => { state.meals.splice(state.meals.indexOf(m), 1); save(); renderMeals(); toast("Meal deleted"); };
-      ul.appendChild(li);
+  function donutSVG(t) {
+    const cals = MACROS.map(m => t[m.k] * m.cal), sum = cals.reduce((a, b) => a + b, 0);
+    const r = 42, C2 = 2 * Math.PI * r;
+    let s = '<svg viewBox="0 0 110 110" role="img" aria-label="Macro split of today\'s calories"><circle cx="55" cy="55" r="' + r + '" fill="none" stroke="var(--track)" stroke-width="14"/>';
+    let off = 0;
+    if (sum > 0) MACROS.forEach((m, i) => {
+      const frac = cals[i] / sum; if (frac <= 0) return;
+      s += '<circle cx="55" cy="55" r="' + r + '" fill="none" stroke="' + m.col + '" stroke-width="14" stroke-dasharray="' + (frac * C2) + ' ' + C2 + '" stroke-dashoffset="' + (-off * C2) + '" transform="rotate(-90 55 55)"/>';
+      off += frac;
     });
+    const pp = sum ? Math.round(cals[0] / sum * 100) : 0;
+    s += '<text x="55" y="52" text-anchor="middle" class="d-big">' + (sum ? pp + "%" : "—") + '</text><text x="55" y="68" text-anchor="middle" class="d-small">protein</text></svg>';
+    return s;
+  }
+  function renderMeals() {
+    const k = todayKey(), tot = dayTotals(k), tgt = state.kcalTarget, goals = macroGoals();
+    $("eqGoal").textContent = tgt ? nf.format(tgt) : "—";
+    $("eqFood").textContent = nf.format(tot.kcal);
+    const left = tgt ? tgt - tot.kcal : null;
+    $("eqLeft").textContent = tgt ? nf.format(Math.abs(left)) : "—";
+    $("eqLeftLbl").textContent = !tgt ? "Set a goal below" : left < 0 ? "Over" : "Remaining";
+    $("eqLeft").parentElement.classList.toggle("over", left != null && left < 0);
+    $("kcalBarWrap").hidden = !tgt;
+    if (tgt) { $("kcalBar").style.width = Math.min(100, tot.kcal / tgt * 100) + "%"; $("kcalBarWrap").classList.toggle("over", tot.kcal > tgt); }
+    const w = eatingWindow(); const wc = $("windowChip"); wc.textContent = w.text; wc.className = "window-chip " + w.cls;
+    $("macroDonut").innerHTML = donutSVG(tot);
+    const mb = $("macroBars"); mb.innerHTML = "";
+    MACROS.forEach(m => {
+      const have = tot[m.k], goal = goals ? goals[m.k] : null;
+      const row = document.createElement("div"); row.className = "mrow";
+      const pct = goal ? Math.min(100, have / goal * 100) : 0;
+      const lft = goal ? goal - have : null;
+      row.innerHTML = '<div class="mhead"><span class="mname"><i style="background:' + m.col + '"></i>' + m.n + '</span><span class="mval"><b>' + Math.round(have) + '</b>' + (goal ? " / " + Math.round(goal) : "") + ' g</span></div>' +
+        '<div class="mbar"><i style="width:' + pct + '%;background:' + m.col + '"></i></div>' +
+        '<div class="mleft">' + (goal ? (lft >= 0 ? Math.round(lft) + " g left" : Math.round(-lft) + " g over") : "Set a calorie goal to get macro targets") + '</div>';
+      mb.appendChild(row);
+    });
+
+    const today = state.meals.filter(m => dayKey(m.t) === k).sort((a, b) => a.t - b.t);
+    $("foodCount").textContent = today.length ? today.length + " item" + (today.length === 1 ? "" : "s") : "";
+    const g = $("mealGroups"); g.innerHTML = "";
+    MEAL_TYPES.forEach(tp => {
+      const items = today.filter(m => mealType(m) === tp.id);
+      const sub = items.reduce((a, m) => a + m.kcal, 0);
+      const box = document.createElement("div"); box.className = "mgroup";
+      box.innerHTML = '<div class="mg-head"><span class="mg-name">' + tp.ic + " " + tp.n + '</span><span class="mg-kcal">' + nf.format(sub) + ' kcal</span></div><ul class="history mg-list"></ul>';
+      const ul = box.querySelector("ul");
+      items.forEach(m => {
+        const amt = m.grams ? nf.format(m.grams) + " g" : m.servings && m.servings !== 1 ? m.servings + " servings" : "";
+        const li = document.createElement("li");
+        li.innerHTML = '<div style="min-width:0"><div class="meal-name"></div><div class="when">' + (amt ? "⚖️ " + amt + " · " : "") +
+          '<span class="mm p">P ' + round1(m.p || 0) + '</span> <span class="mm c">C ' + round1(m.c || 0) + '</span> <span class="mm f">F ' + round1(m.f || 0) + '</span>' +
+          (m.tags && m.tags.length ? " · " + m.tags.map(id => (MEAL_TAGS.find(t => t.id === id) || { n: id }).n.split(" ")[0]).join("") : "") + '</div></div>' +
+          '<div class="dur">' + nf.format(m.kcal) + '<button class="del" type="button" aria-label="Delete this food">×</button></div>';
+        li.querySelector(".meal-name").textContent = m.name;
+        li.querySelector(".del").onclick = () => { state.meals.splice(state.meals.indexOf(m), 1); save(); renderMeals(); toast("Food removed"); };
+        ul.appendChild(li);
+      });
+      const add = document.createElement("button"); add.type = "button"; add.className = "link mg-add"; add.id = "add-" + tp.id;
+      add.textContent = "+ Add food";
+      add.onclick = () => { formType = tp.id; renderTypeSeg(); $("addFoodCard").scrollIntoView({ behavior: "smooth", block: "start" }); setTimeout(() => { try { $("mealName").focus({ preventScroll: true }); } catch (e) {} }, 350); };
+      box.appendChild(add);
+      g.appendChild(box);
+    });
+
+    renderTypeSeg();
     const tr = $("tagRow"); tr.innerHTML = "";
     MEAL_TAGS.forEach(t => {
       const b = document.createElement("button"); b.type = "button"; b.className = "chip-btn"; b.id = "tag-" + t.id;
@@ -1325,24 +1525,96 @@ section h2 { font-family: var(--font-display); font-size: 17px; font-weight: 700
       b.onclick = () => { mealTags.has(t.id) ? mealTags.delete(t.id) : mealTags.add(t.id); b.setAttribute("aria-pressed", String(mealTags.has(t.id))); };
       tr.appendChild(b);
     });
-    if (document.activeElement !== $("kcalTargetInput")) $("kcalTargetInput").value = tgt || "";
+    renderRecent();
+    renderGoalsForm();
     const days = last7();
-    barChart($("kcalChart"), days, days.map(d => state.meals.filter(m => dayKey(m.t) === dayKey(d)).reduce((a, m) => a + m.kcal, 0)), tgt, v => nf.format(Math.round(v)), "kcal");
-    $("kcalWeekNote").textContent = tgt ? "line = " + nf.format(tgt) + " kcal target" : "";
+    const totals = days.map(d => dayTotals(dayKey(d)));
+    barChart($("kcalChart"), days, totals.map(t => t.kcal), tgt, v => nf.format(Math.round(v)), "kcal");
+    $("kcalWeekNote").textContent = tgt ? "line = " + nf.format(tgt) + " kcal goal" : "";
+    const logged = totals.filter(t => t.kcal > 0);
+    const avg = kk => logged.length ? Math.round(logged.reduce((a, t) => a + t[kk], 0) / logged.length) : 0;
+    $("weekMacros").innerHTML = logged.length ? "Daily average: <b>" + nf.format(avg("kcal")) + " kcal</b> · " +
+      MACROS.map(m => '<span class="mm ' + m.k + '">' + m.n + " " + avg(m.k) + " g</span>").join(" ") : "";
   }
+  function renderTypeSeg() {
+    const seg = $("typeSeg"); seg.innerHTML = "";
+    MEAL_TYPES.forEach(tp => {
+      const b = document.createElement("button"); b.type = "button"; b.id = "type-" + tp.id;
+      b.textContent = tp.ic + " " + tp.n; b.setAttribute("aria-pressed", String(formType === tp.id));
+      b.onclick = () => { formType = tp.id; renderTypeSeg(); };
+      seg.appendChild(b);
+    });
+    $("addMeal").textContent = "Add to " + MEAL_TYPES.find(t => t.id === formType).n;
+  }
+  function renderRecent() {
+    const seen = new Set(), rec = [];
+    state.meals.slice().sort((a, b) => b.t - a.t).forEach(m => { const key = m.name.toLowerCase(); if (!seen.has(key) && rec.length < 6) { seen.add(key); rec.push(m); } });
+    $("recentWrap").hidden = !rec.length;
+    const row = $("recentRow"); row.innerHTML = "";
+    rec.forEach((m, i) => {
+      const b = document.createElement("button"); b.type = "button"; b.className = "chip-btn"; b.id = "recent-" + i;
+      b.textContent = m.name.replace(/\s*\(.*\)$/, "") + (m.grams ? " · " + m.grams + " g" : "");
+      b.onclick = () => {
+        $("mealName").value = m.name;
+        lastFood = foodInfo();
+        if (m.grams) { setUnit("g", true); $("mealQty").value = m.grams; } else { setUnit("s", true); $("mealQty").value = m.servings || 1; }
+        $("mealKcal").value = m.kcal; $("mealP").value = round1(m.p || 0); $("mealC").value = round1(m.c || 0); $("mealF").value = round1(m.f || 0);
+        $("foodHint").textContent = "Filled in from your last entry. Adjust the amount if needed.";
+        try { $("addMeal").focus({ preventScroll: true }); } catch (e) {}
+      };
+      row.appendChild(b);
+    });
+  }
+  function renderGoalsForm() {
+    if (document.activeElement && document.activeElement.closest && document.activeElement.closest("#tab-meals .meal-form:not(#mealForm)")) return;
+    const sp = state.macroSplit;
+    $("kcalTargetInput").value = state.kcalTarget || "";
+    $("pctP").value = sp.p; $("pctC").value = sp.c; $("pctF").value = sp.f;
+    renderPresets(); previewGoals();
+  }
+  function renderPresets() {
+    const row = $("presetRow"); row.innerHTML = "";
+    const p = +$("pctP").value, c = +$("pctC").value, f = +$("pctF").value;
+    PRESETS.forEach(pr => {
+      const b = document.createElement("button"); b.type = "button"; b.className = "chip-btn"; b.id = "preset-" + pr.id;
+      b.textContent = pr.n + " " + pr.p + "/" + pr.c + "/" + pr.f;
+      b.setAttribute("aria-pressed", String(pr.p === p && pr.c === c && pr.f === f));
+      b.onclick = () => { $("pctP").value = pr.p; $("pctC").value = pr.c; $("pctF").value = pr.f; renderPresets(); previewGoals(); };
+      row.appendChild(b);
+    });
+  }
+  function previewGoals() {
+    const k = +$("kcalTargetInput").value, p = +$("pctP").value || 0, c = +$("pctC").value || 0, f = +$("pctF").value || 0;
+    const sum = p + c + f;
+    if (sum !== 100) { $("goalPreview").innerHTML = '<span class="delta-bad">Percentages add up to ' + sum + '%. Make them total 100%.</span>'; return; }
+    if (!k) { $("goalPreview").textContent = "Add your daily calories to see your gram targets."; return; }
+    $("goalPreview").innerHTML = "That's about <b>" + Math.round(k * p / 400) + " g protein</b>, " + Math.round(k * c / 400) + " g carbs and " + Math.round(k * f / 900) + " g fat a day.";
+  }
+  ["kcalTargetInput", "pctP", "pctC", "pctF"].forEach(id => $(id).addEventListener("input", () => { renderPresets(); previewGoals(); }));
+  $("saveKcal").onclick = () => {
+    const v = $("kcalTargetInput").value, p = Math.round(+$("pctP").value || 0), c = Math.round(+$("pctC").value || 0), f = Math.round(+$("pctF").value || 0);
+    if (p + c + f !== 100) { toast("Macro percentages need to add up to 100%"); return; }
+    let n = null;
+    if (v !== "") { n = Math.round(+v); if (!(n >= 800 && n <= 6000)) { toast("Daily calories should be between 800 and 6,000"); return; } }
+    state.kcalTarget = n; state.macroSplit = { p, c, f };
+    if (document.activeElement) document.activeElement.blur();
+    save(); renderMeals(); toast(n ? "Goals saved · " + nf.format(n) + " kcal" : "Goals saved");
+  };
+
   (function fillFoods() {
     const dl = $("foods");
-    FOODS.forEach(([n, kc, g]) => { const o = document.createElement("option"); o.value = n; o.label = Math.round(kc / g * 100) + " kcal per 100 g · serving " + g + " g"; dl.appendChild(o); });
+    FOODS.forEach(([n, kc, g, p]) => { const o = document.createElement("option"); o.value = n; o.label = kc + " kcal · " + g + " g · " + p + " g protein"; dl.appendChild(o); });
   })();
   let mealUnit = "g", lastFood = null;
-  const HINT0 = "Pick a food from the list to fill in calories, or type your own.";
+  const HINT0 = "Pick a food from the list to fill in calories and macros, or type your own.";
   const foodInfo = () => FOOD_MAP.get($("mealName").value.trim().toLowerCase()) || null;
-  function setUnit(u) {
-    if (u === mealUnit) return;
-    const f = foodInfo(), q = +$("mealQty").value;
-    if (f && q > 0) $("mealQty").value = u === "g" ? Math.round(q * f.g) : +(q / f.g).toFixed(2);
-    else if (u === "s" && !q) $("mealQty").value = 1;
-    else if (u === "g" && $("mealQty").value === "1") $("mealQty").value = "";
+  function setUnit(u, silent) {
+    if (u !== mealUnit && !silent) {
+      const f = foodInfo(), q = +$("mealQty").value;
+      if (f && q > 0) $("mealQty").value = u === "g" ? Math.round(q * f.g) : +(q / f.g).toFixed(2);
+      else if (u === "s" && !q) $("mealQty").value = 1;
+      else if (u === "g" && $("mealQty").value === "1") $("mealQty").value = "";
+    }
     mealUnit = u;
     $("unitG").setAttribute("aria-pressed", String(u === "g"));
     $("unitS").setAttribute("aria-pressed", String(u === "s"));
@@ -1350,7 +1622,7 @@ section h2 { font-family: var(--font-display); font-size: 17px; font-weight: 700
     $("mealQty").min = u === "g" ? "1" : "0.25";
     $("mealQty").step = u === "g" ? "1" : "0.25";
     $("mealQty").placeholder = u === "g" ? "e.g. 150" : "1";
-    autoKcal();
+    if (!silent) autoKcal();
   }
   $("unitG").onclick = () => setUnit("g");
   $("unitS").onclick = () => setUnit("s");
@@ -1360,15 +1632,14 @@ section h2 { font-family: var(--font-display); font-size: 17px; font-weight: 700
     lastFood = f;
     const q = +$("mealQty").value;
     if (f) {
-      const per100 = Math.round(f.kcal / f.g * 100);
-      if (mealUnit === "g") {
-        if (q > 0) $("mealKcal").value = Math.round(f.kcal / f.g * q);
-        $("foodHint").textContent = "~" + per100 + " kcal per 100 g · a typical serving is " + f.g + " g (" + f.kcal + " kcal). You can edit the calories.";
-      } else {
-        if (q > 0) $("mealKcal").value = Math.round(f.kcal * q);
-        $("foodHint").textContent = "~" + f.kcal + " kcal per serving (" + f.g + " g) × " + (q || 0) + " = about " + nf.format(Math.round(f.g * (q || 0))) + " g. You can edit the calories.";
+      const factor = mealUnit === "g" ? q / f.g : q;
+      if (q > 0) {
+        $("mealKcal").value = Math.round(f.kcal * factor);
+        $("mealP").value = round1(f.p * factor); $("mealC").value = round1(f.c * factor); $("mealF").value = round1(f.f * factor);
       }
-    } else $("foodHint").textContent = $("mealName").value.trim() ? "Not in the list? Type the calories for this amount yourself." : HINT0;
+      const per = v => round1(v / f.g * 100);
+      $("foodHint").textContent = "Per 100 g: " + Math.round(f.kcal / f.g * 100) + " kcal · P " + per(f.p) + " g · C " + per(f.c) + " g · F " + per(f.f) + " g. A typical serving is " + f.g + " g. You can edit any number.";
+    } else $("foodHint").textContent = $("mealName").value.trim() ? "Not in the list? Type the calories and macros for this amount yourself." : HINT0;
   }
   $("mealName").addEventListener("input", autoKcal);
   $("mealName").addEventListener("change", autoKcal);
@@ -1379,25 +1650,29 @@ section h2 { font-family: var(--font-display); font-size: 17px; font-weight: 700
     const kcal = Math.round(+$("mealKcal").value);
     if (!name) { toast("Type what you ate first"); return; }
     if (!(kcal >= 0) || $("mealKcal").value === "") { toast("Add the calories, or pick a food from the list"); return; }
+    const k = todayKey(), goals = macroGoals();
+    const proteinBefore = dayTotals(k).p;
     const stBefore = stageOf(state.pet.xp);
     const q = +$("mealQty").value || 0, f = foodInfo();
     const grams = mealUnit === "g" ? (q > 0 ? Math.round(q) : null) : (f && q > 0 ? Math.round(q * f.g) : null);
     const servings = mealUnit === "s" ? (q || 1) : null;
-    state.meals.push({ t: Date.now(), name, kcal, tags: [...mealTags], grams, servings });
-    const items = evaluate(stBefore);
+    const num = id => Math.max(0, round1(+$(id).value || 0));
+    state.meals.push({ t: Date.now(), type: formType, name, kcal, grams, servings, p: num("mealP"), c: num("mealC"), f: num("mealF"), tags: [...mealTags] });
+    const items = [];
+    const proteinAfter = dayTotals(k).p;
+    if (goals && proteinBefore < goals.p && proteinAfter >= goals.p && !state.rw.proteinDays.includes(k)) {
+      state.rw.proteinDays.push(k);
+      state.pet.xp += PROTEIN_XP;
+      items.push({ kicker: "Protein goal hit", art: '<div class="big-ic">💪</div>', title: Math.round(goals.p) + " g of protein!", text: state.pet.name + " got +" + PROTEIN_XP + " sunlight and is flexing her tiny arms 💪" });
+    }
+    items.push(...evaluate(stBefore));
+    const tname = MEAL_TYPES.find(t => t.id === formType).n;
     mealTags = new Set(); lastFood = null; $("mealForm").reset(); $("foodHint").textContent = HINT0;
     if (mealUnit === "s") $("mealQty").value = 1;
     save(); renderMeals(); renderPet(); renderBadges();
-    toast("Logged " + name + " · " + nf.format(kcal) + " kcal" + (state.active ? ". Heads up: you're still fasting." : ""));
+    toast("Added to " + tname + " · " + nf.format(kcal) + " kcal" + (state.active ? ". Heads up: you're still fasting." : ""));
     if (items.length) celebrate(items);
   });
-  $("saveKcal").onclick = () => {
-    const v = $("kcalTargetInput").value;
-    if (v === "") { state.kcalTarget = null; save(); renderMeals(); toast("Calorie target removed"); return; }
-    const n = Math.round(+v);
-    if (!(n >= 800 && n <= 6000)) { toast("Target should be between 800 and 6,000 kcal"); return; }
-    state.kcalTarget = n; save(); renderMeals(); toast("Target set to " + nf.format(n) + " kcal");
-  };
 
   /* ---------- Progress: weight & waist ---------- */
   let bodyMetric = "kg";
