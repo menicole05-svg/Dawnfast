@@ -159,6 +159,56 @@ section h2 { font-family: var(--font-display); font-size: 17px; font-weight: 700
 .history button.del:focus-visible { outline: 2px solid var(--dusk); }
 .empty { color: var(--muted); font-size: 14px; text-align: center; padding: 8px 0; }
 
+.link { all: unset; cursor: pointer; font-size: 12px; color: var(--dusk); font-weight: 700; }
+.link:focus-visible { outline: 2px solid var(--dusk); outline-offset: 2px; border-radius: 4px; }
+.head-right { display: flex; align-items: center; gap: 8px; }
+.icon-btn { padding: 6px 10px; font-size: 15px; line-height: 1; }
+
+/* Pet */
+.pet-card { display: grid; grid-template-columns: 140px 1fr; gap: 16px; align-items: center; }
+@media (max-width: 420px) { .pet-card { grid-template-columns: 112px 1fr; gap: 12px; } }
+.pet-art svg { width: 100%; height: auto; display: block; overflow: visible; transform-origin: 50% 85%; animation: breathe 3.6s ease-in-out infinite; }
+.pet-art.active svg { animation: bob 1.5s ease-in-out infinite; }
+.pet-info { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+.pet-name-row { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+.pet-name { font-family: var(--font-display); font-weight: 800; font-size: 26px; letter-spacing: -0.02em; line-height: 1.1; }
+.pet-mood { font-size: 13px; color: var(--muted); }
+.xp-bar { height: 10px; border-radius: 999px; background: var(--track); overflow: hidden; }
+.xp-bar i { display: block; height: 100%; width: 0; background: linear-gradient(90deg, var(--dawn-1), var(--dawn-2)); border-radius: inherit; transition: width .8s cubic-bezier(.2,.8,.2,1); }
+.pet-meta { display: flex; flex-wrap: wrap; gap: 6px; }
+.mini-chip { font-size: 12px; font-weight: 700; padding: 3px 10px; border-radius: 999px; background: var(--surface-2); font-variant-numeric: tabular-nums; }
+.acc-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+.acc { font-size: 13px; padding: 7px 12px; }
+.acc[aria-pressed="true"] { background: var(--fg); color: var(--bg); border-color: var(--fg); }
+.acc:disabled { opacity: .45; cursor: not-allowed; transform: none; }
+.rays { animation: spin 40s linear infinite; }
+@keyframes bob { 0%,100% { transform: translateY(0) } 50% { transform: translateY(-7px) } }
+@keyframes breathe { 0%,100% { transform: scale(1) } 50% { transform: scale(1.035, .975) } }
+@keyframes spin { to { transform: rotate(360deg) } }
+
+/* Badges */
+.badges { display: grid; grid-template-columns: repeat(auto-fill, minmax(98px, 1fr)); gap: 10px; }
+.badge-tile { text-align: center; padding: 12px 8px; border-radius: 16px; background: var(--surface-2); display: flex; flex-direction: column; align-items: center; gap: 2px; }
+.badge-tile .ic { font-size: 30px; line-height: 1.2; }
+.badge-tile .bt { font-weight: 800; font-size: 13px; line-height: 1.25; }
+.badge-tile .bx { font-size: 11px; color: var(--muted); }
+.badge-tile.got { background: linear-gradient(160deg, color-mix(in srgb, var(--dawn-2) 30%, var(--surface)), var(--surface)); border: 1px solid color-mix(in srgb, var(--dawn-1) 40%, var(--line)); }
+.badge-tile.locked { opacity: .5; }
+.badge-tile.locked .ic { filter: grayscale(1); }
+.badge-count { font-size: 13px; color: var(--muted); font-weight: 600; margin-left: 6px; font-family: var(--font-body); }
+
+/* Celebration */
+.celebrate { position: fixed; inset: 0; z-index: 50; display: flex; align-items: center; justify-content: center; padding: max(24px, env(safe-area-inset-top, 0px)) max(20px, env(safe-area-inset-right, 0px)) max(24px, env(safe-area-inset-bottom, 0px)) max(20px, env(safe-area-inset-left, 0px)); background: color-mix(in srgb, var(--bg) 72%, transparent); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); }
+.celebrate canvas { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+.cel-card { position: relative; background: var(--surface); border: 1px solid var(--line); border-radius: 28px; padding: 28px 22px 22px; max-width: 360px; width: 100%; text-align: center; display: flex; flex-direction: column; gap: 8px; align-items: center; box-shadow: 0 30px 80px -30px color-mix(in srgb, var(--dawn-1) 70%, transparent); animation: pop .55s cubic-bezier(.2,1.5,.4,1); }
+.cel-art { width: 150px; max-width: 100%; display: flex; justify-content: center; }
+.cel-art svg { width: 100%; height: auto; overflow: visible; animation: bob 1.2s ease-in-out infinite; }
+.big-ic { font-size: 84px; line-height: 1.1; animation: bob 1.4s ease-in-out infinite; }
+.cel-card h3 { font-family: var(--font-display); font-size: 26px; font-weight: 800; margin: 0; letter-spacing: -0.02em; text-wrap: balance; line-height: 1.15; }
+.cel-card p { margin: 0 0 8px; color: var(--muted); text-wrap: pretty; }
+.cel-kicker { color: var(--dawn-1); }
+@keyframes pop { from { transform: scale(.6); opacity: 0 } to { transform: scale(1); opacity: 1 } }
+
 .foot { font-size: 12px; color: var(--muted); text-align: center; max-width: 52ch; margin: 4px auto 0; }
 
 .toast { position: fixed; left: 50%; bottom: calc(24px + env(safe-area-inset-bottom, 0px)); transform: translate(-50%, 20px); background: var(--fg); color: var(--bg); padding: 10px 18px; border-radius: 999px; font-weight: 700; font-size: 14px; opacity: 0; transition: all .3s ease; pointer-events: none; z-index: 20; max-width: calc(100% - 32px); text-align: center; }
@@ -177,7 +227,10 @@ section h2 { font-family: var(--font-display); font-size: 17px; font-weight: 700
 <div class="wrap">
   <header>
     <div class="brand"><span class="sun" aria-hidden="true"></span>Dawnfast</div>
-    <div class="streak-pill" title="Days in a row you reached your goal">🔥 <b id="streak">0</b> day streak</div>
+    <div class="head-right">
+      <div class="streak-pill" title="Days in a row you reached your goal">🔥 <b id="streak">0</b> day streak</div>
+      <button class="icon-btn" id="soundBtn" type="button" aria-label="Turn sound off">🔊</button>
+    </div>
   </header>
 
   <div class="demo" id="demo" hidden>
@@ -238,6 +291,26 @@ section h2 { font-family: var(--font-display); font-size: 17px; font-weight: 700
     <button class="cta" id="mainBtn" type="button">Start fasting</button>
   </section>
 
+  <section class="card">
+    <div class="pet-card">
+      <div class="pet-art" id="petArt"></div>
+      <div class="pet-info">
+        <div class="eyebrow" id="petStage">Egg</div>
+        <div class="pet-name-row"><span class="pet-name" id="petName">Zoe</span><button class="link" id="renameBtn" type="button">Rename</button></div>
+        <div class="edit-row" id="renameRow" hidden>
+          <input id="nameInput" maxlength="16" aria-label="Pet name">
+          <button type="button" id="saveName" style="padding:6px 12px;font-size:13px">Save</button>
+        </div>
+        <div class="pet-mood" id="petMood"></div>
+        <div class="xp-bar" role="progressbar" aria-label="Growth to next stage" id="xpBar"><i id="xpFill"></i></div>
+        <div class="sub" id="xpText"></div>
+        <div class="pet-meta"><span class="mini-chip" id="sunChip">☀️ 0 sunlight</span><span class="mini-chip" id="freezeChip" title="A freeze saves your streak if you miss a day. You get 1 every week.">🧊 1 streak freeze</span></div>
+      </div>
+    </div>
+    <div class="eyebrow" style="margin-top:16px" id="dressLabel">Dress up Zoe</div>
+    <div class="acc-row" id="accRow"></div>
+  </section>
+
   <section>
     <h2>Your plan</h2>
     <div class="protocols" id="protocols" role="group" aria-label="Fasting plan"></div>
@@ -257,7 +330,12 @@ section h2 { font-family: var(--font-display); font-size: 17px; font-weight: 700
   </section>
 
   <section class="card">
-    <h2>This week</h2>
+    <h2>Badges<span class="badge-count" id="badgeCount"></span></h2>
+    <div class="badges" id="badges"></div>
+  </section>
+
+  <section class="card">
+    <h2>This week<span class="badge-count" id="weekGoal"></span></h2>
     <div class="chart" id="chart"></div>
   </section>
 
@@ -270,6 +348,17 @@ section h2 { font-family: var(--font-display); font-size: 17px; font-weight: 700
 </div>
 
 <div class="toast" id="toast" role="status"></div>
+
+<div class="celebrate" id="celebrate" hidden role="dialog" aria-modal="true" aria-labelledby="celTitle">
+  <canvas id="confetti" aria-hidden="true"></canvas>
+  <div class="cel-card" id="celCard">
+    <div class="cel-art" id="celArt"></div>
+    <div class="eyebrow cel-kicker" id="celKicker"></div>
+    <h3 id="celTitle"></h3>
+    <p id="celText"></p>
+    <button class="cta" id="celBtn" type="button">Yay!</button>
+  </div>
+</div>
 
 <script>
 (function () {
@@ -302,6 +391,97 @@ section h2 { font-family: var(--font-display); font-size: 17px; font-weight: 700
     [1,   "Goal reached! Break your fast gently, or keep riding it."]
   ];
   const IDLE_MOTTOS = ["Ready when you are.", "Your next fast is one tap away.", "Rest well. The next sunrise is yours."];
+
+  /* ---------- Rewards: Zoe, sunlight, badges ---------- */
+  const GOAL_XP = 10, MAX_BONUS = 10, MAX_FREEZES = 2;
+  const PET_STAGES = [
+    { min: 0,   n: "Egg",        x: "Something is wiggling inside the egg…" },
+    { min: 20,  n: "Hatchling",  x: "{n} peeked out of her shell to see the sunrise!" },
+    { min: 60,  n: "Baby",       x: "{n} is out of her shell and loves soaking up sunlight." },
+    { min: 150, n: "Teen",       x: "{n} grew rays of her own. Look at her glow!" },
+    { min: 300, n: "Sun Spirit", x: "{n} became a full sunrise. Legendary!" }
+  ];
+  const ACC = {
+    bow:     { n: "Bow",     ic: "🎀" },
+    scarf:   { n: "Scarf",   ic: "🧣" },
+    glasses: { n: "Sunnies", ic: "🕶️" },
+    flower:  { n: "Flower",  ic: "🌸" },
+    crown:   { n: "Crown",   ic: "👑" }
+  };
+  const BADGES = [
+    { id: "first", ic: "🌅", t: "First sunrise",   x: "Reach your first goal", xp: 10, test: s => s.goals >= 1 },
+    { id: "s3",  ic: "🔥", t: "On fire",          x: "3-day streak",  xp: 15,  acc: "bow",     test: s => s.streak >= 3 },
+    { id: "s7",  ic: "⚡", t: "Week warrior",     x: "7-day streak",  xp: 30,  acc: "scarf",   test: s => s.streak >= 7 },
+    { id: "s14", ic: "🌟", t: "Two-week glow",    x: "14-day streak", xp: 50,  test: s => s.streak >= 14 },
+    { id: "s30", ic: "🏆", t: "Sunrise legend",   x: "30-day streak", xp: 100, acc: "crown",   test: s => s.streak >= 30 },
+    { id: "f5",  ic: "✋", t: "High five",        x: "5 fasts done",  xp: 20,  test: s => s.fasts >= 5 },
+    { id: "f10", ic: "🎯", t: "Perfect ten",      x: "10 fasts done", xp: 30,  acc: "glasses", test: s => s.fasts >= 10 },
+    { id: "f25", ic: "💎", t: "Quarter century",  x: "25 fasts done", xp: 50,  test: s => s.fasts >= 25 },
+    { id: "f50", ic: "🚀", t: "Fifty strong",     x: "50 fasts done", xp: 80,  test: s => s.fasts >= 50 },
+    { id: "h100", ic: "⏳", t: "100 hours",       x: "100 hours fasted", xp: 30, acc: "flower", test: s => s.hours >= 100 },
+    { id: "h250", ic: "🌙", t: "250 hours",       x: "250 hours fasted", xp: 50, test: s => s.hours >= 250 },
+    { id: "h500", ic: "☀️", t: "500 hours",       x: "500 hours fasted", xp: 80, test: s => s.hours >= 500 }
+  ];
+  const stageOf = xp => { let i = 0; PET_STAGES.forEach((s, k) => { if (xp >= s.min) i = k; }); return i; };
+
+  let svgUid = 0;
+  function petSVG(stage, wearing, mood) {
+    const u = "p" + (++svgUid);
+    const G = [{ cx: 80, cy: 92, r: 40 }, { cx: 80, cy: 76, r: 30 }, { cx: 80, cy: 94, r: 34 }, { cx: 80, cy: 90, r: 42 }, { cx: 80, cy: 86, r: 46 }][stage];
+    const { cx, cy, r } = G;
+    const top = stage === 0 ? 42 : cy - r;
+    const ink = "#2b1a3d";
+    let s = '<svg viewBox="0 0 160 160" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><defs>' +
+      '<radialGradient id="' + u + 'b" cx=".38" cy=".32" r=".85"><stop offset="0" stop-color="var(--dawn-2)"/><stop offset="1" stop-color="var(--dawn-1)"/></radialGradient>' +
+      '<radialGradient id="' + u + 'e" cx=".38" cy=".3" r=".9"><stop offset="0" stop-color="#fffaf0"/><stop offset="1" stop-color="#ffd59a"/></radialGradient></defs>';
+    s += '<ellipse cx="80" cy="148" rx="36" ry="6" fill="var(--fg)" opacity=".08"/>';
+    if (stage === 4) s += '<circle cx="' + cx + '" cy="' + cy + '" r="' + (r + 30) + '" fill="var(--dawn-2)" opacity=".16"/>';
+    const rayN = [0, 0, 6, 8, 12][stage], rayL = [0, 0, 8, 12, 18][stage];
+    if (rayN) {
+      s += '<g class="rays" style="transform-origin:' + cx + 'px ' + cy + 'px">';
+      for (let i = 0; i < rayN; i++) {
+        const a = (i / rayN) * Math.PI * 2;
+        const r1 = r + 6, r2 = r + 6 + rayL;
+        s += '<line x1="' + (cx + r1 * Math.cos(a)).toFixed(1) + '" y1="' + (cy + r1 * Math.sin(a)).toFixed(1) + '" x2="' + (cx + r2 * Math.cos(a)).toFixed(1) + '" y2="' + (cy + r2 * Math.sin(a)).toFixed(1) + '" stroke="var(--dawn-2)" stroke-width="5" stroke-linecap="round"/>';
+      }
+      s += '</g>';
+    }
+    if (stage === 0) {
+      s += '<ellipse cx="80" cy="92" rx="40" ry="50" fill="url(#' + u + 'e)"/>' +
+        '<circle cx="64" cy="82" r="7" fill="var(--dawn-1)" opacity=".45"/><circle cx="94" cy="106" r="9" fill="var(--dawn-1)" opacity=".4"/><circle cx="90" cy="68" r="4.5" fill="var(--dusk)" opacity=".35"/><circle cx="70" cy="114" r="5" fill="var(--dusk)" opacity=".3"/>' +
+        '<path d="M70 54 L76 61 L72 66 L79 72" fill="none" stroke="#c9945a" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>';
+    } else {
+      if (stage >= 3) {
+        s += '<ellipse cx="' + (cx - r * .42) + '" cy="' + (cy + r * .94) + '" rx="' + r * .24 + '" ry="' + r * .13 + '" fill="var(--dawn-1)"/>' +
+             '<ellipse cx="' + (cx + r * .42) + '" cy="' + (cy + r * .94) + '" rx="' + r * .24 + '" ry="' + r * .13 + '" fill="var(--dawn-1)"/>' +
+             '<ellipse cx="' + (cx - r * 1.02) + '" cy="' + (cy + r * .25) + '" rx="' + r * .14 + '" ry="' + r * .24 + '" fill="var(--dawn-1)" transform="rotate(25 ' + (cx - r * 1.02) + ' ' + (cy + r * .25) + ')"/>' +
+             '<ellipse cx="' + (cx + r * 1.02) + '" cy="' + (cy + r * .25) + '" rx="' + r * .14 + '" ry="' + r * .24 + '" fill="var(--dawn-1)" transform="rotate(-25 ' + (cx + r * 1.02) + ' ' + (cy + r * .25) + ')"/>';
+      }
+      s += '<circle cx="' + cx + '" cy="' + cy + '" r="' + r + '" fill="url(#' + u + 'b)"/>';
+      s += '<ellipse cx="' + (cx - r * .3) + '" cy="' + (cy - r * .5) + '" rx="' + r * .22 + '" ry="' + r * .12 + '" fill="#fff" opacity=".35" transform="rotate(-25 ' + (cx - r * .3) + ' ' + (cy - r * .5) + ')"/>';
+      const ex = r * .36, ey = cy - r * .05;
+      if (mood === "happy") {
+        [-1, 1].forEach(k => { s += '<path d="M' + (cx + k * ex - r * .12) + ' ' + (ey + r * .04) + ' Q' + (cx + k * ex) + ' ' + (ey - r * .14) + ' ' + (cx + k * ex + r * .12) + ' ' + (ey + r * .04) + '" fill="none" stroke="' + ink + '" stroke-width="3.2" stroke-linecap="round"/>'; });
+      } else {
+        [-1, 1].forEach(k => {
+          s += '<ellipse cx="' + (cx + k * ex) + '" cy="' + ey + '" rx="' + r * .1 + '" ry="' + r * .14 + '" fill="' + ink + '"/>' +
+               '<circle cx="' + (cx + k * ex + r * .04) + '" cy="' + (ey - r * .05) + '" r="' + r * .04 + '" fill="#fff"/>';
+        });
+      }
+      [-1, 1].forEach(k => { s += '<ellipse cx="' + (cx + k * r * .6) + '" cy="' + (cy + r * .22) + '" rx="' + r * .14 + '" ry="' + r * .08 + '" fill="#ff6f8f" opacity=".45"/>'; });
+      const mw = mood === "happy" ? .2 : .14, md = mood === "happy" ? .44 : .36;
+      s += '<path d="M' + (cx - r * mw) + ' ' + (cy + r * .22) + ' Q' + cx + ' ' + (cy + r * md) + ' ' + (cx + r * mw) + ' ' + (cy + r * .22) + '" fill="' + (mood === "happy" ? ink : "none") + '" stroke="' + ink + '" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>';
+      if (stage === 1) s += '<path d="M40 100 L50 92 L60 102 L70 90 L80 102 L90 90 L100 102 L110 92 L120 100 Q120 146 80 146 Q40 146 40 100 Z" fill="url(#' + u + 'e)"/>';
+    }
+    if (stage === 4) s += '<path d="M128 40 l3 7 7 3 -7 3 -3 7 -3 -7 -7 -3 7 -3 z" fill="var(--dawn-2)"/><path d="M30 60 l2 5 5 2 -5 2 -2 5 -2 -5 -5 -2 5 -2 z" fill="var(--dawn-2)" opacity=".8"/>';
+    const emo = (ch, x, y, size) => '<text x="' + x + '" y="' + y + '" font-size="' + size + '" text-anchor="middle" dominant-baseline="central">' + ch + '</text>';
+    if (wearing === "glasses" && stage > 0) s += emo(ACC.glasses.ic, cx, cy - r * .05, r * .95);
+    if (wearing === "scarf" && stage > 1) s += emo(ACC.scarf.ic, cx, cy + r * .82, r * .8);
+    if (wearing === "bow") s += emo(ACC.bow.ic, cx + (stage ? r : 40) * .6, top + (stage ? r : 50) * .2, (stage ? r : 40) * .62);
+    if (wearing === "flower") s += emo(ACC.flower.ic, cx - (stage ? r : 40) * .58, top + (stage ? r : 50) * .22, (stage ? r : 40) * .55);
+    if (wearing === "crown") s += emo(ACC.crown.ic, cx, top - 4, (stage ? r : 40) * .72);
+    return s + '</svg>';
+  }
 
   let state = load();
 
@@ -427,6 +607,7 @@ section h2 { font-family: var(--font-display); font-size: 17px; font-weight: 700
       $("endTime").textContent = timeFmt.format(previewEnd);
       $("endDay").textContent = relDay(previewEnd);
       if (lastStageIdx !== -2) { renderStages(null); lastStageIdx = -2; }
+      if (lastMood !== "idle") { lastMood = "idle"; renderPet(); }
       return;
     }
     const goalMs = a.goal * H;
@@ -463,7 +644,21 @@ section h2 { font-family: var(--font-display); font-size: 17px; font-weight: 700
     const idx = renderStagesIfChanged(el / H);
     if (lastStageIdx !== null && lastStageIdx >= 0 && idx > lastStageIdx) toast("New stage: " + STAGES[idx].t);
     lastStageIdx = idx;
+
+    if (p >= 1 && !a.awarded) {
+      const before = stageOf(state.pet.xp);
+      a.awarded = true;
+      state.pet.xp += GOAL_XP;
+      const items = [{ kicker: "Goal reached", art: petSVG(stageOf(state.pet.xp), state.pet.wearing, "happy"),
+        title: "You did it! " + a.goal + "h complete", text: state.pet.name + " got +" + GOAL_XP + " sunlight ☀️ Keep going for up to " + MAX_BONUS + " bonus sunlight, or break your fast gently." }];
+      items.push(...evaluate(before));
+      save(); renderStats();
+      celebrate(items);
+    }
+    const mk = a.awarded ? "done" : "active";
+    if (mk !== lastMood || now - lastPetRender > 60000) { lastMood = mk; lastPetRender = now; renderPet(); }
   }
+  let lastMood = null, lastPetRender = 0;
   function renderStagesIfChanged(h) {
     let idx = -1; STAGES.forEach((s, i) => { if (h >= s.at) idx = i; });
     if (idx !== lastStageIdx) renderStages(h);
@@ -479,13 +674,10 @@ section h2 { font-family: var(--font-display); font-size: 17px; font-weight: 700
     $("sLong").innerHTML = (lens.length ? Math.max(...lens).toFixed(1) : 0) + "<small>h</small>";
     $("sAvg").innerHTML = (lens.length ? (lens.reduce((a, b) => a + b, 0) / lens.length).toFixed(1) : 0) + "<small>h</small>";
 
-    // streak: consecutive days (ending today or yesterday) with a fast that hit its goal
-    const hitDays = new Set(h.filter(f => f.end - f.start >= f.goal * H).map(f => dayKey(f.end)));
-    if (state.active && Date.now() - state.active.start >= state.active.goal * H) hitDays.add(dayKey(Date.now()));
-    let streak = 0; const d = new Date();
-    if (!hitDays.has(dayKey(d))) d.setDate(d.getDate() - 1);
-    while (hitDays.has(dayKey(d))) { streak++; d.setDate(d.getDate() - 1); }
-    $("streak").textContent = streak;
+    applyFreeze();
+    $("streak").textContent = computeStreak();
+    const frozenSet = new Set(state.rw.frozen);
+    renderPet(); renderBadges();
 
     // week chart
     const chart = $("chart"); chart.innerHTML = "";
@@ -503,14 +695,14 @@ section h2 { font-family: var(--font-display); font-size: 17px; font-weight: 700
     const plotH = 118; // px for bars (chart 150 minus labels)
     const gl = document.createElement("div"); gl.className = "goal-line";
     gl.style.bottom = (24 + (goal / max) * plotH) + "px";
-    gl.innerHTML = "<span>" + goal + "h goal</span>";
+    $("weekGoal").textContent = "dashed line = " + goal + "h goal";
     chart.appendChild(gl);
     days.forEach((x, i) => {
       const col = document.createElement("div");
       col.className = "bar-col" + (i === 6 ? " today" : "");
       const v = vals[i];
       col.innerHTML = '<div class="bar' + (v >= goal ? " hit" : "") + '" style="height:' + Math.max(4, (v / max) * plotH) + 'px">' +
-        (v > 0 ? '<span class="val">' + v.toFixed(1) + '</span>' : "") + '</div><span class="day">' +
+        (v > 0 ? '<span class="val">' + v.toFixed(1) + '</span>' : frozenSet.has(dayKey(x)) ? '<span class="val" title="Streak freeze used">🧊</span>' : "") + '</div><span class="day">' +
         x.toLocaleDateString(undefined, { weekday: "narrow" }) + '</span>';
       chart.appendChild(col);
     });
@@ -534,6 +726,213 @@ section h2 { font-family: var(--font-display); font-size: 17px; font-weight: 700
     $("demo").hidden = !state.demo;
   }
 
+  /* ---------- Reward engine ---------- */
+  const isHit = f => f.end - f.start >= f.goal * H;
+  function weekKey(t) { const d = new Date(t); d.setHours(0, 0, 0, 0); d.setDate(d.getDate() - (d.getDay() + 6) % 7); return dayKey(d); }
+  function hitDaySet() {
+    const s = new Set(state.history.filter(isHit).map(f => dayKey(f.end)));
+    if (state.active && state.active.awarded) s.add(dayKey(Date.now()));
+    return s;
+  }
+  function computeStreak() {
+    const hit = hitDaySet(), frozen = new Set(state.rw.frozen);
+    const d = new Date();
+    if (!hit.has(dayKey(d))) d.setDate(d.getDate() - 1);
+    let n = 0;
+    for (let guard = 0; guard < 400; guard++) {
+      const k = dayKey(d);
+      if (hit.has(k)) n++; else if (!frozen.has(k)) break;
+      d.setDate(d.getDate() - 1);
+    }
+    return n;
+  }
+  function stats() {
+    return {
+      goals: state.history.filter(isHit).length + (state.active && state.active.awarded ? 1 : 0),
+      fasts: state.history.length,
+      hours: state.history.reduce((a, f) => a + (f.end - f.start) / H, 0),
+      streak: computeStreak()
+    };
+  }
+  function applyFreeze() {
+    const rw = state.rw, now = Date.now();
+    const wk = weekKey(now);
+    if (rw.lastGrant !== wk) { rw.freezes = Math.min(MAX_FREEZES, rw.freezes + 1); rw.lastGrant = wk; save(); }
+    const hit = hitDaySet(), frozen = new Set(rw.frozen);
+    const y = new Date(); y.setDate(y.getDate() - 1);
+    const yy = new Date(); yy.setDate(yy.getDate() - 2);
+    const ky = dayKey(y), kyy = dayKey(yy);
+    if (!hit.has(ky) && !frozen.has(ky) && (hit.has(kyy) || frozen.has(kyy)) && rw.freezes > 0) {
+      rw.frozen.push(ky); rw.freezes--; save();
+      toast("🧊 " + state.pet.name + " used a streak freeze. Your streak is safe!");
+    }
+  }
+  function evaluate(beforeStage) {
+    const before = beforeStage == null ? stageOf(state.pet.xp) : beforeStage;
+    const st = stats(), items = [];
+    BADGES.forEach(b => {
+      if (state.rw.badges.includes(b.id) || !b.test(st)) return;
+      state.rw.badges.push(b.id);
+      state.pet.xp += b.xp;
+      let extra = "";
+      if (b.acc && !state.rw.acc.includes(b.acc)) { state.rw.acc.push(b.acc); extra = " New outfit for " + state.pet.name + ": " + ACC[b.acc].ic + " " + ACC[b.acc].n + "!"; }
+      items.push({ kicker: "Badge unlocked", art: '<div class="big-ic">' + b.ic + '</div>', title: b.t, text: b.x + "! +" + b.xp + " sunlight for " + state.pet.name + "." + extra });
+    });
+    const after = stageOf(state.pet.xp);
+    if (after > before) items.push({ evo: true, kicker: "Evolution!", art: petSVG(after, state.pet.wearing, "happy"), title: state.pet.name + " is now a " + PET_STAGES[after].n + "!", text: PET_STAGES[after].x.replace("{n}", state.pet.name) });
+    return items;
+  }
+  function freshRewards() { return { badges: [], acc: [], freezes: 1, lastGrant: weekKey(Date.now()), frozen: [] }; }
+  function migrate() {
+    let fresh = false;
+    if (!state.pet) { state.pet = { name: "Zoe", xp: 0, wearing: null }; fresh = true; }
+    if (!state.rw) { state.rw = freshRewards(); fresh = true; }
+    if (state.sound === undefined) state.sound = true;
+    if (fresh) { state.pet.xp += state.history.filter(isHit).length * GOAL_XP; evaluate(); save(); }
+  }
+
+  function renderPet() {
+    const p = state.pet, xp = p.xp, st = stageOf(xp);
+    const a = state.active;
+    const done = a && a.awarded;
+    $("petArt").innerHTML = petSVG(st, p.wearing, done ? "happy" : null);
+    $("petArt").className = "pet-art" + (a ? " active" : "");
+    $("petStage").textContent = "Stage " + (st + 1) + " · " + PET_STAGES[st].n;
+    $("petName").textContent = p.name;
+    $("dressLabel").textContent = "Dress up " + p.name;
+    let mood;
+    if (!a) mood = p.name + " is resting. Start a fast to feed her sunlight ☀️";
+    else if (done) mood = p.name + " is glowing! You reached your goal.";
+    else mood = p.name + " is fasting with you. " + fmtHM(a.start + a.goal * H - Date.now()) + " until sunlight!";
+    $("petMood").textContent = mood;
+    const next = PET_STAGES[st + 1];
+    if (next) {
+      const pct = (xp - PET_STAGES[st].min) / (next.min - PET_STAGES[st].min) * 100;
+      $("xpFill").style.width = pct + "%";
+      $("xpBar").setAttribute("aria-valuenow", Math.round(pct));
+      $("xpText").textContent = (next.min - xp) + " more sunlight to become a " + next.n;
+    } else {
+      $("xpFill").style.width = "100%";
+      $("xpText").textContent = "Fully grown! Keep shining.";
+    }
+    $("sunChip").textContent = "☀️ " + xp + " sunlight";
+    $("freezeChip").textContent = "🧊 " + state.rw.freezes + " streak freeze" + (state.rw.freezes === 1 ? "" : "s");
+
+    const row = $("accRow"); row.innerHTML = "";
+    Object.keys(ACC).forEach(k => {
+      const owned = state.rw.acc.includes(k);
+      const b = document.createElement("button");
+      b.type = "button"; b.className = "acc"; b.id = "acc-" + k;
+      if (owned) {
+        b.textContent = ACC[k].ic + " " + ACC[k].n;
+        b.setAttribute("aria-pressed", String(p.wearing === k));
+        b.onclick = () => { p.wearing = p.wearing === k ? null : k; save(); renderPet(); };
+      } else {
+        const badge = BADGES.find(x => x.acc === k);
+        b.textContent = "🔒 " + ACC[k].n;
+        b.title = "Unlock with: " + badge.x;
+        b.setAttribute("aria-label", ACC[k].n + ", locked. Unlock with " + badge.x);
+        b.disabled = true;
+      }
+      row.appendChild(b);
+    });
+  }
+
+  function renderBadges() {
+    const box = $("badges"); box.innerHTML = "";
+    BADGES.forEach(b => {
+      const got = state.rw.badges.includes(b.id);
+      const d = document.createElement("div");
+      d.className = "badge-tile " + (got ? "got" : "locked");
+      d.innerHTML = '<span class="ic">' + b.ic + '</span><span class="bt">' + b.t + '</span><span class="bx">' + (got ? b.x : "🔒 " + b.x) + '</span>';
+      box.appendChild(d);
+    });
+    $("badgeCount").textContent = state.rw.badges.length + " of " + BADGES.length;
+  }
+
+  /* Celebration pop-up */
+  const queue = [];
+  let showing = false;
+  function celebrate(items) { queue.push(...items); if (!showing) showNext(); }
+  function showNext() {
+    const it = queue.shift();
+    if (!it) { showing = false; $("celebrate").hidden = true; return; }
+    showing = true;
+    $("celArt").innerHTML = it.art;
+    $("celKicker").textContent = it.kicker;
+    $("celTitle").textContent = it.title;
+    $("celText").textContent = it.text;
+    $("celBtn").textContent = queue.length ? "Next 🎉" : "Yay!";
+    const card = $("celCard"); card.style.animation = "none"; void card.offsetWidth; card.style.animation = "";
+    $("celebrate").hidden = false;
+    confetti(it.evo ? 280 : 170);
+    sound(it.evo ? "evo" : "win");
+    try { $("celBtn").focus({ preventScroll: true }); } catch (e) {}
+  }
+  $("celBtn").onclick = showNext;
+
+  function confetti(n) {
+    if (window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const cv = $("confetti"), ctx = cv.getContext("2d");
+    const W = innerWidth, Hh = innerHeight, dpr = window.devicePixelRatio || 1;
+    cv.width = W * dpr; cv.height = Hh * dpr; ctx.scale(dpr, dpr);
+    const cs = getComputedStyle(document.documentElement);
+    const cols = ["--dawn-1", "--dawn-2", "--dusk", "--good"].map(v => cs.getPropertyValue(v).trim()).concat(["#ff6f8f", "#6fd3ff"]);
+    const ps = [];
+    for (let i = 0; i < n; i++) {
+      const side = i % 2 ? 1 : -1;
+      ps.push({ x: W / 2 + side * W * .25 * Math.random(), y: Hh * .55, vx: (Math.random() - .5) * 16, vy: -Math.random() * 16 - 6,
+        s: Math.random() * 7 + 5, r: Math.random() * 6, vr: (Math.random() - .5) * .35, c: cols[i % cols.length], shape: i % 3 });
+    }
+    cancelAnimationFrame(confetti.raf);
+    const t0 = performance.now();
+    (function frame(t) {
+      ctx.clearRect(0, 0, W, Hh);
+      ps.forEach(p => {
+        p.vy += .38; p.vx *= .99; p.x += p.vx; p.y += p.vy; p.r += p.vr;
+        ctx.save(); ctx.translate(p.x, p.y); ctx.rotate(p.r); ctx.fillStyle = p.c;
+        if (p.shape === 0) ctx.fillRect(-p.s / 2, -p.s / 4, p.s, p.s / 2);
+        else if (p.shape === 1) { ctx.beginPath(); ctx.arc(0, 0, p.s / 2.6, 0, 7); ctx.fill(); }
+        else { ctx.beginPath(); ctx.moveTo(0, -p.s / 2); ctx.lineTo(p.s / 2, p.s / 2); ctx.lineTo(-p.s / 2, p.s / 2); ctx.fill(); }
+        ctx.restore();
+      });
+      if (t - t0 < 3800) confetti.raf = requestAnimationFrame(frame); else ctx.clearRect(0, 0, W, Hh);
+    })(t0);
+  }
+
+  let actx = null;
+  function sound(kind) {
+    if (!state.sound) return;
+    try {
+      actx = actx || new (window.AudioContext || window.webkitAudioContext)();
+      if (actx.state === "suspended") actx.resume();
+      const notes = kind === "evo" ? [523.25, 659.25, 783.99, 1046.5, 1318.5, 1568] : [659.25, 783.99, 1046.5, 1318.5];
+      notes.forEach((f, i) => {
+        const o = actx.createOscillator(), g = actx.createGain();
+        o.type = "triangle"; o.frequency.value = f;
+        const st = actx.currentTime + i * (kind === "evo" ? 0.12 : 0.09);
+        g.gain.setValueAtTime(0, st);
+        g.gain.linearRampToValueAtTime(0.16, st + 0.02);
+        g.gain.exponentialRampToValueAtTime(0.001, st + 0.5);
+        o.connect(g); g.connect(actx.destination);
+        o.start(st); o.stop(st + 0.55);
+      });
+    } catch (e) {}
+  }
+  function renderSoundBtn() {
+    $("soundBtn").textContent = state.sound ? "🔊" : "🔇";
+    $("soundBtn").setAttribute("aria-label", state.sound ? "Turn sound off" : "Turn sound on");
+  }
+  $("soundBtn").onclick = () => { state.sound = !state.sound; save(); renderSoundBtn(); if (state.sound) sound("win"); toast(state.sound ? "Sound on" : "Sound off"); };
+
+  $("renameBtn").onclick = () => { const r = $("renameRow"); r.hidden = !r.hidden; if (!r.hidden) { $("nameInput").value = state.pet.name; $("nameInput").focus(); } };
+  $("saveName").onclick = () => {
+    const v = $("nameInput").value.trim();
+    if (!v) { toast("Give your pet a name first"); return; }
+    state.pet.name = v; save(); $("renameRow").hidden = true; renderPet(); toast("Hi, " + v + "!");
+  };
+  $("nameInput").addEventListener("keydown", e => { if (e.key === "Enter") $("saveName").click(); });
+
   $("mainBtn").onclick = () => {
     const btn = $("mainBtn");
     if (!state.active) {
@@ -551,12 +950,23 @@ section h2 { font-family: var(--font-display); font-size: 17px; font-weight: 700
     }
     clearTimeout(confirmTimer);
     const a = state.active, end = Date.now();
-    const len = end - a.start;
+    const len = end - a.start, goalMs = a.goal * H;
+    const before = stageOf(state.pet.xp);
+    let bonus = 0;
+    if (len >= goalMs) {
+      if (!a.awarded) state.pet.xp += GOAL_XP;
+      bonus = Math.min(MAX_BONUS, Math.floor((len - goalMs) / H));
+      state.pet.xp += bonus;
+    }
     state.history.unshift({ start: a.start, end, goal: a.goal });
     state.active = null;
     btn.className = "cta";
+    const items = evaluate(before);
     save(); tick(); renderStats();
-    toast(len >= a.goal * H ? "Goal smashed: " + fmtHM(len) + " 🎉" : "Logged " + fmtHM(len) + ". Every hour counts.");
+    const nm = state.pet.name;
+    if (len >= goalMs) toast("Logged " + fmtHM(len) + (bonus ? " · +" + bonus + " bonus sunlight for " + nm + " ☀️" : " · " + nm + " is proud of you!"));
+    else toast("Logged " + fmtHM(len) + ". Every hour counts. " + nm + " believes in you!");
+    if (items.length) celebrate(items);
   };
 
   $("editStartBtn").onclick = () => {
@@ -572,11 +982,13 @@ section h2 { font-family: var(--font-display); font-size: 17px; font-weight: 700
   };
 
   $("clearDemo").onclick = () => {
-    state = { demo: false, goal: state.goal || 16, active: null, history: [] };
-    lastStageIdx = null; save(); renderProtocols(); renderMarkers(); tick(); renderStats();
-    toast("All clear. Start your first fast!");
+    state = { demo: false, goal: state.goal || 16, active: null, history: [],
+      pet: { name: state.pet.name, xp: 0, wearing: null }, rw: freshRewards(), sound: state.sound };
+    lastStageIdx = null; lastMood = null; save(); renderProtocols(); renderMarkers(); tick(); renderStats();
+    toast("All clear! " + state.pet.name + " is a fresh egg. Start your first fast!");
   };
 
+  migrate(); renderSoundBtn();
   renderProtocols(); renderMarkers(); tick(); renderStats();
   setInterval(tick, 1000);
   setInterval(renderStats, 60000);

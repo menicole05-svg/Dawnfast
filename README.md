@@ -8,6 +8,10 @@ A visually motivating intermittent fasting tracker. A fast is a night that ends 
 - **Body-stage timeline** (fed state → fat burning → ketosis → autophagy) showing where you are now
 - **Motivational messages** that change as you progress, plus a toast when you hit a new stage
 - **Streak counter**, stats (total, longest, average), weekly bar chart vs. your goal
+- **Zoe, your pet:** she grows from an egg to a Sun Spirit (5 stages) as you earn sunlight by hitting goals
+- **Badges** for goals, streaks (3/7/14/30 days) and milestones (fasts and total hours), some unlock outfits for Zoe
+- **Streak freeze:** 1 per week, used automatically if you miss a day
+- **Confetti + sound** celebrations (sound can be turned off)
 - **History** of past fasts, with goal hit/miss chips
 - Edit your start time if you forgot to tap Start
 - Light & dark mode, works great on phones
