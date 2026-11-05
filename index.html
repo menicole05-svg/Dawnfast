@@ -582,6 +582,65 @@ body.sheet-open { overflow: hidden; }
 .cr-dose { display: flex; gap: 10px; margin-top: 14px; }
 .cr-dose .field { flex: 1; }
 
+/* Muscle map */
+:root { --mm-green: #1f9d6b; --mm-yellow: #e9a91f; --mm-red: #e8455f; --mm-gray: #cdc8de; --mm-body: #ecebf4; --mm-body-line: #d5d0e6; --mm-hair: #b9b4cc; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --mm-green: #3fcf8e; --mm-yellow: #f2bd4a; --mm-red: #ff6b81; --mm-gray: #48436c; --mm-body: #2a2650; --mm-body-line: #3b3668; --mm-hair: #3b3668; } }
+:root[data-theme="dark"] { --mm-green: #3fcf8e; --mm-yellow: #f2bd4a; --mm-red: #ff6b81; --mm-gray: #48436c; --mm-body: #2a2650; --mm-body-line: #3b3668; --mm-hair: #3b3668; }
+.mm-toolbar { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; margin: 12px 0 4px; }
+.mm-figure { display: flex; justify-content: center; padding: 6px 0; overflow: auto; -webkit-overflow-scrolling: touch; }
+.mm-svg { width: min(250px, 66vw); max-width: 100%; height: auto; display: block; overflow: visible; animation: fadeUp .3s ease; transition: width .3s ease; touch-action: manipulation; }
+.mm-figure.big .mm-svg { width: min(470px, 100%); }
+.mm-body path, .mm-body rect, .mm-body ellipse { fill: var(--mm-body); stroke: var(--mm-body-line); stroke-width: 1; }
+.mm-hair { fill: var(--mm-hair); }
+.mm-lines path { fill: none; stroke: color-mix(in srgb, var(--bg) 55%, transparent); stroke-width: 1; stroke-linecap: round; pointer-events: none; }
+.mm-m { cursor: pointer; outline: none; }
+.mm-m path { stroke: var(--surface); stroke-width: .8; transition: fill .35s ease, opacity .35s ease, stroke .25s ease, stroke-width .25s ease; }
+.mm-m.st-green path { fill: var(--mm-green); }
+.mm-m.st-yellow path { fill: var(--mm-yellow); }
+.mm-m.st-red path { fill: var(--mm-red); }
+.mm-m.st-gray path { fill: var(--mm-gray); }
+.mm-m.dim path { opacity: .38; }
+.mm-m:hover path { opacity: 1; filter: brightness(1.06); }
+.mm-m.sel path { stroke: var(--fg); stroke-width: 2.2; opacity: 1; }
+.mm-m:focus-visible path { stroke: var(--dusk); stroke-width: 2.4; }
+@keyframes mmPulse { 0%, 100% { filter: brightness(1) } 50% { filter: brightness(1.15) } }
+.mm-m.sel { animation: mmPulse 2.2s ease-in-out infinite; }
+.dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; flex: 0 0 auto; }
+.dot.st-green { background: var(--mm-green); } .dot.st-yellow { background: var(--mm-yellow); } .dot.st-red { background: var(--mm-red); } .dot.st-gray { background: var(--mm-gray); }
+.mm-legend { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px 14px; font-size: 12px; font-weight: 600; color: var(--muted); margin: 4px 0 10px; }
+.mm-leg { display: inline-flex; align-items: center; gap: 6px; }
+.mm-leg b { color: var(--fg); font-family: var(--font-mono); font-weight: 500; }
+.mm-detail { border-top: 1px solid var(--line); padding-top: 12px; }
+.mm-hint { margin: 0; text-align: center; }
+.mm-d-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; }
+.mm-d-head h3 { margin: 0; font-family: var(--font-display); font-size: 24px; font-weight: 800; letter-spacing: -0.02em; }
+.mm-status { display: flex; gap: 10px; align-items: flex-start; padding: 10px 12px; border-radius: 14px; margin: 10px 0; background: var(--surface-2); }
+.mm-status .dot { margin-top: 4px; width: 12px; height: 12px; }
+.mm-status div { display: flex; flex-direction: column; }
+.mm-status span { font-size: 13px; color: var(--muted); }
+.mm-status.st-green { background: color-mix(in srgb, var(--mm-green) 14%, var(--surface)); }
+.mm-status.st-yellow { background: color-mix(in srgb, var(--mm-yellow) 18%, var(--surface)); }
+.mm-status.st-red { background: color-mix(in srgb, var(--mm-red) 15%, var(--surface)); }
+.mm-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.mm-grid .stat { background: var(--surface-2); border: none; display: flex; flex-direction: column; gap: 2px; }
+.mm-grid .v.sm { font-size: 18px; }
+.mm-sore { margin-top: 12px; display: flex; flex-direction: column; gap: 6px; }
+.mm-exlist { list-style: none; margin: 6px 0 0; padding: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+@media (max-width: 420px) { .mm-exlist { grid-template-columns: 1fr; } }
+.mm-ex { all: unset; cursor: pointer; display: flex; gap: 8px; align-items: center; width: 100%; box-sizing: border-box; padding: 6px 8px; border-radius: 12px; background: var(--surface-2); }
+.mm-ex:focus-visible { outline: 2px solid var(--dusk); }
+.mm-ex .ex-av { width: 30px; height: 30px; border-radius: 10px; font-size: 10px; }
+.mm-ex span { display: flex; flex-direction: column; min-width: 0; }
+.mm-ex b { font-size: 13px; overflow-wrap: anywhere; }
+.mm-ex small { font-size: 11px; color: var(--muted); }
+.mm-disclaimer { margin: 12px 0 0; font-size: 12px; }
+.mm-chips { margin-top: 6px; }
+.mm-chip { display: inline-flex; align-items: center; gap: 6px; padding: 6px 11px; font-size: 12px; }
+.mm-chip .dot { width: 8px; height: 8px; }
+.ex-musc { font-size: 13px; color: var(--muted); margin-top: 8px; }
+.ex-musc b { color: var(--fg); }
+@media (prefers-reduced-motion: reduce) { .mm-m.sel { animation: none; } }
+
 .foot { font-size: 12px; color: var(--muted); text-align: center; max-width: 52ch; margin: 4px auto 0; }
 
 .toast { position: fixed; left: 50%; bottom: calc(24px + env(safe-area-inset-bottom, 0px)); transform: translate(-50%, 20px); background: var(--fg); color: var(--bg); padding: 10px 18px; border-radius: 999px; font-weight: 700; font-size: 14px; opacity: 0; transition: all .3s ease; pointer-events: none; z-index: 20; max-width: calc(100% - 32px); text-align: center; }
@@ -880,6 +939,26 @@ body.sheet-open { overflow: hidden; }
         </div>
         <button class="cta" id="startEmpty" type="button" style="margin-top:14px">＋ Start empty workout</button>
       </section>
+
+      <section class="card mm-card" id="mmCard">
+        <div class="row-head"><h2 style="margin:0">Muscle map</h2>
+          <div class="seg" role="group" aria-label="Body type" style="margin:0"><button type="button" id="mmSexF" aria-pressed="true">Female</button><button type="button" id="mmSexM" aria-pressed="false">Male</button></div>
+        </div>
+        <div class="mm-toolbar">
+          <div class="seg" role="group" aria-label="Body view" style="margin:0">
+            <button type="button" id="mmView-front" aria-pressed="true">Front</button>
+            <button type="button" id="mmView-side" aria-pressed="false">Side</button>
+            <button type="button" id="mmView-back" aria-pressed="false">Back</button>
+          </div>
+          <button type="button" class="chip-btn" id="mmZoom" aria-pressed="false">⤢ Bigger</button>
+        </div>
+        <div class="mm-figure" id="mmFigure"></div>
+        <div class="mm-legend" id="mmLegend"></div>
+        <div class="mm-detail" id="mmDetail" aria-live="polite"></div>
+        <div class="eyebrow" style="margin-top:14px">All muscle groups</div>
+        <div class="chips-row mm-chips" id="mmChips"></div>
+      </section>
+
 
       <section class="card">
         <div class="row-head"><h2 style="margin:0">My routines</h2><button class="chip-btn" id="newRoutine" type="button">＋ New routine</button></div>
@@ -2907,6 +2986,7 @@ Stretching|Full body|Bodyweight|dur|2.3
       };
       ul.appendChild(li);
     });
+    renderMuscleMap();
   }
   ["All", "Gym", "Home"].forEach(p => $("place-" + p).onclick = () => { state.wk.filter = p; save(); renderWkHome(); });
   $("newRoutine").onclick = () => { edRoutine = { id: null, name: "", place: (state.wk.filter === "Home" ? "Home" : "Gym"), items: [] }; wkView = "editor"; renderWorkout(); window.scrollTo(0, 0); setTimeout(() => { try { $("edName").focus(); } catch (e) {} }, 50); };
@@ -3225,7 +3305,9 @@ Stretching|Full body|Bodyweight|dur|2.3
     else if (ex.t === "bw") stats = '<div class="stat"><div class="v">' + (b.reps || "—") + '</div><div class="l">Most reps</div></div>';
     else if (ex.t === "cardio") stats = '<div class="stat"><div class="v">' + (b.km || "—") + '<small>km</small></div><div class="l">Longest</div></div>';
     else stats = '<div class="stat"><div class="v">' + (b.sec || "—") + '<small>s</small></div><div class="l">Longest hold</div></div>';
+    const exm = exMuscles(ex), mn = l => l.map(k => MM_BY[k].n).join(", ");
     $("infoBody").innerHTML = '<div class="ex-head">' + avatar(ex) + '<div class="ex-title"><div class="ex-name-static" style="font-size:18px">' + esc(ex.n) + '</div><div class="sub">' + esc(ex.m) + ' · ' + esc(ex.e) + ' · ' + TYPE_LABEL[ex.t] + '</div></div></div>' +
+      (exm.p.length || exm.s.length ? '<div class="ex-musc">' + (exm.p.length ? '<b>Works:</b> ' + mn(exm.p) : "") + (exm.s.length ? (exm.p.length ? " · " : "") + '<b>Helps:</b> ' + mn(exm.s) : "") + '</div>' : "") +
       '<div class="body-sum" style="margin:14px 0">' + stats + '<div class="stat"><div class="v">' + sessions.length + '</div><div class="l">Times done</div></div></div>' +
       (ex.t === "wr" ? '<div class="eyebrow">Est. 1-rep max over time</div><div class="line-chart" id="infoChart"></div>' : "") +
       '<div class="eyebrow" style="margin-top:12px">Recent sessions</div><ul class="history">' +
@@ -3957,6 +4039,385 @@ Stretching|Full body|Bodyweight|dur|2.3
     if (!(v >= 1 && v <= 25)) { toast("Dose should be between 1 and 25 g"); return; }
     state.creatine.dose = Math.round(v * 2) / 2; save(); renderCreatine(); toast("Daily dose set to " + state.creatine.dose + " g");
   };
+
+  /* ---------- Muscle map: interactive anatomy ----------
+     Exercise → primary/secondary muscle groups, recovery estimate, original SVG figure (front/back/side). */
+  const MM = [
+    { k: "shoulders", n: "Shoulders", sci: "Deltoids" }, { k: "chest", n: "Chest", sci: "Pectorals" },
+    { k: "biceps", n: "Biceps", sci: "Biceps brachii" }, { k: "triceps", n: "Triceps", sci: "Triceps brachii" },
+    { k: "forearms", n: "Forearms", sci: "Wrist flexors & extensors" }, { k: "traps", n: "Upper back", sci: "Trapezius" },
+    { k: "lats", n: "Lats", sci: "Latissimus dorsi" }, { k: "lowerback", n: "Lower back", sci: "Erector spinae" },
+    { k: "abs", n: "Abs", sci: "Rectus abdominis" }, { k: "obliques", n: "Obliques", sci: "External obliques" },
+    { k: "glutes", n: "Glutes", sci: "Gluteus maximus & medius" }, { k: "quads", n: "Quadriceps", sci: "Quadriceps femoris" },
+    { k: "hamstrings", n: "Hamstrings", sci: "Biceps femoris & co." }, { k: "adductors", n: "Adductors", sci: "Inner thigh" },
+    { k: "calves", n: "Calves", sci: "Gastrocnemius & soleus" }
+  ];
+  const MM_BY = Object.fromEntries(MM.map(m => [m.k, m]));
+  const MM_STATUS = {
+    green: { n: "Recovered", d: "Ready to train again." },
+    yellow: { n: "Recovering", d: "Trained recently or a little sore." },
+    red: { n: "Very sore", d: "You reported high soreness." },
+    gray: { n: "No recent data", d: "Not trained in the last 14 days." }
+  };
+  const SORE = [["0", "None"], ["1", "Mild"], ["2", "Sore"], ["3", "Very sore"]];
+
+  /* Which muscles an exercise works. Primary = main target, secondary = helps. A muscle is never in both lists. */
+  const mmCache = new Map();
+  function exMuscles(ex) {
+    const key = ex.id + "|" + ex.m + "|" + ex.n;
+    if (mmCache.has(key)) return mmCache.get(key);
+    const n = ex.n.toLowerCase(), has = (...w) => w.some(x => n.includes(x));
+    let P = [], S = [];
+    switch (ex.m) {
+      case "Chest":
+        P = ["chest"]; S = ["triceps", "shoulders"];
+        if (has("fly", "crossover", "pec deck", "svend")) S = ["shoulders"];
+        if (has("pullover")) S = ["lats", "triceps"];
+        if (has("push up")) S = ["triceps", "shoulders", "abs"];
+        break;
+      case "Back":
+        P = ["lats"]; S = ["biceps", "traps", "forearms"];
+        if (has("row")) { P = ["lats", "traps"]; S = ["biceps", "shoulders", "forearms"]; if (has("bent over", "pendlay", "t-bar", "meadows")) S.push("lowerback"); }
+        if (has("deadlift", "rack pull")) { P = ["lowerback", "glutes", "hamstrings"]; S = ["traps", "quads", "forearms", "lats"]; }
+        if (has("back extension", "superman")) { P = ["lowerback"]; S = ["glutes", "hamstrings"]; }
+        if (has("straight arm", "pullover")) { P = ["lats"]; S = ["triceps", "abs"]; }
+        if (has("inverted row")) { P = ["lats", "traps"]; S = ["biceps", "shoulders", "abs"]; }
+        break;
+      case "Traps":
+        P = ["traps"]; S = ["forearms"];
+        if (has("upright")) { P = ["traps", "shoulders"]; S = ["biceps"]; }
+        break;
+      case "Shoulders":
+        P = ["shoulders"]; S = ["traps"];
+        if (has("press", "push up", "handstand")) S = ["triceps", "traps"];
+        if (has("face pull", "rear delt", "reverse pec", "pull apart")) { P = ["shoulders", "traps"]; S = []; }
+        break;
+      case "Biceps":
+        P = ["biceps"]; S = ["forearms"];
+        if (has("hammer", "zottman")) { P = ["biceps", "forearms"]; S = []; }
+        break;
+      case "Triceps":
+        P = ["triceps"]; S = [];
+        if (has("bench", "jm press", "dip", "diamond")) S = ["chest", "shoulders"];
+        if (has("overhead")) S = ["shoulders"];
+        break;
+      case "Forearms":
+        P = ["forearms"]; S = [];
+        if (has("farmer")) S = ["traps", "abs", "obliques"];
+        if (has("dead hang")) S = ["lats", "shoulders"];
+        if (has("reverse curl")) S = ["biceps"];
+        break;
+      case "Abs":
+        P = ["abs"]; S = ["obliques"];
+        if (has("russian twist", "woodchopper", "side plank", "pallof", "bicycle", "heel taps")) { P = ["obliques"]; S = ["abs"]; }
+        if (has("ab wheel")) S = ["obliques", "lats", "shoulders"];
+        if (has("bird dog")) { P = ["abs", "lowerback"]; S = ["glutes"]; }
+        if (has("mountain climber")) S = ["obliques", "shoulders", "quads"];
+        if (has("cable crunch")) S = ["obliques"];
+        break;
+      case "Quads":
+        P = ["quads"]; S = ["glutes", "adductors"];
+        if (has("lunge", "split squat", "step up")) S = ["glutes", "adductors", "hamstrings"];
+        if (has("leg extension", "sissy", "spanish", "wall sit")) S = [];
+        if (has("cossack")) { P = ["quads", "adductors"]; S = ["glutes"]; }
+        if (has("front squat", "goblet")) S = ["glutes", "abs", "adductors"];
+        if (has("jump squat")) S = ["glutes", "calves"];
+        if (has("leg press", "hack squat", "pendulum", "belt squat")) S = ["glutes", "adductors"];
+        break;
+      case "Hamstrings":
+        P = ["hamstrings"]; S = ["glutes", "lowerback"];
+        if (has("sumo")) { P = ["glutes", "hamstrings", "adductors"]; S = ["lowerback", "quads", "traps"]; }
+        if (has("leg curl", "nordic")) S = ["calves"];
+        if (has("kettlebell deadlift")) S = ["glutes", "lowerback", "quads"];
+        break;
+      case "Glutes":
+        P = ["glutes"]; S = ["hamstrings"];
+        if (has("hip adduction")) { P = ["adductors"]; S = []; }
+        if (has("abduction", "clamshell", "lateral band", "fire hydrant")) S = [];
+        if (has("sumo squat")) { P = ["glutes", "adductors"]; S = ["quads"]; }
+        if (has("kettlebell swing")) { P = ["glutes", "hamstrings"]; S = ["lowerback", "shoulders", "abs"]; }
+        if (has("romanian", "hyperextension")) { P = ["glutes", "hamstrings"]; S = ["lowerback"]; }
+        break;
+      case "Calves":
+        P = ["calves"]; S = [];
+        break;
+      case "Full body":
+        if (has("clean", "snatch")) { P = ["glutes", "hamstrings", "traps", "quads"]; S = ["shoulders", "lowerback", "forearms"]; }
+        else if (has("thruster", "wall ball")) { P = ["quads", "shoulders"]; S = ["glutes", "triceps", "abs"]; }
+        else if (has("devil press", "man maker")) { P = ["chest", "shoulders", "quads"]; S = ["glutes", "triceps", "abs", "lats"]; }
+        else if (has("turkish")) { P = ["shoulders", "abs"]; S = ["obliques", "glutes", "triceps"]; }
+        else if (has("sled")) { P = ["quads", "glutes"]; S = ["calves", "hamstrings", "shoulders"]; }
+        else if (has("burpee")) { P = ["quads", "chest"]; S = ["shoulders", "triceps", "abs"]; if (has("pull up")) P.push("lats"); }
+        else if (has("muscle up")) { P = ["lats", "chest", "triceps"]; S = ["biceps", "shoulders", "abs"]; }
+        else if (has("box jump", "tuck jump", "star jump")) { P = ["quads", "glutes"]; S = ["calves", "hamstrings"]; }
+        else if (has("bear crawl")) { P = ["shoulders", "abs"]; S = ["quads", "triceps"]; }
+        else if (has("battle rope")) { P = ["shoulders"]; S = ["abs", "forearms", "biceps"]; }
+        else if (has("inchworm")) { S = ["hamstrings", "abs", "shoulders"]; }
+        else if (has("jumping jack", "high knees")) { S = ["calves", "quads", "shoulders"]; }
+        else if (has("yoga", "stretching")) { P = []; S = []; }
+        else { P = []; S = ["quads", "glutes", "shoulders", "abs"]; }
+        break;
+      case "Cardio":
+        if (has("row")) S = ["lats", "quads", "biceps", "traps"];
+        else if (has("swim")) S = ["lats", "shoulders", "triceps"];
+        else if (has("boxing")) S = ["shoulders", "obliques", "abs"];
+        else if (has("assault", "elliptical")) S = ["quads", "glutes", "shoulders"];
+        else if (has("bike", "cycling")) S = ["quads", "glutes", "calves"];
+        else if (has("stair", "incline", "hiking")) S = ["glutes", "quads", "calves", "hamstrings"];
+        else if (has("jump rope")) S = ["calves", "shoulders"];
+        else S = ["quads", "hamstrings", "calves", "glutes"];
+        break;
+    }
+    const pSet = [...new Set(P)], out = { p: pSet, s: [...new Set(S)].filter(x => !pSet.includes(x)) };
+    mmCache.set(key, out);
+    return out;
+  }
+
+  /* Sets per muscle from finished workouts + the one in progress. Warm-up sets are skipped.
+     Each completed set counts once per muscle: as "direct" when the muscle is primary, "helper" when secondary. */
+  function mmSessions() {
+    const list = (state.wk ? state.wk.history : []).map(h => ({ h, t: h.end || h.start, live: false }));
+    if (state.wk && state.wk.active) list.unshift({ h: state.wk.active, t: Date.now(), live: true });
+    return list;
+  }
+  function mmHits(sess) {
+    const hits = {};
+    sess.h.items.forEach(it => {
+      const ex = exById(it.ex), ms = exMuscles(ex);
+      const sets = it.sets.filter(s => s.done && s.k !== "w").length;
+      if (!sets) return;
+      const add = (k, type) => { const r = hits[k] = hits[k] || { direct: 0, helper: 0, ex: [] }; r[type] += sets; r.ex.push({ id: ex.id, n: ex.n, sets, type }); };
+      ms.p.forEach(k => add(k, "direct")); ms.s.forEach(k => add(k, "helper"));
+    });
+    return hits;
+  }
+  const AN = () => state.anatomy || (state.anatomy = { sex: "f", view: "front", sel: null, sore: {}, big: false });
+  function muscleData() {
+    const now = Date.now(), ws = weekStart(), out = {};
+    MM.forEach(m => out[m.k] = { week: { direct: 0, helper: 0 }, last: null, lastHit: null, sessions: [] });
+    mmSessions().forEach(s => {
+      const hits = mmHits(s);
+      Object.entries(hits).forEach(([k, r]) => {
+        const d = out[k]; if (!d) return;
+        if (s.t >= ws) { d.week.direct += r.direct; d.week.helper += r.helper; }
+        d.sessions.push({ ...s, r });
+        if (!d.last || s.t > d.last) { d.last = s.t; d.lastHit = r; }
+      });
+    });
+    MM.forEach(m => {
+      const d = out[m.k], sore = AN().sore[m.k];
+      d.sessions.sort((a, b) => b.t - a.t);
+      const hrs = d.last ? (now - d.last) / H : Infinity;
+      const win = d.lastHit ? (d.lastHit.direct ? Math.min(96, Math.max(48, 30 + 6 * d.lastHit.direct)) : 24) : 0;
+      d.hrs = hrs; d.window = win;
+      const soreValid = sore && now - sore.t < 72 * H && (!d.last || sore.t >= d.last - 60000);
+      d.sore = soreValid ? sore.lvl : null;
+      if (soreValid) d.status = sore.lvl >= 3 ? "red" : sore.lvl >= 1 ? "yellow" : "green";
+      else if (!d.last || hrs > 14 * 24) d.status = "gray";
+      else d.status = hrs < win ? "yellow" : "green";
+    });
+    return out;
+  }
+
+  /* ---- Original SVG figure. Coordinates are for the figure's left side; paired muscles are mirrored at x = 100. ---- */
+  const MIRROR = pts => pts.map(([x, y]) => [200 - x, y]);
+  const CENTER = pts => pts.concat(MIRROR(pts).reverse());
+  function smoothPath(pts) {
+    const n = pts.length, f = p => p[0].toFixed(1) + " " + p[1].toFixed(1);
+    let d = "M" + f(pts[0]);
+    for (let i = 0; i < n; i++) {
+      const p0 = pts[(i - 1 + n) % n], p1 = pts[i], p2 = pts[(i + 1) % n], p3 = pts[(i + 2) % n];
+      d += " C" + f([p1[0] + (p2[0] - p0[0]) / 6, p1[1] + (p2[1] - p0[1]) / 6]) + " " + f([p2[0] - (p3[0] - p1[0]) / 6, p2[1] - (p3[1] - p1[1]) / 6]) + " " + f(p2);
+    }
+    return d + "Z";
+  }
+  const ARM_L = [[62, 88], [55, 96], [52, 112], [51, 132], [52, 152], [53, 168], [50, 188], [46, 210], [44, 232], [46, 240], [52, 240], [55, 222], [58, 200], [61, 182], [64, 166], [66, 148], [67, 128], [67, 112]];
+  const LEG_L = [[68, 200], [66, 222], [66, 248], [69, 276], [72, 298], [71, 322], [72, 348], [76, 374], [78, 396], [90, 398], [88, 372], [88, 346], [89, 320], [88, 302], [90, 280], [94, 256], [98, 238], [96, 226], [86, 214], [76, 204]];
+  const FOOT_L = [[76, 394], [73, 410], [72, 422], [80, 426], [90, 424], [91, 408], [90, 396]];
+  const TORSO_L = [[92, 74], [80, 79], [68, 84], [60, 90], [57, 102], [60, 116], [66, 124], [69, 142], [73, 160], [75, 170], [71, 186], [68, 202], [70, 218], [80, 230], [92, 236], [100, 238]];
+  const FOREARM_L = [[61, 172], [56, 174], [51, 190], [47, 212], [46, 230], [51, 231], [55, 214], [59, 194], [62, 180]];
+  const ANAT = {
+    front: {
+      body: [["center", TORSO_L], ["pair", ARM_L], ["pair", LEG_L], ["pair", FOOT_L]],
+      hands: [[48, 252]], head: { cx: 100, cy: 36 }, face: true,
+      muscles: {
+        traps: [["pair", [[93, 76], [82, 80], [70, 86], [82, 88], [94, 84]]]],
+        shoulders: [["pair", [[67, 86], [60, 90], [56, 100], [56, 114], [60, 121], [64, 114], [67, 102], [71, 92]]]],
+        chest: [["pair", [[97, 90], [84, 89], [72, 94], [67, 104], [68, 118], [76, 126], [88, 128], [97, 124], [99, 108]]]],
+        biceps: [["pair", [[63, 124], [58, 128], [55, 142], [56, 158], [60, 167], [64, 158], [66, 142], [66, 128]]]],
+        forearms: [["pair", FOREARM_L]],
+        abs: [["center", [[100, 130], [93, 131], [90, 148], [90, 172], [92, 196], [100, 212]]]],
+        obliques: [["pair", [[86, 133], [74, 135], [71, 150], [74, 166], [78, 184], [86, 196], [89, 176], [88, 150]]]],
+        quads: [["pair", [[71, 212], [68, 236], [69, 262], [73, 286], [80, 296], [86, 290], [87, 268], [86, 244], [81, 224]]]],
+        adductors: [["pair", [[89, 232], [88, 252], [89, 272], [92, 262], [96, 246], [97, 236], [93, 230]]]],
+        calves: [["pair", [[73, 310], [71, 330], [73, 352], [77, 358], [79, 338], [78, 318]]], ["pair", [[86, 312], [88, 330], [87, 350], [84, 348], [83, 330]]]]
+      },
+      lines: ["M100 132 V208", "M91 150 Q100 152 109 150", "M90.5 168 Q100 170 109.5 168", "M91 186 Q100 188 109 186"]
+    },
+    back: {
+      body: [["center", TORSO_L], ["pair", ARM_L], ["pair", LEG_L], ["pair", FOOT_L]],
+      hands: [[48, 252]], head: { cx: 100, cy: 36 }, face: false,
+      muscles: {
+        traps: [["center", [[100, 62], [93, 72], [80, 80], [67, 88], [80, 92], [90, 104], [96, 120], [100, 132]]]],
+        shoulders: [["pair", [[67, 88], [60, 91], [56, 100], [56, 114], [60, 121], [64, 114], [68, 100]]]],
+        triceps: [["pair", [[63, 120], [57, 125], [53, 142], [54, 160], [58, 168], [64, 160], [66, 140], [66, 125]]]],
+        forearms: [["pair", FOREARM_L]],
+        lats: [["pair", [[70, 110], [68, 128], [71, 148], [78, 164], [86, 170], [90, 152], [91, 134], [87, 116], [78, 106]]]],
+        lowerback: [["center", [[100, 136], [94, 140], [91, 156], [89, 174], [91, 192], [100, 198]]]],
+        glutes: [["pair", [[70, 199], [68, 214], [72, 232], [84, 240], [98, 238], [98, 216], [93, 202], [82, 196]]]],
+        hamstrings: [["pair", [[71, 242], [70, 262], [73, 286], [80, 296], [87, 288], [89, 264], [91, 248], [84, 244]]]],
+        adductors: [["pair", [[93, 246], [91, 262], [93, 274], [97, 258], [97, 246]]]],
+        calves: [["pair", [[73, 306], [71, 326], [74, 348], [80, 358], [86, 350], [89, 328], [87, 308], [80, 302]]]]
+      },
+      lines: ["M100 62 V236"]
+    },
+    side: {
+      body: [["single", [[96, 60], [90, 74], [86, 90], [84, 110], [84, 132], [87, 156], [86, 176], [80, 194], [78, 210], [81, 224], [84, 250], [87, 276], [88, 292], [84, 312], [84, 334], [88, 360], [91, 392], [90, 404], [124, 406], [124, 398], [112, 392], [106, 362], [105, 330], [106, 306], [108, 290], [112, 266], [116, 240], [115, 216], [112, 198], [114, 178], [116, 152], [118, 134], [124, 120], [122, 102], [114, 90], [110, 78], [108, 60]]]],
+      arm: [["single", [[94, 86], [90, 100], [90, 124], [92, 146], [94, 166], [108, 166], [110, 144], [111, 120], [110, 96], [104, 84]]], ["single", [[94, 166], [96, 196], [100, 226], [110, 228], [110, 198], [108, 166]]]],
+      hands: [[105, 242]], head: { cx: 103, cy: 37 }, face: "side",
+      muscles: {
+        traps: [["single", [[96, 64], [90, 74], [88, 86], [95, 86], [101, 76]]]],
+        lats: [["single", [[85, 100], [84, 124], [87, 146], [92, 148], [92, 124], [90, 102]]]],
+        chest: [["single", [[110, 94], [116, 100], [123, 114], [120, 128], [112, 126]]]],
+        abs: [["single", [[115, 134], [117, 150], [114, 176], [112, 186], [111, 160], [112, 140]]]],
+        obliques: [["single", [[88, 152], [88, 172], [91, 188], [96, 190], [95, 170], [94, 152]]]],
+        glutes: [["single", [[86, 182], [80, 196], [79, 212], [83, 224], [94, 224], [98, 208], [96, 190]]]],
+        hamstrings: [["single", [[83, 228], [85, 254], [88, 280], [95, 284], [97, 258], [96, 230]]]],
+        quads: [["single", [[100, 216], [101, 244], [104, 272], [108, 290], [112, 268], [115, 242], [114, 218], [108, 206]]]],
+        calves: [["single", [[86, 306], [85, 328], [88, 350], [94, 346], [97, 324], [94, 306]]]]
+      },
+      armMuscles: {
+        shoulders: [["single", [[94, 86], [91, 98], [94, 112], [102, 116], [109, 112], [111, 98], [106, 86], [100, 83]]]],
+        triceps: [["single", [[92, 116], [91, 134], [93, 152], [96, 162], [100, 160], [99, 138], [98, 118]]]],
+        biceps: [["single", [[103, 118], [103, 140], [104, 160], [108, 162], [110, 142], [110, 120]]]],
+        forearms: [["single", [[97, 170], [98, 196], [101, 222], [108, 222], [108, 196], [106, 170]]]]
+      },
+      lines: []
+    }
+  };
+  /* Male option: broader shoulders and chest, narrower hips (front and back views). */
+  const WARP = [[0, 1], [62, 1], [84, 1.12], [128, 1.1], [165, 1.03], [200, 0.92], [240, 0.93], [262, 1], [440, 1]];
+  function warpPt([x, y]) {
+    let f = 1;
+    for (let i = 1; i < WARP.length; i++) if (y <= WARP[i][0]) { const [y0, f0] = WARP[i - 1], [y1, f1] = WARP[i]; f = f0 + (f1 - f0) * (y - y0) / (y1 - y0); break; }
+    return [100 + (x - 100) * f, y];
+  }
+  function shapePaths([mode, pts], view) {
+    const tf = view !== "side" && AN().sex === "m" ? p => p.map(warpPt) : p => p;
+    if (mode === "center") return [smoothPath(tf(CENTER(pts)))];
+    if (mode === "pair") return [smoothPath(tf(pts)), smoothPath(tf(MIRROR(pts)))];
+    return [smoothPath(pts)];
+  }
+  function figureSVG(view, data) {
+    const A = ANAT[view], an = AN(), sel = an.sel, fem = an.sex !== "m";
+    const muscleG = (k, shapes) => {
+      const m = MM_BY[k], d = data[k];
+      return '<g class="mm-m st-' + d.status + (sel === k ? " sel" : "") + (sel && sel !== k ? " dim" : "") + '" data-m="' + k + '" tabindex="0" role="button" aria-pressed="' + (sel === k) +
+        '" aria-label="' + esc(m.n + ", " + MM_STATUS[d.status].n) + '"><title>' + esc(m.n) + '</title>' + shapes.flatMap(s => shapePaths(s, view)).map(p => '<path d="' + p + '"/>').join("") + '</g>';
+    };
+    let s = '<svg viewBox="30 4 140 432" xmlns="http://www.w3.org/2000/svg" class="mm-svg" role="group" aria-label="' + (view === "front" ? "Front" : view === "back" ? "Back" : "Side") + ' view muscle map">';
+    const { cx, cy } = A.head;
+    // hair behind head
+    if (fem) {
+      if (view === "front") s += '<path class="mm-hair" d="' + smoothPath([[83, 26], [80, 48], [79, 70], [85, 84], [100, 86], [115, 84], [121, 70], [120, 48], [117, 26], [100, 13]]) + '"/>';
+      if (view === "back") s += '<path class="mm-hair" d="' + smoothPath([[83, 24], [80, 50], [80, 78], [88, 92], [100, 94], [112, 92], [120, 78], [120, 50], [117, 24], [100, 13]]) + '"/>';
+      if (view === "side") s += '<path class="mm-hair" d="' + smoothPath([[90, 18], [83, 34], [80, 58], [82, 84], [88, 90], [92, 70], [96, 46], [104, 20]]) + '"/>';
+    }
+    s += '<g class="mm-body">';
+    A.body.forEach(b => shapePaths(b, view).forEach(p => s += '<path d="' + p + '"/>'));
+    s += '<rect x="' + (cx - 9) + '" y="52" width="18" height="28" rx="6"/>';
+    s += '<ellipse cx="' + cx + '" cy="' + cy + '" rx="' + (view === "side" ? 18 : 17) + '" ry="21"/>';
+    if (view === "side") s += '<path d="M119 34 Q125 40 119 44 Z"/>';
+    A.hands.forEach(([hx, hy]) => { s += '<ellipse cx="' + hx + '" cy="' + hy + '" rx="6" ry="12"/>'; if (view !== "side") s += '<ellipse cx="' + (200 - hx) + '" cy="' + hy + '" rx="6" ry="12"/>'; });
+    s += '</g>';
+    if (fem && view === "front") s += '<path class="mm-hair" d="' + smoothPath([[83, 34], [85, 21], [100, 14], [115, 21], [117, 34], [108, 26], [100, 24], [92, 26]]) + '"/>';
+    if (fem && view === "back") s += '<path class="mm-hair" d="' + smoothPath([[82, 34], [85, 20], [100, 14], [115, 20], [118, 34], [114, 52], [100, 58], [86, 52]]) + '"/>';
+    if (fem && view === "side") s += '<path class="mm-hair" d="' + smoothPath([[86, 34], [88, 22], [100, 15], [114, 18], [121, 28], [110, 26], [98, 30], [92, 40]]) + '"/>';
+    Object.entries(A.muscles).forEach(([k, shapes]) => s += muscleG(k, shapes));
+    if (A.lines.length) s += '<g class="mm-lines">' + A.lines.map(d => '<path d="' + d + '"/>').join("") + '</g>';
+    if (view === "side") {
+      s += '<g class="mm-body">'; A.arm.forEach(b => shapePaths(b, view).forEach(p => s += '<path d="' + p + '"/>')); s += '<ellipse cx="105" cy="242" rx="7" ry="13"/></g>';
+      Object.entries(A.armMuscles).forEach(([k, shapes]) => s += muscleG(k, shapes));
+    }
+    return s + '</svg>';
+  }
+
+  /* ---- Render card + detail panel ---- */
+  function renderMuscleMap() {
+    if (!$("mmFigure") || !state.wk) return;
+    const an = AN(), data = muscleData();
+    ["front", "back", "side"].forEach(v => $("mmView-" + v).setAttribute("aria-pressed", String(an.view === v)));
+    $("mmSexF").setAttribute("aria-pressed", String(an.sex !== "m")); $("mmSexM").setAttribute("aria-pressed", String(an.sex === "m"));
+    $("mmZoom").setAttribute("aria-pressed", String(!!an.big)); $("mmZoom").textContent = an.big ? "⤡ Smaller" : "⤢ Bigger";
+    $("mmFigure").classList.toggle("big", !!an.big);
+    $("mmFigure").innerHTML = figureSVG(an.view, data);
+    const counts = { green: 0, yellow: 0, red: 0, gray: 0 };
+    MM.forEach(m => counts[data[m.k].status]++);
+    $("mmLegend").innerHTML = ["green", "yellow", "red", "gray"].map(st => '<span class="mm-leg"><i class="dot st-' + st + '"></i>' + MM_STATUS[st].n + ' <b>' + counts[st] + '</b></span>').join("");
+    $("mmChips").innerHTML = MM.map(m => '<button type="button" class="chip-btn mm-chip" data-m="' + m.k + '" aria-pressed="' + (an.sel === m.k) + '"><i class="dot st-' + data[m.k].status + '"></i>' + esc(m.n) + '</button>').join("");
+    renderMuscleDetail(data);
+  }
+  function renderMuscleDetail(data) {
+    const an = AN(), k = an.sel, box = $("mmDetail");
+    if (!k) { box.innerHTML = '<p class="sub mm-hint">Tap a muscle on the body, or pick one below, to see its recovery, sets this week and the exercises that train it.</p>'; return; }
+    const m = MM_BY[k], d = data[k], st = MM_STATUS[d.status];
+    let why;
+    if (d.sore != null) why = "Based on the soreness you reported (" + SORE[d.sore][1].toLowerCase() + ").";
+    else if (d.status === "gray") why = st.d;
+    else if (d.status === "yellow") { const left = Math.max(1, Math.round(d.window - d.hrs)); why = "Trained " + Math.round(d.hrs) + "h ago. Usually needs about " + left + "h more."; }
+    else why = "Last trained " + (d.hrs < 48 ? Math.round(d.hrs) + "h" : Math.round(d.hrs / 24) + " days") + " ago.";
+    const lastTxt = d.last ? (d.sessions[0].live ? "Now (in progress)" : relDay(d.last)) : "Never";
+    const lastSub = d.last && !d.sessions[0].live ? timeFmt.format(d.last) + " · " + esc(d.sessions[0].h.name) : d.last ? esc(d.sessions[0].h.name) : "No workouts logged yet";
+    // exercises that target it: ones you've done first
+    const used = new Map();
+    state.wk.history.forEach(h => h.items.forEach(i => used.set(i.ex, (used.get(i.ex) || 0) + 1)));
+    const prim = allEx().filter(e => exMuscles(e).p.includes(k)).sort((a, b) => (used.get(b.id) || 0) - (used.get(a.id) || 0) || a.n.localeCompare(b.n));
+    const helps = allEx().filter(e => exMuscles(e).s.includes(k)).length;
+    const exList = prim.slice(0, 8).map(e => '<li><button type="button" class="mm-ex" data-ex="' + e.id + '">' + avatar(e) + '<span><b>' + esc(e.n) + '</b><small>' + esc(e.e) + (used.get(e.id) ? " · done " + used.get(e.id) + "×" : "") + '</small></span></button></li>').join("");
+    const hist = d.sessions.slice(0, 5).map(s => {
+      const exTxt = s.r.ex.map(x => esc(x.n) + " ×" + x.sets + (x.type === "helper" ? " (helper)" : "")).join(", ");
+      return '<li><div style="min-width:0"><div style="font-weight:700">' + (s.live ? "Today (in progress)" : dayFmt.format(s.t)) + ' · ' + esc(s.h.name) + '</div><div class="when">' + exTxt + '</div></div><div class="dur">' + (s.r.direct || s.r.helper) + '<small style="font-size:11px;color:var(--muted)"> ' + (s.r.direct ? "direct" : "helper") + '</small></div></li>';
+    }).join("");
+    box.innerHTML =
+      '<div class="mm-d-head"><div><div class="eyebrow">' + esc(m.sci) + '</div><h3>' + esc(m.n) + '</h3></div><button type="button" class="icon-btn" id="mmClose" aria-label="Close muscle details">✕</button></div>' +
+      '<div class="mm-status st-' + d.status + '"><i class="dot st-' + d.status + '"></i><div><b>' + st.n + '</b><span>' + why + '</span></div></div>' +
+      '<div class="mm-grid">' +
+        '<div class="stat"><div class="l">Last trained</div><div class="v sm">' + lastTxt + '</div><div class="l">' + lastSub + '</div></div>' +
+        '<div class="stat"><div class="l">Sets this week</div><div class="v">' + d.week.direct + '</div><div class="l">' + (d.week.helper ? "+" + d.week.helper + " as a helper muscle" : "direct sets") + '</div></div>' +
+      '</div>' +
+      '<div class="mm-sore"><div class="eyebrow">How does it feel today?</div><div class="chips-row">' +
+        SORE.map(([v, n]) => '<button type="button" class="chip-btn" data-sore="' + v + '" aria-pressed="' + (d.sore != null && String(d.sore) === v) + '">' + n + '</button>').join("") +
+      '</div></div>' +
+      '<div class="eyebrow" style="margin-top:14px">Exercises that target it</div>' +
+      (exList ? '<ul class="mm-exlist">' + exList + '</ul>' + (prim.length > 8 ? '<p class="sub" style="margin:4px 0 0">+' + (prim.length - 8) + ' more in the exercise library' + (helps ? ", and " + helps + " where it helps" : "") + '.</p>' : "") : '<p class="sub">No exercises found.</p>') +
+      '<div class="eyebrow" style="margin-top:14px">Recent workouts</div>' +
+      '<ul class="history">' + (hist || '<li class="empty">No workouts have trained this muscle yet.</li>') + '</ul>' +
+      '<p class="sub mm-disclaimer">Recovery is a rough estimate from your logged sets, time since training and the soreness you report. It isn\'t a medical assessment. If something hurts, rest it, and talk to a professional if pain lasts.</p>';
+  }
+  function selectMuscle(k) {
+    const an = AN(); an.sel = an.sel === k ? null : k; save(); renderMuscleMap();
+    if (an.sel && window.innerWidth < 760) setTimeout(() => { const el = $("mmDetail"); if (el) el.scrollIntoView({ behavior: "smooth", block: "nearest" }); }, 60);
+  }
+  $("mmCard").addEventListener("click", e => {
+    const g = e.target.closest("[data-m]"); if (g) { selectMuscle(g.dataset.m); return; }
+    const b = e.target.closest("button"); if (!b) return;
+    const an = AN();
+    if (b.id && b.id.startsWith("mmView-")) { an.view = b.id.slice(7); save(); renderMuscleMap(); return; }
+    if (b.id === "mmSexF" || b.id === "mmSexM") { an.sex = b.id === "mmSexM" ? "m" : "f"; save(); renderMuscleMap(); return; }
+    if (b.id === "mmZoom") { an.big = !an.big; save(); renderMuscleMap(); return; }
+    if (b.id === "mmClose") { an.sel = null; save(); renderMuscleMap(); return; }
+    if (b.dataset.sore != null && an.sel) {
+      const lvl = +b.dataset.sore, cur = an.sore[an.sel];
+      if (cur && cur.lvl === lvl && Date.now() - cur.t < 72 * H) { delete an.sore[an.sel]; toast("Soreness cleared"); }
+      else { an.sore[an.sel] = { lvl, t: Date.now() }; toast(MM_BY[an.sel].n + ": " + SORE[lvl][1].toLowerCase()); }
+      save(); renderMuscleMap(); return;
+    }
+    if (b.dataset.ex) { openInfo(b.dataset.ex); return; }
+  });
+  $("mmCard").addEventListener("keydown", e => {
+    const g = e.target.closest && e.target.closest("g[data-m]");
+    if (g && (e.key === "Enter" || e.key === " ")) { e.preventDefault(); selectMuscle(g.dataset.m); setTimeout(() => { const n = document.querySelector('#mmFigure g[data-m="' + g.dataset.m + '"]'); if (n) n.focus(); }, 0); }
+  });
 
   /* ---------- Tabs ---------- */
   const TABS = ["fast", "water", "meals", "workout", "progress", "zoe"];

@@ -11,6 +11,7 @@ Six tabs: **Fast · Water · Meals · Workout · Progress · Me**
 - **Macros (MyFitnessPal-inspired):** Goal − Food = Remaining calories, protein/carbs/fat bars and donut, meals grouped into Breakfast/Lunch/Dinner/Snacks, recent foods, and macro goal presets (Balanced, High protein, Low carb, Keto)
 - **Workouts (Hevy-inspired):** 277 exercises (barbell, dumbbell, machine, cable, kettlebell, Smith, EZ bar, bands, bodyweight, cardio), gym and home routines, live set logging with previous values, warm-up/drop/failure sets, rest timer, PRs and estimated 1-rep max, history, muscle split, and optional calories burned (estimate, or typed in from your watch or Health app)
 - **Grocery planner:** set your daily macros and days, pick foods, type your own prices, and get how many kg/pcs to buy for the week, per-day portions, total cost vs. budget, and cheapest protein per peso (USDA macros)
+- **Muscle map (Workout tab):** interactive front/side/back SVG anatomy (female default, male option) with 15 selectable muscle groups colored by an estimated recovery status (recovered, recovering, very sore, no data). Tap a muscle for last trained date, direct and helper sets this week, exercises that target it, recent workouts, and to report soreness. Every exercise maps to primary and secondary muscles; warm-up sets are not counted
 - **Weight & waist log:** kg and cm check-ins with a trend chart and change since your first log
 - **Live fasting ring** with elapsed time, time remaining, and % of goal
 - **Plans:** 13:11, 16:8, 18:6, 20:4, OMAD, 36h
