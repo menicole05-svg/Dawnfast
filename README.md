@@ -9,6 +9,7 @@ Six tabs: **Fast · Water · Meals · Workout · Progress · Me**
 - **Meal & calorie log:** built-in list of common foods (including Filipino dishes) with estimated calories; log by weight in grams (or by servings), tags, daily calorie target, and eating-window status
 - **Macros (MyFitnessPal-inspired):** Goal − Food = Remaining calories, protein/carbs/fat bars and donut, meals grouped into Breakfast/Lunch/Dinner/Snacks, recent foods, and macro goal presets (Balanced, High protein, Low carb, Keto)
 - **Workouts (Hevy-inspired):** 277 exercises (barbell, dumbbell, machine, cable, kettlebell, Smith, EZ bar, bands, bodyweight, cardio), gym and home routines, live set logging with previous values, warm-up/drop/failure sets, rest timer, PRs and estimated 1-rep max, history, muscle split, and optional calories burned (estimate, or typed in from your watch or Health app)
+- **Grocery planner:** set your daily macros and days, pick foods, type your own prices, and get how many kg/pcs to buy for the week, per-day portions, total cost vs. budget, and cheapest protein per peso (USDA macros)
 - **Weight & waist log:** kg and cm check-ins with a trend chart and change since your first log
 - **Live fasting ring** with elapsed time, time remaining, and % of goal
 - **Plans:** 13:11, 16:8, 18:6, 20:4, OMAD, 36h

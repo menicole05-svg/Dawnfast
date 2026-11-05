@@ -511,6 +511,47 @@ body.sheet-open { overflow: hidden; }
 .gear:disabled { opacity: .5; cursor: not-allowed; transform: none; }
 .health-note { background: color-mix(in srgb, var(--dusk) 12%, transparent); padding: 10px 12px; border-radius: 12px; margin: 10px 0 0; color: var(--fg); }
 
+/* Grocery planner */
+.meals-view { width: 100%; display: grid; grid-template-columns: 1fr 1fr; margin: 0; }
+.meals-view button { padding: 9px 6px; }
+.gr-basket { display: flex; flex-direction: column; gap: 16px; }
+.gr-role { display: flex; flex-direction: column; gap: 8px; }
+.gr-role-head { display: flex; flex-direction: column; }
+.gr-role-head b { font-family: var(--font-display); font-size: 16px; }
+.gr-item { display: grid; grid-template-columns: minmax(0, 1fr) 104px auto 34px; gap: 8px; align-items: end; padding: 10px; border-radius: 14px; background: var(--surface-2); }
+@media (max-width: 420px) { .gr-item { grid-template-columns: minmax(0, 1fr) 96px 34px; } .gr-share { grid-column: 1 / 3; display: flex; align-items: center; gap: 8px; } .gr-item .icon-btn { grid-row: 1; grid-column: 3; } }
+.gr-name { display: flex; flex-direction: column; min-width: 0; align-self: center; }
+.gr-name b { font-size: 14px; overflow-wrap: anywhere; }
+.gr-name span { font-size: 11px; color: var(--muted); font-family: var(--font-mono); }
+.gr-price { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.gr-price span { font-size: 10px; font-weight: 700; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.gr-price input { font: inherit; font-size: 16px; font-family: var(--font-mono); width: 100%; min-width: 0; padding: 7px 8px; border-radius: 10px; border: 1px solid var(--line); background: var(--surface); color: var(--fg); }
+.gr-share { display: flex; flex-direction: column; gap: 2px; }
+.gr-share > span { font-size: 10px; font-weight: 700; color: var(--muted); }
+.stepper.sm button { padding: 3px 9px; font-size: 14px; }
+.stepper.sm b { font-size: 14px; min-width: 16px; text-align: center; }
+.gr-item .icon-btn { padding: 6px 8px; font-size: 12px; align-self: center; }
+.gr-add { font: inherit; font-size: 15px; padding: 9px 12px; border-radius: 12px; border: 1px dashed var(--line); background: transparent; color: var(--dusk); font-weight: 700; width: 100%; }
+.gr-total { display: flex; justify-content: space-between; align-items: flex-end; gap: 12px; flex-wrap: wrap; margin: 12px 0 6px; }
+.gr-budget { font-size: 13px; font-weight: 800; padding: 6px 12px; border-radius: 999px; }
+.gr-budget.ok { background: color-mix(in srgb, var(--good) 16%, transparent); color: var(--good); }
+.gr-budget.over { background: color-mix(in srgb, #ff5a6e 16%, transparent); color: #e04558; }
+.gr-line { display: grid !important; grid-template-columns: 40px 1fr auto; gap: 10px; align-items: center; }
+.gr-line.done .gr-line-t b, .gr-line.done .gr-line-q b { text-decoration: line-through; opacity: .55; }
+.gr-line-t { display: flex; flex-direction: column; min-width: 0; }
+.gr-line-t span { font-size: 12px; color: var(--muted); }
+.gr-line-q { display: flex; flex-direction: column; align-items: flex-end; text-align: right; }
+.gr-line-q b { font-family: var(--font-mono); font-weight: 500; font-size: 14px; white-space: nowrap; }
+.gr-line-q span { font-size: 12px; color: var(--muted); font-family: var(--font-mono); }
+.gr-check { display: flex; flex-direction: column; gap: 6px; margin-top: 6px; }
+.gc-row { display: grid; grid-template-columns: 70px 1fr auto; gap: 10px; align-items: center; font-size: 13px; font-weight: 600; }
+.gc-row b { font-family: var(--font-mono); font-weight: 500; font-size: 12px; }
+.gc-row .mbar { margin: 0; }
+.gc-row i.ok { background: var(--good); } .gc-row i.under { background: var(--dawn-2); } .gc-row i.over { background: #ff5a6e; }
+.gc-row.cheap { grid-template-columns: 1fr auto; padding: 4px 0; border-bottom: 1px solid var(--line); }
+.gr-note { background: color-mix(in srgb, var(--dawn-2) 18%, transparent); padding: 8px 12px; border-radius: 12px; margin: 8px 0 0; color: var(--fg); }
+.gr-copy { width: 100%; font: inherit; font-family: var(--font-mono); font-size: 13px; margin-top: 10px; padding: 10px; border-radius: 12px; border: 1px solid var(--line); background: var(--surface-2); color: var(--fg); }
+
 .foot { font-size: 12px; color: var(--muted); text-align: center; max-width: 52ch; margin: 4px auto 0; }
 
 .toast { position: fixed; left: 50%; bottom: calc(24px + env(safe-area-inset-bottom, 0px)); transform: translate(-50%, 20px); background: var(--fg); color: var(--bg); padding: 10px 18px; border-radius: 999px; font-weight: 700; font-size: 14px; opacity: 0; transition: all .3s ease; pointer-events: none; z-index: 20; max-width: calc(100% - 32px); text-align: center; }
@@ -639,6 +680,49 @@ body.sheet-open { overflow: hidden; }
   </div>
 
   <div class="panel" id="tab-meals" data-tab="meals" hidden>
+    <div class="seg meals-view" role="group" aria-label="Meals view">
+      <button type="button" id="mvToday" aria-pressed="true">🍽️ Today</button>
+      <button type="button" id="mvGrocery" aria-pressed="false">🛒 Grocery planner</button>
+    </div>
+    <div id="mealsGrocery" class="panel-inner" hidden>
+      <section class="card">
+        <h2>Your targets</h2>
+        <div class="row-head">
+          <div class="field"><span>Plan for</span><div class="stepper"><button type="button" id="grMinus" aria-label="Fewer days">−</button><b><span id="grDays">7</span> days</b><button type="button" id="grPlus" aria-label="More days">+</button></div></div>
+          <button type="button" class="chip-btn" id="grUseGoals" aria-pressed="true">Use my Nutrition goals</button>
+        </div>
+        <p class="sub" id="grGoalNote" style="margin:8px 0 10px"></p>
+        <div class="form-grid three macros-in">
+          <label class="field m-pro"><span>Protein g/day</span><input type="number" id="grP" min="0" max="500" inputmode="numeric"></label>
+          <label class="field m-carb"><span>Carbs g/day</span><input type="number" id="grC" min="0" max="1000" inputmode="numeric"></label>
+          <label class="field m-fat"><span>Fat g/day</span><input type="number" id="grF" min="0" max="400" inputmode="numeric"></label>
+        </div>
+        <div class="form-grid" style="margin-top:10px">
+          <label class="field"><span>Veggies g/day</span><input type="number" id="grVeg" min="0" max="2000" step="50" inputmode="numeric"></label>
+          <label class="field"><span>Budget ₱ (optional)</span><input type="number" id="grBudget" min="0" step="50" inputmode="numeric" placeholder="e.g. 1500"></label>
+        </div>
+        <p class="sub" id="grWeekly" style="margin:10px 0 0;font-weight:700;color:var(--fg)"></p>
+      </section>
+
+      <section class="card">
+        <h2>Your basket</h2>
+        <p class="sub" style="margin:0 0 10px">Type the price you pay where you shop. "Share" sets how much of that group each food covers.</p>
+        <div id="grBasket" class="gr-basket"></div>
+      </section>
+
+      <section class="card">
+        <div class="row-head"><h2 style="margin:0">Shopping list</h2><div class="set-actions" style="margin:0"><button type="button" class="chip-btn" id="grCopy">Copy list</button><button type="button" class="chip-btn" id="grReset">Uncheck all</button></div></div>
+        <div class="gr-total"><div><div class="eyebrow">Estimated total</div><div class="big-num" id="grTotal">₱0</div><div class="sub" id="grTotalNote"></div></div><div class="gr-budget" id="grBudgetState" hidden></div></div>
+        <ul class="history gr-list" id="grList"></ul>
+        <textarea id="grCopyText" class="gr-copy" rows="6" hidden aria-label="Shopping list text"></textarea>
+        <div class="eyebrow" style="margin-top:14px">Does it hit your macros?</div>
+        <div id="grCheck" class="gr-check"></div>
+        <div id="grNotes"></div>
+        <div id="grCheap"></div>
+        <p class="sub" style="margin:12px 0 0">Amounts are for the raw, edible part. Whole fish, shrimp and veggies include extra weight for bones, shells and trimmings. Macros: USDA FoodData Central.</p>
+      </section>
+    </div>
+    <div id="mealsToday" class="panel-inner">
   <section class="card">
     <div class="kcal-head">
       <h2 style="margin:0">Calories remaining</h2>
@@ -719,6 +803,7 @@ body.sheet-open { overflow: hidden; }
     <div class="chart" id="kcalChart"></div>
     <div class="macro-legend" id="weekMacros"></div>
   </section>
+    </div>
   </div>
 
   <div class="panel" id="tab-workout" data-tab="workout" hidden>
@@ -3517,13 +3602,246 @@ Stretching|Full body|Bodyweight|dur|2.3
   };
   $("meLogWeight").onclick = () => go("progress");
 
+  /* ---------- Grocery planner ----------
+     [id, name, role p/c/f/v, USDA #, unit kg|pc|pack, grams per unit as bought, unit label, edible fraction, default share,
+      kcal, protein, carbs, fat per 100 g edible, USDA description] — macros from USDA FoodData Central (SR Legacy) */
+  const PLAN_FOODS = [
+    ["chicken-breast", "Chicken breast fillet", "p", "05062", "kg", 1000, "kg", 1, 2, 120, 22.5, 0.0, 2.6, "chicken,broiler or fryers,brst,skinless,bnless,meat only,raw"],
+    ["chicken-thigh", "Chicken thigh fillet, skinless", "p", "05096", "kg", 1000, "kg", 1, 1, 121, 19.7, 0.0, 4.1, "chicken,broilers or fryers,dk meat,thigh,meat only,raw"],
+    ["eggs", "Eggs", "p", "01123", "pc", 57, "pc", 0.88, 1, 143, 12.6, 0.7, 9.5, "egg,whl,raw,frsh"],
+    ["tuna-can", "Canned tuna in water", "p", "15121", "pack", 155, "can (155 g)", 0.75, 1, 86, 19.4, 0.0, 1.0, "fish,tuna,lt,cnd in h2o,drnd sol"],
+    ["sardines", "Sardines in tomato sauce", "p", "15089", "pack", 155, "can (155 g)", 0.9, 1, 185, 20.9, 0.5, 10.4, "sardine,pacific,cnd in tomato sau,drnd sol w/bone"],
+    ["tilapia", "Tilapia, whole", "p", "15261", "kg", 1000, "kg", 0.5, 1, 96, 20.1, 0.0, 1.7, "fish,tilapia,raw"],
+    ["bangus", "Bangus, whole", "p", "15053", "kg", 1000, "kg", 0.6, 1, 148, 20.5, 0.0, 6.7, "milkfish,raw"],
+    ["galunggong", "Galunggong, whole", "p", "15050", "kg", 1000, "kg", 0.6, 1, 158, 20.1, 0.0, 7.9, "mackerel,pacific&jack,mxd sp,raw"],
+    ["shrimp", "Shrimp, head-on", "p", "15270", "kg", 1000, "kg", 0.55, 1, 85, 20.1, 0.0, 0.5, "crustaceans,shrimp,raw (not previously frozen)"],
+    ["pork-loin", "Pork loin, lean", "p", "10024", "kg", 1000, "kg", 1, 1, 143, 21.4, 0.0, 5.7, "pork,frsh,loin,whl,ln,raw"],
+    ["beef-lean", "Ground beef, 90% lean", "p", "23562", "kg", 1000, "kg", 1, 1, 176, 20.0, 0.0, 10.0, "beef,ground,90% ln meat / 10% fat,raw"],
+    ["tofu", "Tokwa / firm tofu", "p", "16126", "pack", 300, "block (300 g)", 1, 1, 78, 9.0, 2.9, 4.2, "tofu,firm,prep w/ca sulfate&magnesium chloride (nigari)"],
+    ["greek-yogurt", "Greek yogurt, plain nonfat", "p", "01256", "pack", 500, "tub (500 g)", 1, 1, 59, 10.2, 3.6, 0.4, "yogurt,greek,pln,nonfat"],
+    ["whey", "Whey protein powder", "p", "14066", "pack", 1000, "tub (1 kg)", 1, 1, 352, 78.1, 6.2, 1.6, "beverages,prot pdr whey bsd"],
+    ["rice", "White rice, uncooked", "c", "20044", "kg", 1000, "kg", 1, 2, 365, 7.1, 80.0, 0.7, "rice,white,long-grain,reg,raw,enr"],
+    ["brown-rice", "Brown rice, uncooked", "c", "20036", "kg", 1000, "kg", 1, 1, 367, 7.5, 76.2, 3.2, "rice,brown,long-grain,raw"],
+    ["oats", "Rolled oats", "c", "08120", "pack", 800, "pack (800 g)", 1, 1, 379, 13.2, 67.7, 6.5, "cereals,oats,reg & quick,not fort,dry"],
+    ["kamote", "Kamote / sweet potato", "c", "11507", "kg", 1000, "kg", 0.85, 1, 86, 1.6, 20.1, 0.1, "sweet potato,raw,unprep"],
+    ["potato", "Potato", "c", "11352", "kg", 1000, "kg", 0.9, 1, 77, 2.0, 17.5, 0.1, "potatoes,flesh & skn,raw"],
+    ["banana", "Banana (lakatan)", "c", "09040", "pc", 120, "pc", 0.8, 1, 89, 1.1, 22.8, 0.3, "bananas,raw"],
+    ["saba", "Saging na saba", "c", "09277", "pc", 130, "pc", 0.75, 1, 122, 1.3, 31.9, 0.4, "plantains,raw"],
+    ["ww-bread", "Whole wheat bread", "c", "18075", "pack", 450, "loaf (450 g)", 1, 1, 252, 12.4, 42.7, 3.5, "bread,whole-wheat,comm. prepared"],
+    ["pandesal", "Pandesal", "c", "18342", "pc", 40, "pc", 1, 1, 310, 10.9, 52.0, 6.5, "rolls, dinner, pln,comm prepared (inc brown -n- serve)"],
+    ["pasta", "Spaghetti / pasta, dry", "c", "20120", "pack", 1000, "pack (1 kg)", 1, 1, 371, 13.0, 74.7, 1.5, "pasta,dry,enr"],
+    ["monggo", "Monggo, dry", "c", "16080", "kg", 1000, "kg", 1, 1, 347, 23.9, 62.6, 1.1, "mung bns,mature seeds,raw"],
+    ["peanut-butter", "Peanut butter", "f", "16098", "pack", 340, "jar (340 g)", 1, 1, 598, 22.2, 22.3, 51.4, "peanut butter,smooth style,w/ salt"],
+    ["oil", "Cooking oil", "f", "04582", "pack", 920, "bottle (1 L)", 1, 1, 884, 0.0, 0.0, 100.0, "oil,canola"],
+    ["olive-oil", "Olive oil", "f", "04053", "pack", 460, "bottle (500 mL)", 1, 1, 884, 0.0, 0.0, 100.0, "oil,olive,salad or cooking"],
+    ["avocado", "Avocado", "f", "09037", "pc", 200, "pc", 0.7, 1, 160, 2.0, 8.5, 14.7, "avocados,raw,all comm var"],
+    ["peanuts", "Peanuts, roasted", "f", "16390", "pack", 250, "pack (250 g)", 1, 1, 587, 24.4, 21.3, 49.7, "peanuts,all types,dry-roasted,wo/salt"],
+    ["kangkong", "Kangkong", "v", "11503", "pack", 250, "bundle (250 g)", 0.6, 1, 19, 2.6, 3.1, 0.2, "swamp cabbage,(skunk cabbage),raw"],
+    ["pechay", "Pechay", "v", "11116", "kg", 1000, "kg", 0.85, 1, 13, 1.5, 2.2, 0.2, "cabbage,chinese (pak-choi),raw"],
+    ["cabbage", "Cabbage", "v", "11109", "kg", 1000, "kg", 0.8, 1, 25, 1.3, 5.8, 0.1, "cabbage,raw"],
+    ["carrots", "Carrots", "v", "11124", "kg", 1000, "kg", 0.9, 1, 41, 0.9, 9.6, 0.2, "carrots,raw"],
+    ["broccoli", "Broccoli", "v", "11090", "kg", 1000, "kg", 0.65, 1, 34, 2.8, 6.6, 0.4, "broccoli,raw"],
+    ["sitaw", "Sitaw", "v", "11199", "pack", 250, "bundle (250 g)", 0.9, 1, 47, 2.8, 8.3, 0.4, "yardlong bean,raw"],
+    ["talong", "Talong / eggplant", "v", "11209", "kg", 1000, "kg", 0.9, 1, 25, 1.0, 5.9, 0.2, "eggplant,raw"],
+    ["tomato", "Tomato", "v", "11529", "kg", 1000, "kg", 0.95, 1, 18, 0.9, 3.9, 0.2, "tomatoes,red,ripe,raw,year rnd average"],
+    ["ampalaya", "Ampalaya", "v", "11024", "kg", 1000, "kg", 0.8, 1, 17, 1.0, 3.7, 0.2, "balsam-pear (bitter gourd),pods,raw"],
+    ["kalabasa", "Kalabasa", "v", "11485", "kg", 1000, "kg", 0.8, 1, 45, 1.0, 11.7, 0.1, "squash,wntr,butternut,raw"]
+  ].map(a => ({ id: a[0], n: a[1], role: a[2], ndb: a[3], unit: a[4], ug: a[5], ul: a[6], y: a[7], w: a[8], kcal: a[9], p: a[10], c: a[11], f: a[12], d: a[13] }));
+  const PF = id => PLAN_FOODS.find(x => x.id === id);
+  const ROLES = [
+    { k: "p", n: "Protein", ic: "🍗", key: "p", hint: "Split your protein target between these." },
+    { k: "c", n: "Carbs", ic: "🍚", key: "c", hint: "Fill the carbs left after protein and veggies." },
+    { k: "f", n: "Fats", ic: "🥑", key: "f", hint: "Top up the fat that's still missing." },
+    { k: "v", n: "Veggies", ic: "🥬", key: null, hint: "A set amount per day, split between these." }
+  ];
+  const peso = n => "₱" + nf.format(Math.round(n));
+  function migrateGrocery() {
+    if (state.grocery) return;
+    const g = macroGoals();
+    state.grocery = { days: 7, useGoals: !!g, p: g ? Math.round(g.p) : 100, c: g ? Math.round(g.c) : 150, f: g ? Math.round(g.f) : 50, vegG: 300, budget: null,
+      items: [["chicken-breast", 3], ["eggs", 1], ["rice", 2], ["oats", 1], ["banana", 1], ["peanut-butter", 1], ["oil", 1], ["kangkong", 1], ["pechay", 1], ["carrots", 1]].map(([id, w]) => ({ id, w, price: "" })),
+      bought: {} };
+    save();
+  }
+  function groceryTargets() {
+    const G = state.grocery, g = macroGoals();
+    const d = G.useGoals && g ? { p: g.p, c: g.c, f: g.f } : { p: +G.p || 0, c: +G.c || 0, f: +G.f || 0 };
+    return d;
+  }
+  /* Core calculation: veggies first (fixed grams), then protein foods share the protein target,
+     carb foods fill the carbs still missing, fat foods fill the fat still missing. */
+  function planGrocery() {
+    const G = state.grocery, days = Math.max(1, +G.days || 7), t = groceryTargets();
+    const tot = { p: t.p * days, c: t.c * days, f: t.f * days };
+    const got = { p: 0, c: 0, f: 0, kcal: 0 };
+    const res = {}; const notes = [];
+    const byRole = k => G.items.filter(it => PF(it.id) && PF(it.id).role === k);
+    const prots = byRole("p"), carbs = byRole("c"), fats = byRole("f"), vegs = byRole("v");
+    const W = list => list.reduce((a, it) => a + Math.max(0, +it.w || 0), 0) || 1;
+    /* grams of each food needed so its group delivers `amount` of `macro` */
+    const gramsFor = (list, amount, macro) => { const out = {}; const w = W(list); list.forEach(it => { const f = PF(it.id), share = amount * Math.max(0, +it.w || 0) / w; out[it.id] = macro ? (f[macro] > 0 ? share / f[macro] * 100 : 0) : share; }); return out; };
+    const sumOf = (list, grams, k) => list.reduce((a, it) => a + PF(it.id)[k] * (grams[it.id] || 0) / 100, 0);
+    const vegG = gramsFor(vegs, (+G.vegG || 0) * days, null);
+    let pG = {}, cG = {}, fG = {};
+    let needC = 0, needF = 0;
+    // Each group fills what the others leave; repeat a few times so everything settles on the targets.
+    for (let k = 0; k < 8; k++) {
+      const otherP = sumOf(vegs, vegG, "p") + sumOf(carbs, cG, "p") + sumOf(fats, fG, "p");
+      pG = gramsFor(prots, Math.max(0, tot.p - otherP), "p");
+      needC = tot.c - sumOf(vegs, vegG, "c") - sumOf(prots, pG, "c") - sumOf(fats, fG, "c");
+      cG = gramsFor(carbs, Math.max(0, needC), "c");
+      needF = tot.f - sumOf(vegs, vegG, "f") - sumOf(prots, pG, "f") - sumOf(carbs, cG, "f");
+      fG = gramsFor(fats, Math.max(0, needF), "f");
+    }
+    const add = (it, food, edibleG) => {
+      edibleG = Math.max(0, edibleG);
+      const r = { it, food, edible: edibleG, buyG: edibleG / food.y, p: food.p * edibleG / 100, c: food.c * edibleG / 100, f: food.f * edibleG / 100, kcal: food.kcal * edibleG / 100 };
+      r.units = r.buyG / food.ug;
+      r.cost = it.price !== "" && it.price != null && !isNaN(+it.price) ? r.units * +it.price : null;
+      got.p += r.p; got.c += r.c; got.f += r.f; got.kcal += r.kcal;
+      res[it.id] = r;
+    };
+    [[vegs, vegG], [prots, pG], [carbs, cG], [fats, fG]].forEach(([list, gm]) => list.forEach(it => add(it, PF(it.id), gm[it.id] || 0)));
+    if (!prots.length && tot.p > 0) notes.push("Add at least one protein food to reach your protein target.");
+    if (needC < -5) notes.push("Your other foods already cover your carbs (" + Math.round(-needC) + " g over for the week), so carb foods are set to zero.");
+    else if (!carbs.length && needC > 20) notes.push("Add a carb food (like rice or oats) to reach your carb target.");
+    if (needF < -5) notes.push("You already get " + Math.round(-needF) + " g more fat than your target from the other foods. Leaner protein (chicken breast, tuna, tilapia) would bring it down.");
+    else if (!fats.length && needF > 20) notes.push("Add a fat source (like peanut butter or cooking oil) to reach your fat target.");
+    const costs = Object.values(res).map(r => r.cost);
+    const total = costs.reduce((a, c) => a + (c || 0), 0);
+    const missingPrice = Object.values(res).filter(r => r.cost == null && r.edible > 0).length;
+    return { days, t, tot, got, res, notes, total, missingPrice };
+  }
+  function fmtBuy(r) {
+    const f = r.food;
+    if (r.edible <= 0) return "—";
+    if (f.unit === "kg") return (r.buyG >= 1000 ? (Math.ceil(r.buyG / 50) * 50 / 1000).toFixed(2).replace(/0$/, "") + " kg" : Math.ceil(r.buyG / 10) * 10 + " g");
+    if (f.unit === "pc") return Math.ceil(r.units) + " pc" + (Math.ceil(r.units) === 1 ? "" : "s");
+    return r.units < 0.95 ? Math.max(5, Math.ceil(r.buyG / 5) * 5) + " g" : Math.ceil(r.units - 0.05) + " × " + f.ul.replace(/\s*\(.*\)$/, "");
+  }
+  function fmtPerDay(r, days) {
+    const f = r.food, g = r.edible / days;
+    if (g <= 0) return "";
+    if (f.unit === "pc") { const pcs = r.units / days; return (pcs >= 1 ? (Math.round(pcs * 2) / 2) : pcs.toFixed(1)) + " pc/day"; }
+    if (f.role === "f" && g < 40) return Math.round(g) + " g/day (~" + (Math.round(g / 14 * 2) / 2) + " tbsp)";
+    return Math.round(g) + " g/day" + (f.id === "rice" || f.id === "brown-rice" ? " uncooked (~" + (Math.round(g * 2.6 / 158 * 4) / 4) + " cup cooked)" : "");
+  }
+  function renderGrocery(full) {
+    const G = state.grocery, g = macroGoals();
+    const active = document.activeElement && document.activeElement.closest && document.activeElement.closest("#mealsGrocery");
+    if (!active) {
+      $("grDays").textContent = G.days;
+      $("grUseGoals").setAttribute("aria-pressed", String(!!(G.useGoals && g)));
+      $("grUseGoals").disabled = !g;
+      const t = groceryTargets();
+      $("grP").value = Math.round(t.p); $("grC").value = Math.round(t.c); $("grF").value = Math.round(t.f);
+      ["grP", "grC", "grF"].forEach(id => $(id).disabled = !!(G.useGoals && g));
+      $("grVeg").value = G.vegG; $("grBudget").value = G.budget || "";
+    }
+    $("grGoalNote").textContent = g ? (G.useGoals ? "Using your Nutrition goals (" + nf.format(state.kcalTarget) + " kcal/day). Turn this off to type your own." : "Typing your own targets.") : "Set Nutrition goals below the food log to sync them here, or type targets now.";
+    const plan = planGrocery();
+    $("grWeekly").textContent = "For " + plan.days + " day" + (plan.days === 1 ? "" : "s") + ": " + nf.format(Math.round(plan.tot.p)) + " g protein · " + nf.format(Math.round(plan.tot.c)) + " g carbs · " + nf.format(Math.round(plan.tot.f)) + " g fat";
+    // basket
+    if (full !== false) { const box = $("grBasket"); box.innerHTML = "";
+    ROLES.forEach(role => {
+      const items = G.items.filter(it => PF(it.id) && PF(it.id).role === role.k);
+      const sec = document.createElement("div"); sec.className = "gr-role";
+      const opts = PLAN_FOODS.filter(f => f.role === role.k && !G.items.some(it => it.id === f.id));
+      sec.innerHTML = '<div class="gr-role-head"><b>' + role.ic + " " + role.n + '</b><span class="sub">' + role.hint + '</span></div>' +
+        items.map(it => { const f = PF(it.id);
+          return '<div class="gr-item" data-id="' + it.id + '"><div class="gr-name"><b>' + esc(f.n) + '</b><span>' + f.p + 'P · ' + f.c + 'C · ' + f.f + 'F per 100 g</span></div>' +
+            '<label class="gr-price"><span>₱ per ' + esc(f.ul) + '</span><input type="number" inputmode="decimal" min="0" step="0.5" placeholder="price" data-k="price" id="gp-' + it.id + '" value="' + esc(it.price) + '"></label>' +
+            (items.length > 1 ? '<div class="gr-share"><span>Share</span><div class="stepper sm"><button type="button" data-a="w-" aria-label="Less of this">−</button><b>' + it.w + '</b><button type="button" data-a="w+" aria-label="More of this">+</button></div></div>' : '<div class="gr-share"></div>') +
+            '<button type="button" class="icon-btn" data-a="rm" aria-label="Remove ' + esc(f.n) + '">✕</button></div>'; }).join("") +
+        (opts.length ? '<select class="gr-add" data-role="' + role.k + '" aria-label="Add a ' + role.n.toLowerCase() + ' food"><option value="">＋ Add ' + role.n.toLowerCase() + ' food…</option>' + opts.map(f => '<option value="' + f.id + '">' + esc(f.n) + '</option>').join("") + '</select>' : "");
+      box.appendChild(sec);
+    }); }
+    // results
+    const list = $("grList"); list.innerHTML = "";
+    const order = ["p", "c", "f", "v"];
+    const rs = Object.values(plan.res).filter(r => r.edible > 0).sort((a, b) => order.indexOf(a.food.role) - order.indexOf(b.food.role));
+    if (!rs.length) list.innerHTML = '<li class="empty">Add foods to your basket to build a shopping list.</li>';
+    rs.forEach(r => {
+      const li = document.createElement("li"); const done = !!G.bought[r.it.id];
+      li.className = "gr-line" + (done ? " done" : "");
+      li.innerHTML = '<button type="button" class="chk" aria-pressed="' + done + '" aria-label="Mark ' + esc(r.food.n) + ' as bought" data-buy="' + r.it.id + '">✓</button>' +
+        '<div class="gr-line-t"><b>' + esc(r.food.n) + '</b><span>' + fmtPerDay(r, plan.days) + ' · ' + Math.round(r.p) + ' g protein</span></div>' +
+        '<div class="gr-line-q"><b>' + fmtBuy(r) + '</b><span>' + (r.cost != null ? peso(r.cost) : "add price") + (r.food.unit === "pack" ? " · " + (r.units < 0.95 ? "1 " + esc(r.food.ul) : esc(r.food.ul.replace(/^[^(]*\(?/, "").replace(/\)$/, "") || r.food.ul) + " each") : "") + '</span></div>';
+      list.appendChild(li);
+    });
+    // totals vs budget
+    const b = +G.budget || 0;
+    $("grTotal").textContent = peso(plan.total) + (plan.missingPrice ? " +" : "");
+    $("grTotalNote").textContent = plan.missingPrice ? plan.missingPrice + " item" + (plan.missingPrice > 1 ? "s" : "") + " still need a price" : "for " + plan.days + " day" + (plan.days === 1 ? "" : "s") + " · " + peso(plan.total / plan.days) + " a day";
+    const bs = $("grBudgetState");
+    if (b > 0) { const left = b - plan.total; bs.hidden = false; bs.className = "gr-budget " + (left >= 0 ? "ok" : "over"); bs.textContent = left >= 0 ? peso(left) + " under your " + peso(b) + " budget" : peso(-left) + " over your " + peso(b) + " budget"; }
+    else bs.hidden = true;
+    // macro check
+    const kTarget = (plan.t.p * 4 + plan.t.c * 4 + plan.t.f * 9) * plan.days;
+    $("grCheck").innerHTML = [["Protein", plan.got.p, plan.tot.p, "g"], ["Carbs", plan.got.c, plan.tot.c, "g"], ["Fat", plan.got.f, plan.tot.f, "g"], ["Calories", plan.got.kcal, kTarget, "kcal"]].map(([n, have, want, u]) => {
+      const pc = want ? have / want * 100 : 0, cls = Math.abs(pc - 100) <= 6 ? "ok" : pc > 100 ? "over" : "under";
+      return '<div class="gc-row"><span>' + n + '</span><span class="mbar"><i class="' + cls + '" style="width:' + Math.min(100, pc) + '%"></i></span><b>' + nf.format(Math.round(have)) + " / " + nf.format(Math.round(want)) + " " + u + '</b></div>';
+    }).join("");
+    $("grNotes").innerHTML = plan.notes.map(n => '<p class="sub gr-note">' + esc(n) + '</p>').join("");
+    // cheapest protein
+    const ranked = Object.values(plan.res).filter(r => r.food.role === "p" && r.it.price !== "" && +r.it.price > 0)
+      .map(r => ({ r, per: (+r.it.price / r.food.ug) / (r.food.p * r.food.y / 100) * 100 })).sort((a, b) => a.per - b.per);
+    $("grCheap").innerHTML = ranked.length > 1 ? '<div class="eyebrow" style="margin-top:14px">Cost per 100 g of protein</div>' + ranked.map((x, i) => '<div class="gc-row cheap"><span>' + (i === 0 ? "🥇 " : "") + esc(x.r.food.n) + '</span><b>' + peso(x.per) + '</b></div>').join("") +
+      '<p class="sub" style="margin:6px 0 0">Giving more share to the cheapest protein lowers your total.</p>' : "";
+  }
+  $("mealsGrocery").addEventListener("click", e => {
+    const b = e.target.closest("button"); if (!b) return;
+    const G = state.grocery;
+    if (b.dataset.buy) { G.bought[b.dataset.buy] = !G.bought[b.dataset.buy]; save(); renderGrocery(); return; }
+    const row = b.closest(".gr-item");
+    if (row) {
+      const it = G.items.find(x => x.id === row.dataset.id);
+      if (b.dataset.a === "w-") it.w = Math.max(1, it.w - 1);
+      if (b.dataset.a === "w+") it.w = Math.min(9, it.w + 1);
+      if (b.dataset.a === "rm") { G.items = G.items.filter(x => x !== it); delete G.bought[it.id]; }
+      save(); renderGrocery(); return;
+    }
+  });
+  $("mealsGrocery").addEventListener("change", e => {
+    const sel = e.target.closest(".gr-add"); if (!sel || !sel.value) return;
+    const f = PF(sel.value); state.grocery.items.push({ id: f.id, w: f.w, price: "" }); save(); renderGrocery(); toast("Added " + f.n);
+  });
+  $("mealsGrocery").addEventListener("input", e => {
+    const inp = e.target, G = state.grocery;
+    if (inp.dataset.k === "price") { const it = G.items.find(x => x.id === inp.closest(".gr-item").dataset.id); it.price = inp.value; save(); renderGroceryResultsOnly(); return; }
+    const map = { grP: "p", grC: "c", grF: "f", grVeg: "vegG", grBudget: "budget" };
+    if (map[inp.id]) { G[map[inp.id]] = inp.value === "" ? (inp.id === "grBudget" ? null : 0) : +inp.value; save(); renderGroceryResultsOnly(); }
+  });
+  function renderGroceryResultsOnly() { renderGrocery(false); }
+  $("grMinus").onclick = () => { state.grocery.days = Math.max(1, state.grocery.days - 1); save(); renderGrocery(); };
+  $("grPlus").onclick = () => { state.grocery.days = Math.min(14, state.grocery.days + 1); save(); renderGrocery(); };
+  $("grUseGoals").onclick = () => { const G = state.grocery; G.useGoals = !G.useGoals; if (!G.useGoals) { const t = groceryTargets(); } save(); renderGrocery(); };
+  $("grReset").onclick = () => { state.grocery.bought = {}; save(); renderGrocery(); toast("Checklist cleared"); };
+  $("grCopy").onclick = () => {
+    const plan = planGrocery();
+    const lines = Object.values(plan.res).filter(r => r.edible > 0).map(r => "☐ " + r.food.n + " — " + fmtBuy(r) + (r.food.unit === "pack" && r.units < 0.95 ? " (from 1 " + r.food.ul + ")" : "") + (r.cost != null ? " · " + peso(r.cost) : ""));
+    const text = "Dawnfast grocery list (" + plan.days + " days)\n" + lines.join("\n") + "\nTotal: " + peso(plan.total);
+    const done = () => toast("Shopping list copied");
+    try { navigator.clipboard.writeText(text).then(done, () => fallbackCopy(text)); } catch (err) { fallbackCopy(text); }
+  };
+  function fallbackCopy(text) { const ta = $("grCopyText"); ta.hidden = false; ta.value = text; ta.focus(); ta.select(); toast("Select all and copy the list below"); }
+  let mealsView = "today";
+  function setMealsView(v) {
+    mealsView = v;
+    $("mealsToday").hidden = v !== "today"; $("mealsGrocery").hidden = v !== "grocery";
+    $("mvToday").setAttribute("aria-pressed", String(v === "today")); $("mvGrocery").setAttribute("aria-pressed", String(v === "grocery"));
+    if (v === "grocery") renderGrocery(); else renderMeals();
+  }
+  $("mvToday").onclick = () => setMealsView("today");
+  $("mvGrocery").onclick = () => setMealsView("grocery");
+
   /* ---------- Tabs ---------- */
   const TABS = ["fast", "water", "meals", "workout", "progress", "zoe"];
   function go(tab, fromHash) {
     if (!TABS.includes(tab)) tab = "fast";
     TABS.forEach(t => { $("tab-" + t).hidden = t !== tab; $("nav-" + t).setAttribute("aria-current", t === tab ? "page" : "false"); });
     if (tab === "water") renderWater();
-    if (tab === "meals") renderMeals();
+    if (tab === "meals") { if (typeof mealsView !== "undefined" && mealsView === "grocery") renderGrocery(); else renderMeals(); }
     if (tab === "progress") { renderBody(); renderStats(); }
     if (tab === "zoe") { renderMe(); renderPet(); renderBadges(); }
     if (tab === "workout") renderWorkout();
@@ -3601,7 +3919,7 @@ Stretching|Full body|Bodyweight|dur|2.3
     toast("All clear! " + state.pet.name + " is a fresh egg. Start your first fast!");
   };
 
-  migrate(); migrateWorkouts(); migrateMe(); renderSoundBtn();
+  migrate(); migrateWorkouts(); migrateMe(); migrateGrocery(); renderSoundBtn();
   renderProtocols(); renderMarkers(); tick(); renderStats();
   go(location.hash.slice(1), true);
   setInterval(tick, 1000);
