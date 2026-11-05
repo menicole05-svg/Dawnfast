@@ -6,6 +6,7 @@ A visually motivating intermittent fasting tracker. A fast is a night that ends 
 Six tabs: **Fast · Water · Meals · Workout · Progress · Me**
 
 - **Water tracker:** set your own glass size and daily goal, quick-add buttons, 7-day chart (+3 sunlight for Zoe when you hit your goal)
+- **Creatine tracker:** one tap for your daily dose (default 5 g), streak, last-30-days count, and a 5-week calendar you can tap to fill in missed logs
 - **Meal & calorie log:** built-in list of common foods (including Filipino dishes) with estimated calories; log by weight in grams (or by servings), tags, daily calorie target, and eating-window status
 - **Macros (MyFitnessPal-inspired):** Goal − Food = Remaining calories, protein/carbs/fat bars and donut, meals grouped into Breakfast/Lunch/Dinner/Snacks, recent foods, and macro goal presets (Balanced, High protein, Low carb, Keto)
 - **Workouts (Hevy-inspired):** 277 exercises (barbell, dumbbell, machine, cable, kettlebell, Smith, EZ bar, bands, bodyweight, cardio), gym and home routines, live set logging with previous values, warm-up/drop/failure sets, rest timer, PRs and estimated 1-rep max, history, muscle split, and optional calories burned (estimate, or typed in from your watch or Health app)

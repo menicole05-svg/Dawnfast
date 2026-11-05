@@ -560,6 +560,28 @@ body.sheet-open { overflow: hidden; }
 .gr-note { background: color-mix(in srgb, var(--dawn-2) 18%, transparent); padding: 8px 12px; border-radius: 12px; margin: 8px 0 0; color: var(--fg); }
 .gr-copy { width: 100%; font: inherit; font-family: var(--font-mono); font-size: 13px; margin-top: 10px; padding: 10px; border-radius: 12px; border: 1px solid var(--line); background: var(--surface-2); color: var(--fg); }
 
+/* Creatine */
+.cr-top { display: grid; grid-template-columns: 76px 1fr; gap: 16px; align-items: center; }
+.cr-scoop { width: 76px; height: 76px; border-radius: 22px; display: grid; place-items: center; font-size: 34px; background: var(--surface-2); border: 2px dashed var(--line); transition: all .35s ease; filter: grayscale(.7); }
+.cr-card.done .cr-scoop { background: linear-gradient(150deg, #c9b8ff, var(--dusk)); border: 2px solid transparent; filter: none; box-shadow: 0 10px 26px -10px var(--dusk); transform: rotate(-4deg); }
+.cr-info { min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.cr-card.done #crStatus { color: var(--dusk); }
+.cr-cta { width: auto; flex: 1 1 140px; padding: 14px 18px; background: linear-gradient(100deg, #a98bff, var(--dusk)); color: #fff; box-shadow: 0 10px 30px -12px var(--dusk); }
+.cr-cta:disabled { opacity: .55; cursor: default; transform: none; box-shadow: none; }
+.cr-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin: 14px 0 12px; }
+.cr-stats div { background: var(--surface-2); border-radius: 14px; padding: 10px 12px; display: flex; flex-direction: column; min-width: 0; }
+.cr-stats b { font-family: var(--font-display); font-weight: 800; font-size: 20px; font-variant-numeric: tabular-nums; }
+.cr-stats span { font-size: 11px; color: var(--muted); font-weight: 600; }
+.cr-cal { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; }
+.cr-cal .dh { font-size: 10px; font-weight: 800; color: var(--muted); text-align: center; }
+.cr-day { all: unset; cursor: pointer; aspect-ratio: 1; max-width: 100%; border-radius: 9px; background: var(--track); display: grid; place-items: center; font-size: 11px; font-family: var(--font-mono); color: var(--muted); box-sizing: border-box; }
+.cr-day.on { background: var(--dusk); color: #fff; }
+.cr-day.today { outline: 2px solid var(--dawn-1); outline-offset: 1px; }
+.cr-day.future { visibility: hidden; }
+.cr-day:focus-visible { outline: 2px solid var(--fg); }
+.cr-dose { display: flex; gap: 10px; margin-top: 14px; }
+.cr-dose .field { flex: 1; }
+
 .foot { font-size: 12px; color: var(--muted); text-align: center; max-width: 52ch; margin: 4px auto 0; }
 
 .toast { position: fixed; left: 50%; bottom: calc(24px + env(safe-area-inset-bottom, 0px)); transform: translate(-50%, 20px); background: var(--fg); color: var(--bg); padding: 10px 18px; border-radius: 999px; font-weight: 700; font-size: 14px; opacity: 0; transition: all .3s ease; pointer-events: none; z-index: 20; max-width: calc(100% - 32px); text-align: center; }
@@ -671,6 +693,33 @@ body.sheet-open { overflow: hidden; }
     </div>
     <div class="chips-row" id="waterQuick" aria-label="Quick amounts"></div>
   </section>
+
+  <section class="card cr-card" id="crCard">
+    <div class="cr-top">
+      <div class="cr-scoop" id="crScoop" aria-hidden="true"><span>⚡</span></div>
+      <div class="cr-info">
+        <div class="eyebrow">Creatine today</div>
+        <div class="big-num" id="crStatus">Not yet</div>
+        <div class="sub" id="crMsg"></div>
+      </div>
+    </div>
+    <div class="water-btns">
+      <button class="cta cr-cta" id="crTake" type="button">Take 5 g</button>
+      <button type="button" class="icon-btn" id="crUndo" aria-label="Undo today's creatine">↶ Undo</button>
+    </div>
+    <div class="cr-stats">
+      <div><b id="crStreak">0</b><span>day streak</span></div>
+      <div><b id="crMonth">0/30</b><span>last 30 days</span></div>
+      <div><b id="crTotal">0 g</b><span>total taken</span></div>
+    </div>
+    <div class="cr-cal" id="crCal" aria-label="Creatine days, last 5 weeks"></div>
+    <div class="cr-dose">
+      <label class="field"><span>Daily dose (g)</span><input type="number" id="crDoseIn" min="1" max="25" step="0.5" inputmode="decimal"></label>
+      <button type="button" class="save-pill" id="crDoseSave" style="align-self:end">Save</button>
+    </div>
+    <p class="sub" style="margin:10px 0 0">Tap a day in the calendar to mark or unmark it if you forgot to log. Creatine works by building up over time, so the daily habit matters more than the time of day.</p>
+  </section>
+
 
   <section class="card">
     <h2>Water settings</h2>
@@ -999,7 +1048,7 @@ body.sheet-open { overflow: hidden; }
       <div class="cz-row"><span class="eyebrow">Gear</span><div class="chips-row" id="accRowMe"></div></div>
       <div class="cz-row"><span class="eyebrow">Buddy</span><div class="chips-row"><button type="button" class="chip-btn" id="zoeToggle" aria-pressed="true">🐣 Show Zoe beside me</button></div></div>
     </div>
-    <p class="sub" style="margin:12px 0 0"><b>How you earn EXP:</b> 5 per set, 20 per workout, 25 per PR, 20 per fasting goal, 10 per water or protein goal, plus daily quests.</p>
+    <p class="sub" style="margin:12px 0 0"><b>How you earn EXP:</b> 5 per set, 20 per workout, 25 per PR, 20 per fasting goal, 10 per water or protein goal, 3 per creatine day, plus daily quests.</p>
   </section>
 
   <section class="card">
@@ -1170,7 +1219,9 @@ body.sheet-open { overflow: hidden; }
     { id: "wkw3", ic: "📅", t: "Three-peat",    x: "3 workouts in a week",  xp: 25, test: s => s.wkWeekMax >= 3 },
     { id: "wk10", ic: "💥", t: "Gym rat",       x: "10 workouts",          xp: 30, acc: "cap", test: s => s.workouts >= 10 },
     { id: "wk50", ic: "🦾", t: "Iron will",     x: "50 workouts",          xp: 80, test: s => s.workouts >= 50 },
-    { id: "wkpr", ic: "🏆", t: "Record breaker", x: "Set a personal record", xp: 15, test: s => s.prs >= 1 }
+    { id: "wkpr", ic: "🏆", t: "Record breaker", x: "Set a personal record", xp: 15, test: s => s.prs >= 1 },
+    { id: "cr7", ic: "⚡", t: "Charged up", x: "7-day creatine streak", xp: 15, test: s => s.crStreak >= 7 },
+    { id: "cr30", ic: "🔋", t: "Fully loaded", x: "30-day creatine streak", xp: 40, test: s => s.crStreak >= 30 }
   );
   ACC.umbrella = { n: "Umbrella", ic: "☂️" };
   ACC.headband = { n: "Sweatband", ic: "🎽" };
@@ -2014,6 +2065,7 @@ Stretching|Full body|Bodyweight|dur|2.3
       proteinDays: (state.rw.proteinDays || []).length,
       workouts: state.wk ? state.wk.history.length : 0,
       prs: state.rw.prs || 0,
+      crStreak: state.creatine ? crStreak() : 0,
       wkWeekMax: state.wk ? Math.max(0, ...Object.values(state.wk.history.reduce((a, h) => { const k = weekKey(h.start); a[k] = (a[k] || 0) + 1; return a; }, {}))) : 0
     };
   }
@@ -3262,7 +3314,8 @@ Stretching|Full body|Bodyweight|dur|2.3
     const prs = h.reduce((a, x) => a + (x.prs || 0), 0);
     const fasts = state.history.filter(isHit).length;
     const waterDays = (state.rw.waterDays || []).length, proteinDays = (state.rw.proteinDays || []).length;
-    const exp = sets * 5 + h.length * 20 + prs * 25 + fasts * 20 + waterDays * 10 + proteinDays * 10 + ((state.me && state.me.questExp) || 0);
+    const crDays = state.creatine ? Object.keys(state.creatine.log).length : 0;
+    const exp = sets * 5 + h.length * 20 + prs * 25 + fasts * 20 + waterDays * 10 + proteinDays * 10 + crDays * 3 + ((state.me && state.me.questExp) || 0);
     return { exp, level: levelFromExp(exp), sets, prs, fasts, waterDays, workouts: h.length };
   }
   function currentKg() {
@@ -3405,6 +3458,7 @@ Stretching|Full body|Bodyweight|dur|2.3
     { id: "water", ic: "💧", t: "Hit your water goal", exp: 30, p: () => [waterTotal(todayKey()), state.water.goal] },
     { id: "fast", ic: "🌅", t: "Reach your fasting goal", exp: 45, p: () => [hitDaySet().has(todayKey()) ? 1 : 0, 1] },
     { id: "meals3", ic: "🍽️", t: "Log 3 meals or snacks", exp: 25, p: () => [state.meals.filter(m => dayKey(m.t) === todayKey()).length, 3] },
+    { id: "creatine", ic: "⚡", t: "Take your creatine", exp: 15, p: () => [state.creatine && state.creatine.log[todayKey()] ? 1 : 0, 1] },
     { id: "protein", ic: "🍗", t: "Hit your protein goal", exp: 35, p: () => { const g = macroGoals(); return [Math.round(dayTotals(todayKey()).p), g ? Math.round(g.p) : 80]; } }
   ];
   function todaySessions() {
@@ -3843,12 +3897,73 @@ Stretching|Full body|Bodyweight|dur|2.3
   $("mvToday").onclick = () => setMealsView("today");
   $("mvGrocery").onclick = () => setMealsView("grocery");
 
+  /* ---------- Creatine ---------- */
+  function migrateCreatine() {
+    if (state.creatine) return;
+    state.creatine = { dose: 5, log: {} };
+    if (state.demo) for (let i = 1; i <= 12; i++) { if (i === 5) continue; const d = new Date(); d.setDate(d.getDate() - i); d.setHours(8, 30, 0, 0); state.creatine.log[dayKey(d)] = { g: 5, t: d.getTime() }; }
+    save();
+  }
+  const crToday = () => state.creatine.log[todayKey()];
+  function crStreak() {
+    const d = new Date(); let n = 0;
+    if (!state.creatine.log[dayKey(d)]) d.setDate(d.getDate() - 1);
+    while (state.creatine.log[dayKey(d)]) { n++; d.setDate(d.getDate() - 1); }
+    return n;
+  }
+  function takeCreatine(k, silent) {
+    const before = stageOf(state.pet.xp);
+    state.creatine.log[k] = { g: state.creatine.dose, t: Date.now() };
+    const items = evaluate(before);
+    save(); renderCreatine();
+    if (!silent) { toast("⚡ " + state.creatine.dose + " g creatine logged · " + crStreak() + "-day streak"); sound("win"); }
+    if (items.length) celebrate(items);
+  }
+  function renderCreatine() {
+    if (!state.creatine) return;
+    const c = state.creatine, k = todayKey(), today = c.log[k], dose = c.dose;
+    $("crCard").classList.toggle("done", !!today);
+    $("crStatus").textContent = today ? dose === today.g ? "Done ✓" : today.g + " g ✓" : "Not yet";
+    $("crMsg").textContent = today ? "Taken at " + timeFmt.format(today.t) + ". See you tomorrow!" : "Your daily " + dose + " g. Mix it with water, a shake or any drink.";
+    $("crTake").textContent = today ? "Taken today ✓" : "Take " + dose + " g";
+    $("crTake").disabled = !!today;
+    $("crUndo").disabled = !today;
+    const days = Object.keys(c.log);
+    $("crStreak").textContent = crStreak();
+    let m = 0; for (let i = 0; i < 30; i++) { const d = new Date(); d.setDate(d.getDate() - i); if (c.log[dayKey(d)]) m++; }
+    $("crMonth").textContent = m + "/30";
+    $("crTotal").textContent = nf.format(days.reduce((a, d) => a + (+c.log[d].g || 0), 0)) + " g";
+    // calendar: last 5 weeks, Monday-first
+    const cal = $("crCal"); cal.innerHTML = ["M", "T", "W", "T", "F", "S", "S"].map(l => '<span class="dh">' + l + '</span>').join("");
+    const start = new Date(); start.setHours(0, 0, 0, 0); start.setDate(start.getDate() - (start.getDay() + 6) % 7 - 28);
+    for (let i = 0; i < 35; i++) {
+      const d = new Date(start); d.setDate(start.getDate() + i);
+      const dk = dayKey(d), fut = d.getTime() > Date.now(), on = !!c.log[dk];
+      cal.insertAdjacentHTML("beforeend", '<button type="button" class="cr-day' + (on ? " on" : "") + (dk === k ? " today" : "") + (fut ? " future" : "") + '" data-day="' + d.getTime() + '"' + (fut ? ' tabindex="-1" aria-hidden="true"' : "") +
+        ' aria-pressed="' + on + '" aria-label="' + dayFmt.format(d) + (on ? ", creatine taken" : ", not taken") + '">' + d.getDate() + '</button>');
+    }
+    if (document.activeElement !== $("crDoseIn")) $("crDoseIn").value = dose;
+  }
+  $("crTake").onclick = () => { if (!crToday()) takeCreatine(todayKey()); };
+  $("crUndo").onclick = () => { delete state.creatine.log[todayKey()]; save(); renderCreatine(); toast("Today's creatine removed"); };
+  $("crCal").addEventListener("click", e => {
+    const b = e.target.closest(".cr-day"); if (!b || b.classList.contains("future")) return;
+    const dk = dayKey(+b.dataset.day);
+    if (state.creatine.log[dk]) { delete state.creatine.log[dk]; save(); renderCreatine(); toast("Unmarked " + dayFmt.format(+b.dataset.day)); }
+    else { const t = +b.dataset.day; if (dk === todayKey()) takeCreatine(dk); else { state.creatine.log[dk] = { g: state.creatine.dose, t: t + 9 * H }; const items = evaluate(); save(); renderCreatine(); toast("Marked " + dayFmt.format(t)); if (items.length) celebrate(items); } }
+  });
+  $("crDoseSave").onclick = () => {
+    const v = +$("crDoseIn").value;
+    if (!(v >= 1 && v <= 25)) { toast("Dose should be between 1 and 25 g"); return; }
+    state.creatine.dose = Math.round(v * 2) / 2; save(); renderCreatine(); toast("Daily dose set to " + state.creatine.dose + " g");
+  };
+
   /* ---------- Tabs ---------- */
   const TABS = ["fast", "water", "meals", "workout", "progress", "zoe"];
   function go(tab, fromHash) {
     if (!TABS.includes(tab)) tab = "fast";
     TABS.forEach(t => { $("tab-" + t).hidden = t !== tab; $("nav-" + t).setAttribute("aria-current", t === tab ? "page" : "false"); });
-    if (tab === "water") renderWater();
+    if (tab === "water") { renderWater(); renderCreatine(); }
     if (tab === "meals") { if (typeof mealsView !== "undefined" && mealsView === "grocery") renderGrocery(); else renderMeals(); }
     if (tab === "progress") { renderBody(); renderStats(); }
     if (tab === "zoe") { renderMe(); renderPet(); renderBadges(); }
@@ -3915,7 +4030,7 @@ Stretching|Full body|Bodyweight|dur|2.3
   $("clearDemo").onclick = () => {
     state = { demo: false, goal: state.goal || 16, active: null, history: [],
       pet: { name: state.pet.name, xp: 0, wearing: null }, rw: freshRewards(), sound: state.sound,
-      water: { glass: state.water.glass, goal: state.water.goal, log: {} }, meals: [], body: [], kcalTarget: state.kcalTarget, macroSplit: state.macroSplit,
+      water: { glass: state.water.glass, goal: state.water.goal, log: {} }, creatine: { dose: state.creatine.dose, log: {} }, meals: [], body: [], kcalTarget: state.kcalTarget, macroSplit: state.macroSplit,
       wk: { routines: state.wk.routines, history: [], active: null, custom: state.wk.custom, addToBudget: state.wk.addToBudget, filter: state.wk.filter, kcalOn: state.wk.kcalOn },
       me: Object.assign({}, state.me, { questExp: 0, quests: {}, lastLevel: 1, createdAt: Date.now(), baseBody: {}, gearSeen: GEAR.filter(g => g[4] === "Starter").map(g => g[0]), acc: [], top: "tank", bottom: "leggings", shoes: "sneakers" }) };
     stopRest(); renderResumePill();
@@ -3927,7 +4042,7 @@ Stretching|Full body|Bodyweight|dur|2.3
     toast("All clear! " + state.pet.name + " is a fresh egg. Start your first fast!");
   };
 
-  migrate(); migrateWorkouts(); migrateMe(); migrateGrocery(); renderSoundBtn();
+  migrate(); migrateCreatine(); migrateWorkouts(); migrateMe(); migrateGrocery(); renderSoundBtn();
   renderProtocols(); renderMarkers(); tick(); renderStats();
   go(location.hash.slice(1), true);
   setInterval(tick, 1000);
