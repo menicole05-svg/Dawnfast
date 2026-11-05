@@ -1,0 +1,557 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0f0d22">
+<title>Dawnfast</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Manrope:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: one centered column — the fasting ring is the hero, stage + stats below, history at the end.
+   Concept: a fast is a night that ends in sunrise. Dark ink sky by default, dawn colors as progress. */
+:root {
+  --bg: #f3f1fa;
+  --surface: #ffffff;
+  --surface-2: #ebe8f6;
+  --fg: #1c1838;
+  --muted: #6b6690;
+  --line: #dcd8ee;
+  --dawn-1: #ff8a5b;
+  --dawn-2: #ffc46b;
+  --dusk: #7a5cff;
+  --good: #1f9d6b;
+  --track: #e2def2;
+  --font-display: "Bricolage Grotesque", "Avenir Next", system-ui, sans-serif;
+  --font-body: "Manrope", "Segoe UI", system-ui, sans-serif;
+  --font-mono: "DM Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0f0d22; --surface: #1a1736; --surface-2: #231f45; --fg: #f1eefe; --muted: #9d97c4;
+    --line: #2e2954; --dawn-1: #ff8f63; --dawn-2: #ffcf7a; --dusk: #9b84ff; --good: #4fd39b; --track: #2a2650;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0f0d22; --surface: #1a1736; --surface-2: #231f45; --fg: #f1eefe; --muted: #9d97c4;
+  --line: #2e2954; --dawn-1: #ff8f63; --dawn-2: #ffcf7a; --dusk: #9b84ff; --good: #4fd39b; --track: #2a2650;
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+body {
+  background: var(--bg);
+  background-image: radial-gradient(120% 60% at 50% -10%, color-mix(in srgb, var(--dusk) 22%, transparent), transparent 70%);
+  background-attachment: fixed;
+  color: var(--fg);
+  font-family: var(--font-body);
+  font-size: 15px;
+  line-height: 1.55;
+  min-height: 100%;
+}
+.wrap {
+  max-width: 560px;
+  margin: 0 auto;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 20px 48px;
+  display: flex; flex-direction: column; gap: 18px;
+}
+header { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.brand { font-family: var(--font-display); font-weight: 800; font-size: 24px; letter-spacing: -0.02em; display: flex; align-items: center; gap: 10px; }
+.brand .sun { width: 22px; height: 22px; border-radius: 50%; background: linear-gradient(160deg, var(--dawn-2), var(--dawn-1)); box-shadow: 0 0 18px color-mix(in srgb, var(--dawn-1) 60%, transparent); }
+.streak-pill { display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 999px; background: var(--surface); border: 1px solid var(--line); font-weight: 700; font-size: 13px; }
+.streak-pill b { font-family: var(--font-mono); font-weight: 500; color: var(--dawn-1); font-size: 15px; }
+
+.demo { display: flex; gap: 10px; align-items: center; justify-content: space-between; flex-wrap: wrap; font-size: 13px; color: var(--muted); background: var(--surface-2); border-radius: 12px; padding: 10px 14px; }
+.demo button { font-size: 13px; padding: 6px 12px; }
+
+/* Hero ring */
+.hero { display: flex; flex-direction: column; align-items: center; gap: 14px; padding-top: 6px; }
+.ring-box { position: relative; width: min(330px, 86vw); aspect-ratio: 1; max-width: 100%; }
+.ring-box svg { width: 100%; height: 100%; display: block; overflow: visible; }
+.ring-center { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; gap: 2px; padding: 18%; }
+.eyebrow { font-size: 11px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); }
+.clock { font-family: var(--font-mono); font-size: clamp(38px, 11vw, 52px); font-weight: 500; letter-spacing: -0.03em; font-variant-numeric: tabular-nums; line-height: 1.05; }
+.sub { font-size: 13px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.pct { font-family: var(--font-display); font-weight: 700; font-size: 15px; background: linear-gradient(90deg, var(--dawn-1), var(--dawn-2)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.motto { font-family: var(--font-display); font-weight: 700; font-size: 21px; text-align: center; text-wrap: balance; letter-spacing: -0.01em; max-width: 26ch; }
+
+.times { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; width: 100%; }
+.time-cell { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 10px 14px; display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.time-cell .v { font-family: var(--font-mono); font-size: 15px; font-variant-numeric: tabular-nums; }
+.time-cell button.link { all: unset; cursor: pointer; font-size: 12px; color: var(--dusk); font-weight: 700; }
+.time-cell button.link:focus-visible { outline: 2px solid var(--dusk); outline-offset: 2px; border-radius: 4px; }
+.edit-row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-top: 6px; }
+.edit-row input { font: inherit; font-size: 13px; background: var(--surface-2); color: var(--fg); border: 1px solid var(--line); border-radius: 8px; padding: 6px 8px; min-width: 0; max-width: 100%; }
+
+button { font-family: var(--font-body); font-weight: 700; font-size: 15px; border-radius: 999px; border: 1px solid var(--line); background: var(--surface); color: var(--fg); padding: 10px 18px; cursor: pointer; transition: transform .12s ease, background .2s ease; }
+button:hover { transform: translateY(-1px); }
+button:active { transform: translateY(0); }
+button:focus-visible { outline: 2px solid var(--dusk); outline-offset: 3px; }
+.cta { width: 100%; padding: 16px; font-size: 17px; border: none; color: #2a1405; background: linear-gradient(100deg, var(--dawn-1), var(--dawn-2)); box-shadow: 0 10px 30px -10px color-mix(in srgb, var(--dawn-1) 70%, transparent); }
+.cta.end { background: var(--surface); color: var(--fg); border: 1px solid var(--line); box-shadow: none; }
+.cta.confirm { background: var(--fg); color: var(--bg); }
+
+/* Protocols */
+section h2 { font-family: var(--font-display); font-size: 17px; font-weight: 700; margin: 0 0 10px; letter-spacing: -0.01em; }
+.protocols { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 4px; scrollbar-width: none; }
+.protocols::-webkit-scrollbar { display: none; }
+.proto { flex: 0 0 auto; display: flex; flex-direction: column; align-items: flex-start; gap: 0; padding: 10px 14px; border-radius: 14px; text-align: left; }
+.proto .n { font-family: var(--font-mono); font-size: 17px; font-weight: 500; }
+.proto .d { font-size: 11px; color: var(--muted); font-weight: 600; }
+.proto[aria-pressed="true"] { background: var(--fg); color: var(--bg); border-color: var(--fg); }
+.proto[aria-pressed="true"] .d { color: color-mix(in srgb, var(--bg) 70%, transparent); }
+
+/* Stage timeline */
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: 20px; padding: 18px; }
+.stages { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; }
+.stage { display: grid; grid-template-columns: 44px 18px 1fr; gap: 0 10px; align-items: start; position: relative; padding-bottom: 14px; }
+.stage:last-child { padding-bottom: 0; }
+.stage .h { font-family: var(--font-mono); font-size: 13px; color: var(--muted); text-align: right; padding-top: 1px; font-variant-numeric: tabular-nums; }
+.stage .dot { width: 14px; height: 14px; border-radius: 50%; border: 2px solid var(--track); background: var(--surface); margin-top: 3px; position: relative; z-index: 1; }
+.stage:not(:last-child)::after { content: ""; position: absolute; left: 60px; top: 18px; bottom: -2px; width: 2px; background: var(--track); }
+.stage .t { font-weight: 700; font-size: 14px; }
+.stage .x { font-size: 13px; color: var(--muted); }
+.stage.done .dot { background: var(--dawn-1); border-color: var(--dawn-1); }
+.stage.done:not(:last-child)::after { background: color-mix(in srgb, var(--dawn-1) 60%, var(--track)); }
+.stage.now .dot { background: var(--dawn-2); border-color: var(--dawn-1); box-shadow: 0 0 0 5px color-mix(in srgb, var(--dawn-2) 30%, transparent); }
+.stage.now .t { color: var(--dawn-1); }
+.stage .badge { display: inline-block; font-size: 10px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; padding: 1px 7px; border-radius: 999px; background: color-mix(in srgb, var(--dawn-2) 35%, transparent); color: var(--fg); margin-left: 6px; vertical-align: 2px; }
+
+/* Stats */
+.stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+.stat { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 12px 14px; min-width: 0; }
+.stat .v { font-family: var(--font-display); font-weight: 800; font-size: 24px; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; }
+.stat .v small { font-size: 13px; font-weight: 600; color: var(--muted); margin-left: 2px; }
+.stat .l { font-size: 12px; color: var(--muted); font-weight: 600; }
+
+/* Week chart */
+.chart { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; align-items: end; height: 150px; position: relative; padding-top: 8px; }
+.goal-line { position: absolute; left: 0; right: 0; border-top: 1.5px dashed color-mix(in srgb, var(--dusk) 60%, transparent); pointer-events: none; }
+.goal-line span { position: absolute; right: 0; top: -18px; font-size: 11px; font-family: var(--font-mono); color: var(--dusk); background: var(--surface); padding: 0 4px; }
+.bar-col { display: flex; flex-direction: column; align-items: center; justify-content: flex-end; gap: 6px; height: 100%; min-width: 0; }
+.bar { width: 100%; max-width: 34px; border-radius: 8px 8px 4px 4px; background: var(--track); min-height: 4px; position: relative; transition: height .6s cubic-bezier(.2,.8,.2,1); }
+.bar.hit { background: linear-gradient(180deg, var(--dawn-2), var(--dawn-1)); }
+.bar .val { position: absolute; top: -18px; left: 50%; transform: translateX(-50%); font-size: 10px; font-family: var(--font-mono); color: var(--muted); white-space: nowrap; }
+.bar-col .day { font-size: 11px; font-weight: 700; color: var(--muted); }
+.bar-col.today .day { color: var(--fg); }
+
+/* History */
+.history { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; }
+.history li { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--line); }
+.history li:last-child { border-bottom: none; }
+.history .when { font-size: 13px; color: var(--muted); }
+.history .dur { font-family: var(--font-mono); font-size: 15px; font-variant-numeric: tabular-nums; display: flex; align-items: center; gap: 8px; }
+.chip { font-family: var(--font-body); font-size: 11px; font-weight: 800; padding: 2px 8px; border-radius: 999px; }
+.chip.hit { background: color-mix(in srgb, var(--good) 18%, transparent); color: var(--good); }
+.chip.miss { background: var(--surface-2); color: var(--muted); }
+.history button.del { all: unset; cursor: pointer; color: var(--muted); font-size: 18px; line-height: 1; padding: 2px 6px; border-radius: 6px; }
+.history button.del:focus-visible { outline: 2px solid var(--dusk); }
+.empty { color: var(--muted); font-size: 14px; text-align: center; padding: 8px 0; }
+
+.foot { font-size: 12px; color: var(--muted); text-align: center; max-width: 52ch; margin: 4px auto 0; }
+
+.toast { position: fixed; left: 50%; bottom: calc(24px + env(safe-area-inset-bottom, 0px)); transform: translate(-50%, 20px); background: var(--fg); color: var(--bg); padding: 10px 18px; border-radius: 999px; font-weight: 700; font-size: 14px; opacity: 0; transition: all .3s ease; pointer-events: none; z-index: 20; max-width: calc(100% - 32px); text-align: center; }
+.toast.show { opacity: 1; transform: translate(-50%, 0); }
+
+@keyframes pulse { 0%,100% { opacity: .55 } 50% { opacity: 1 } }
+.tip-glow { animation: pulse 2.4s ease-in-out infinite; }
+@media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
+@media (max-width: 380px) { .stats { grid-template-columns: 1fr 1fr; } }
+</style>
+<style>[hidden]{display:none!important}html,body{margin:0}img{max-width:100%}</style>
+</head>
+<body>
+
+
+<div class="wrap">
+  <header>
+    <div class="brand"><span class="sun" aria-hidden="true"></span>Dawnfast</div>
+    <div class="streak-pill" title="Days in a row you reached your goal">🔥 <b id="streak">0</b> day streak</div>
+  </header>
+
+  <div class="demo" id="demo" hidden>
+    <span>You're looking at example data so you can see how it works.</span>
+    <button id="clearDemo" type="button">Start fresh</button>
+  </div>
+
+  <section class="hero" aria-live="polite">
+    <div class="ring-box">
+      <svg viewBox="0 0 300 300" aria-hidden="true">
+        <defs>
+          <linearGradient id="dawnGrad" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stop-color="var(--dusk)"/>
+            <stop offset="55%" stop-color="var(--dawn-1)"/>
+            <stop offset="100%" stop-color="var(--dawn-2)"/>
+          </linearGradient>
+          <filter id="glow" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="5"/></filter>
+        </defs>
+        <circle cx="150" cy="150" r="128" fill="none" stroke="var(--track)" stroke-width="16"/>
+        <circle id="ringGlow" cx="150" cy="150" r="128" fill="none" stroke="url(#dawnGrad)" stroke-width="16" stroke-linecap="round" transform="rotate(-90 150 150)" filter="url(#glow)" opacity=".5"/>
+        <circle id="ring" cx="150" cy="150" r="128" fill="none" stroke="url(#dawnGrad)" stroke-width="16" stroke-linecap="round" transform="rotate(-90 150 150)"/>
+        <g id="markers"></g>
+        <circle id="tip" class="tip-glow" r="9" fill="var(--dawn-2)" stroke="var(--surface)" stroke-width="3"/>
+      </svg>
+      <div class="ring-center">
+        <div class="eyebrow" id="stateLabel">Fasting</div>
+        <div class="clock" id="clock">00:00:00</div>
+        <div class="sub" id="remain">—</div>
+        <div class="pct" id="pct"></div>
+      </div>
+    </div>
+    <div class="motto" id="motto">Ready when you are.</div>
+
+    <div class="times" id="times">
+      <div class="time-cell">
+        <span class="eyebrow">Started</span>
+        <span class="v" id="startV">—</span>
+        <button class="link" id="editStartBtn" type="button">Edit start time</button>
+        <div class="edit-row" id="editRow" hidden>
+          <input type="datetime-local" id="startInput" aria-label="Fast start time">
+          <button type="button" id="saveStart" style="padding:6px 12px;font-size:13px">Save</button>
+        </div>
+      </div>
+      <div class="time-cell">
+        <span class="eyebrow">Goal reached at</span>
+        <span class="v" id="goalV">—</span>
+        <span class="sub" id="goalDay"></span>
+      </div>
+    </div>
+
+    <button class="cta" id="mainBtn" type="button">Start fasting</button>
+  </section>
+
+  <section>
+    <h2>Your plan</h2>
+    <div class="protocols" id="protocols" role="group" aria-label="Fasting plan"></div>
+  </section>
+
+  <section class="card">
+    <h2>What's happening in your body</h2>
+    <ol class="stages" id="stages"></ol>
+  </section>
+
+  <section>
+    <div class="stats">
+      <div class="stat"><div class="v" id="sTotal">0</div><div class="l">Fasts done</div></div>
+      <div class="stat"><div class="v" id="sLong">0<small>h</small></div><div class="l">Longest</div></div>
+      <div class="stat"><div class="v" id="sAvg">0<small>h</small></div><div class="l">Average</div></div>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>This week</h2>
+    <div class="chart" id="chart"></div>
+  </section>
+
+  <section class="card">
+    <h2>History</h2>
+    <ul class="history" id="history"></ul>
+  </section>
+
+  <p class="foot">Stage timings are general estimates and vary from person to person. Check with your doctor before long fasts, especially if you're pregnant, diabetic, or take medication.</p>
+</div>
+
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+(function () {
+  const KEY = "dawnfast.v1";
+  const H = 3600000;
+  const PROTOCOLS = [
+    { id: "13", hours: 13, name: "13:11", desc: "Gentle start" },
+    { id: "16", hours: 16, name: "16:8", desc: "Most popular" },
+    { id: "18", hours: 18, name: "18:6", desc: "Fat-burn zone" },
+    { id: "20", hours: 20, name: "20:4", desc: "Warrior" },
+    { id: "23", hours: 23, name: "OMAD", desc: "One meal a day" },
+    { id: "36", hours: 36, name: "36h", desc: "Monk fast" }
+  ];
+  const STAGES = [
+    { at: 0,  t: "Fed state", x: "Your body is digesting and using energy from your last meal." },
+    { at: 4,  t: "Blood sugar settles", x: "Insulin comes down and your body starts drawing on stored energy." },
+    { at: 8,  t: "Glycogen burn", x: "Your liver's sugar stores are being used up. Hunger waves come and go." },
+    { at: 12, t: "Fat burning", x: "With glycogen low, your body shifts toward burning fat for fuel." },
+    { at: 16, t: "Ketosis", x: "Ketone levels rise. Many people feel clearer and steadier here." },
+    { at: 18, t: "Deep ketosis", x: "Fat is now a main fuel source. Keep sipping water and electrolytes." },
+    { at: 24, t: "Autophagy", x: "Cell clean-up processes are thought to ramp up around this point." }
+  ];
+  const MOTTOS = [
+    [0,   "Every fast starts with one hour. You've begun."],
+    [0.15,"Nice start. Water, tea, or black coffee keep you going."],
+    [0.35,"Hunger comes in waves. This one will pass too."],
+    [0.5, "Halfway there. Your body is switching gears."],
+    [0.7, "The hard part is behind you. Keep going."],
+    [0.9, "Almost at your goal. You can see the sunrise."],
+    [1,   "Goal reached! Break your fast gently, or keep riding it."]
+  ];
+  const IDLE_MOTTOS = ["Ready when you are.", "Your next fast is one tap away.", "Rest well. The next sunrise is yours."];
+
+  let state = load();
+
+  function load() {
+    try {
+      const raw = localStorage.getItem(KEY);
+      if (raw) return JSON.parse(raw);
+    } catch (e) {}
+    return sample();
+  }
+  function save() { try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) {} }
+
+  function sample() {
+    const now = Date.now();
+    const day = 24 * H;
+    const hist = [];
+    const lens = [16.4, 17.1, 14.2, 16.0, 18.3, 16.8];
+    lens.forEach((len, i) => {
+      const end = now - (i + 1) * day + 2 * H;
+      hist.push({ start: end - len * H, end, goal: 16 });
+    });
+    return { demo: true, goal: 16, active: { start: now - 13.4 * H, goal: 16 }, history: hist };
+  }
+
+  const $ = id => document.getElementById(id);
+  const ring = $("ring"), ringGlow = $("ringGlow"), tip = $("tip");
+  const R = 128, C = 2 * Math.PI * R;
+  ring.setAttribute("stroke-dasharray", C);
+  ringGlow.setAttribute("stroke-dasharray", C);
+
+  const pad = n => String(n).padStart(2, "0");
+  function fmtDur(ms) {
+    const s = Math.max(0, Math.floor(ms / 1000));
+    return pad(Math.floor(s / 3600)) + ":" + pad(Math.floor(s / 60) % 60) + ":" + pad(s % 60);
+  }
+  function fmtHM(ms) { const m = Math.round(ms / 60000); return Math.floor(m / 60) + "h " + pad(m % 60) + "m"; }
+  const timeFmt = new Intl.DateTimeFormat(undefined, { hour: "numeric", minute: "2-digit" });
+  const dayFmt = new Intl.DateTimeFormat(undefined, { weekday: "short", month: "short", day: "numeric" });
+  function relDay(t) {
+    const d = new Date(t), n = new Date();
+    const a = new Date(d.getFullYear(), d.getMonth(), d.getDate()), b = new Date(n.getFullYear(), n.getMonth(), n.getDate());
+    const diff = Math.round((a - b) / (24 * H));
+    if (diff === 0) return "Today"; if (diff === 1) return "Tomorrow"; if (diff === -1) return "Yesterday";
+    return dayFmt.format(d);
+  }
+  function toLocalInput(t) {
+    const d = new Date(t);
+    return d.getFullYear() + "-" + pad(d.getMonth() + 1) + "-" + pad(d.getDate()) + "T" + pad(d.getHours()) + ":" + pad(d.getMinutes());
+  }
+  function toast(msg) { const el = $("toast"); el.textContent = msg; el.classList.add("show"); clearTimeout(toast._t); toast._t = setTimeout(() => el.classList.remove("show"), 2400); }
+
+  /* Protocol buttons */
+  function renderProtocols() {
+    const box = $("protocols"); box.innerHTML = "";
+    PROTOCOLS.forEach(p => {
+      const b = document.createElement("button");
+      b.type = "button"; b.className = "proto"; b.id = "proto-" + p.id;
+      b.setAttribute("aria-pressed", String(currentGoal() === p.hours));
+      b.innerHTML = '<span class="n">' + p.name + '</span><span class="d">' + p.desc + '</span>';
+      b.onclick = () => {
+        state.goal = p.hours;
+        if (state.active) state.active.goal = p.hours;
+        save(); renderProtocols(); renderMarkers(); tick(); renderStats();
+        toast("Plan set to " + p.name);
+      };
+      box.appendChild(b);
+    });
+  }
+  const currentGoal = () => state.active ? state.active.goal : state.goal;
+
+  /* Stage markers on the ring */
+  function renderMarkers() {
+    const g = $("markers"); g.innerHTML = "";
+    const goal = currentGoal();
+    STAGES.forEach(s => {
+      if (s.at === 0 || s.at >= goal) return;
+      const a = (s.at / goal) * 2 * Math.PI - Math.PI / 2;
+      const x = 150 + R * Math.cos(a), y = 150 + R * Math.sin(a);
+      const c = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+      c.setAttribute("cx", x); c.setAttribute("cy", y); c.setAttribute("r", 3.2);
+      c.setAttribute("fill", "var(--surface)"); c.setAttribute("opacity", ".9");
+      g.appendChild(c);
+    });
+  }
+
+  function renderStages(elapsedH) {
+    const ol = $("stages"); ol.innerHTML = "";
+    let nowIdx = -1;
+    if (elapsedH != null) STAGES.forEach((s, i) => { if (elapsedH >= s.at) nowIdx = i; });
+    STAGES.forEach((s, i) => {
+      const li = document.createElement("li");
+      li.className = "stage" + (i < nowIdx ? " done" : i === nowIdx ? " now" : "");
+      li.innerHTML = '<span class="h">' + s.at + 'h</span><span class="dot"></span><div><div class="t">' + s.t +
+        (i === nowIdx ? '<span class="badge">You\'re here</span>' : "") + '</div><div class="x">' + s.x + '</div></div>';
+      ol.appendChild(li);
+    });
+    return nowIdx;
+  }
+
+  let lastStageIdx = null, confirmTimer = null;
+
+  function tick() {
+    const now = Date.now();
+    const a = state.active;
+    const btn = $("mainBtn");
+    if (!btn.classList.contains("confirm")) {
+      btn.textContent = a ? "End fast" : "Start fasting";
+      btn.className = "cta" + (a ? " end" : "");
+    }
+    $("times").hidden = !a;
+    if (!a) {
+      $("stateLabel").textContent = "Not fasting";
+      const last = state.history[0];
+      $("clock").textContent = last ? fmtDur(now - last.end) : "00:00:00";
+      $("remain").textContent = last ? "since your last fast" : "Pick a plan and start";
+      $("pct").textContent = "";
+      ring.setAttribute("stroke-dashoffset", C); ringGlow.setAttribute("stroke-dashoffset", C);
+      tip.setAttribute("cx", 150); tip.setAttribute("cy", 22);
+      $("motto").textContent = IDLE_MOTTOS[state.history.length % IDLE_MOTTOS.length];
+      if (lastStageIdx !== -2) { renderStages(null); lastStageIdx = -2; }
+      return;
+    }
+    const goalMs = a.goal * H;
+    const el = now - a.start;
+    const p = el / goalMs;
+    const shown = Math.min(p, 1);
+    ring.setAttribute("stroke-dashoffset", C * (1 - shown));
+    ringGlow.setAttribute("stroke-dashoffset", C * (1 - shown));
+    const ang = shown * 2 * Math.PI - Math.PI / 2;
+    tip.setAttribute("cx", 150 + R * Math.cos(ang)); tip.setAttribute("cy", 150 + R * Math.sin(ang));
+
+    $("stateLabel").textContent = p >= 1 ? "Goal reached" : "Fasting";
+    $("clock").textContent = fmtDur(el);
+    $("remain").textContent = p >= 1 ? "+" + fmtHM(el - goalMs) + " bonus time" : fmtHM(goalMs - el) + " to go";
+    $("pct").textContent = Math.floor(p * 100) + "% of " + a.goal + "h";
+    let m = MOTTOS[0][1]; MOTTOS.forEach(([t, s]) => { if (p >= t) m = s; });
+    $("motto").textContent = m;
+    $("startV").textContent = relDay(a.start) + ", " + timeFmt.format(a.start);
+    $("goalV").textContent = timeFmt.format(a.start + goalMs);
+    $("goalDay").textContent = relDay(a.start + goalMs);
+
+    const idx = renderStagesIfChanged(el / H);
+    if (lastStageIdx !== null && lastStageIdx >= 0 && idx > lastStageIdx) toast("New stage: " + STAGES[idx].t);
+    lastStageIdx = idx;
+  }
+  function renderStagesIfChanged(h) {
+    let idx = -1; STAGES.forEach((s, i) => { if (h >= s.at) idx = i; });
+    if (idx !== lastStageIdx) renderStages(h);
+    return idx;
+  }
+
+  function dayKey(t) { const d = new Date(t); return d.getFullYear() + "-" + d.getMonth() + "-" + d.getDate(); }
+
+  function renderStats() {
+    const h = state.history;
+    $("sTotal").textContent = h.length;
+    const lens = h.map(f => (f.end - f.start) / H);
+    $("sLong").innerHTML = (lens.length ? Math.max(...lens).toFixed(1) : 0) + "<small>h</small>";
+    $("sAvg").innerHTML = (lens.length ? (lens.reduce((a, b) => a + b, 0) / lens.length).toFixed(1) : 0) + "<small>h</small>";
+
+    // streak: consecutive days (ending today or yesterday) with a fast that hit its goal
+    const hitDays = new Set(h.filter(f => f.end - f.start >= f.goal * H).map(f => dayKey(f.end)));
+    if (state.active && Date.now() - state.active.start >= state.active.goal * H) hitDays.add(dayKey(Date.now()));
+    let streak = 0; const d = new Date();
+    if (!hitDays.has(dayKey(d))) d.setDate(d.getDate() - 1);
+    while (hitDays.has(dayKey(d))) { streak++; d.setDate(d.getDate() - 1); }
+    $("streak").textContent = streak;
+
+    // week chart
+    const chart = $("chart"); chart.innerHTML = "";
+    const days = [];
+    for (let i = 6; i >= 0; i--) { const x = new Date(); x.setHours(0, 0, 0, 0); x.setDate(x.getDate() - i); days.push(x); }
+    const vals = days.map(x => {
+      const k = dayKey(x);
+      let best = 0;
+      h.forEach(f => { if (dayKey(f.end) === k) best = Math.max(best, (f.end - f.start) / H); });
+      if (state.active && k === dayKey(Date.now())) best = Math.max(best, (Date.now() - state.active.start) / H);
+      return best;
+    });
+    const goal = currentGoal();
+    const max = Math.max(goal * 1.25, ...vals, 1);
+    const plotH = 118; // px for bars (chart 150 minus labels)
+    const gl = document.createElement("div"); gl.className = "goal-line";
+    gl.style.bottom = (24 + (goal / max) * plotH) + "px";
+    gl.innerHTML = "<span>" + goal + "h goal</span>";
+    chart.appendChild(gl);
+    days.forEach((x, i) => {
+      const col = document.createElement("div");
+      col.className = "bar-col" + (i === 6 ? " today" : "");
+      const v = vals[i];
+      col.innerHTML = '<div class="bar' + (v >= goal ? " hit" : "") + '" style="height:' + Math.max(4, (v / max) * plotH) + 'px">' +
+        (v > 0 ? '<span class="val">' + v.toFixed(1) + '</span>' : "") + '</div><span class="day">' +
+        x.toLocaleDateString(undefined, { weekday: "narrow" }) + '</span>';
+      chart.appendChild(col);
+    });
+
+    // history list
+    const ul = $("history"); ul.innerHTML = "";
+    if (!h.length) { ul.innerHTML = '<li class="empty">Finished fasts will show up here.</li>'; }
+    h.slice(0, 20).forEach((f, i) => {
+      const len = f.end - f.start, hit = len >= f.goal * H;
+      const li = document.createElement("li");
+      li.innerHTML = '<div><div style="font-weight:700">' + relDay(f.end) + '</div><div class="when">' +
+        timeFmt.format(f.start) + ' → ' + timeFmt.format(f.end) + ' · ' + f.goal + 'h plan</div></div>' +
+        '<div class="dur">' + fmtHM(len) + '<span class="chip ' + (hit ? "hit" : "miss") + '">' + (hit ? "Goal ✓" : Math.round(len / (f.goal * H) * 100) + "%") + '</span>' +
+        '<button class="del" type="button" aria-label="Delete this fast" data-i="' + i + '">×</button></div>';
+      ul.appendChild(li);
+    });
+    ul.querySelectorAll(".del").forEach(b => b.onclick = () => {
+      state.history.splice(+b.dataset.i, 1); save(); renderStats(); toast("Fast deleted");
+    });
+
+    $("demo").hidden = !state.demo;
+  }
+
+  $("mainBtn").onclick = () => {
+    const btn = $("mainBtn");
+    if (!state.active) {
+      state.active = { start: Date.now(), goal: state.goal };
+      lastStageIdx = null;
+      save(); renderMarkers(); tick(); renderStats();
+      toast("Fast started. You've got this!");
+      return;
+    }
+    if (!btn.classList.contains("confirm")) {
+      btn.classList.add("confirm"); btn.className = "cta confirm"; btn.textContent = "Tap again to end your fast";
+      clearTimeout(confirmTimer);
+      confirmTimer = setTimeout(() => { btn.classList.remove("confirm"); tick(); }, 4000);
+      return;
+    }
+    clearTimeout(confirmTimer);
+    const a = state.active, end = Date.now();
+    const len = end - a.start;
+    state.history.unshift({ start: a.start, end, goal: a.goal });
+    state.active = null;
+    btn.className = "cta";
+    save(); tick(); renderStats();
+    toast(len >= a.goal * H ? "Goal smashed: " + fmtHM(len) + " 🎉" : "Logged " + fmtHM(len) + ". Every hour counts.");
+  };
+
+  $("editStartBtn").onclick = () => {
+    const row = $("editRow"); row.hidden = !row.hidden;
+    if (!row.hidden && state.active) { $("startInput").value = toLocalInput(state.active.start); $("startInput").max = toLocalInput(Date.now()); }
+  };
+  $("saveStart").onclick = () => {
+    const v = new Date($("startInput").value).getTime();
+    if (!v || isNaN(v)) { toast("Pick a valid date and time"); return; }
+    if (v > Date.now()) { toast("Start time can't be in the future"); return; }
+    state.active.start = v; lastStageIdx = null; save();
+    $("editRow").hidden = true; tick(); renderStats(); toast("Start time updated");
+  };
+
+  $("clearDemo").onclick = () => {
+    state = { demo: false, goal: state.goal || 16, active: null, history: [] };
+    lastStageIdx = null; save(); renderProtocols(); renderMarkers(); tick(); renderStats();
+    toast("All clear. Start your first fast!");
+  };
+
+  renderProtocols(); renderMarkers(); tick(); renderStats();
+  setInterval(tick, 1000);
+  setInterval(renderStats, 60000);
+})();
+</script>
+
+</body>
+</html>
