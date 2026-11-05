@@ -27,6 +27,8 @@ Five tabs: **Fast · Water · Meals · Progress · Zoe**
 Foods marked **✓ USDA** use values from [USDA FoodData Central](https://fdc.nal.usda.gov) (SR Legacy), which is public domain.
 Suggested citation: U.S. Department of Agriculture, Agricultural Research Service. FoodData Central. https://fdc.nal.usda.gov
 
+The app also includes 116 plain ingredients (meats, fish, vegetables, oils, sauces, dairy, fruits) from USDA, so you can log what you cook ingredient by ingredient.
+
 Foods marked **Estimate** (mostly cooked Filipino dishes) are approximate values for a typical home-cooked serving.
 
 ## Run it
