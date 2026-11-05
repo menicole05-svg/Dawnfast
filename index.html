@@ -80,6 +80,12 @@ header { display: flex; align-items: center; justify-content: space-between; gap
 .pct { font-family: var(--font-display); font-weight: 700; font-size: 15px; background: linear-gradient(90deg, var(--dawn-1), var(--dawn-2)); -webkit-background-clip: text; background-clip: text; color: transparent; }
 .motto { font-family: var(--font-display); font-weight: 700; font-size: 21px; text-align: center; text-wrap: balance; letter-spacing: -0.01em; max-width: 26ch; }
 
+.end-pill { display: flex; align-items: center; gap: 12px; padding: 12px 20px; border-radius: 18px; background: var(--surface); border: 1.5px solid color-mix(in srgb, var(--dawn-1) 45%, var(--line)); box-shadow: 0 8px 24px -14px color-mix(in srgb, var(--dawn-1) 80%, transparent); }
+.end-pill .flag { font-size: 24px; }
+.end-time { font-family: var(--font-mono); font-size: 26px; font-weight: 500; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; line-height: 1.15; }
+.end-day { font-family: var(--font-body); font-size: 14px; font-weight: 700; color: var(--dawn-1); letter-spacing: 0; }
+.end-pill.done { border-color: color-mix(in srgb, var(--good) 55%, var(--line)); }
+.end-pill.done .end-day { color: var(--good); }
 .times { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; width: 100%; }
 .time-cell { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 10px 14px; display: flex; flex-direction: column; gap: 2px; min-width: 0; }
 .time-cell .v { font-family: var(--font-mono); font-size: 15px; font-variant-numeric: tabular-nums; }
@@ -203,6 +209,13 @@ section h2 { font-family: var(--font-display); font-size: 17px; font-weight: 700
         <div class="pct" id="pct"></div>
       </div>
     </div>
+    <div class="end-pill" id="endPill">
+      <span class="flag" aria-hidden="true">🏁</span>
+      <div>
+        <div class="eyebrow" id="endLabel">Your fast ends at</div>
+        <div class="end-time"><span id="endTime">—</span> <span class="end-day" id="endDay"></span></div>
+      </div>
+    </div>
     <div class="motto" id="motto">Ready when you are.</div>
 
     <div class="times" id="times">
@@ -216,7 +229,7 @@ section h2 { font-family: var(--font-display); font-size: 17px; font-weight: 700
         </div>
       </div>
       <div class="time-cell">
-        <span class="eyebrow">Goal reached at</span>
+        <span class="eyebrow" id="goalLabel">Eating window until</span>
         <span class="v" id="goalV">—</span>
         <span class="sub" id="goalDay"></span>
       </div>
@@ -408,6 +421,11 @@ section h2 { font-family: var(--font-display); font-size: 17px; font-weight: 700
       ring.setAttribute("stroke-dashoffset", C); ringGlow.setAttribute("stroke-dashoffset", C);
       tip.setAttribute("cx", 150); tip.setAttribute("cy", 22);
       $("motto").textContent = IDLE_MOTTOS[state.history.length % IDLE_MOTTOS.length];
+      const previewEnd = now + state.goal * H;
+      $("endPill").classList.remove("done");
+      $("endLabel").textContent = "Start now and you'll finish at";
+      $("endTime").textContent = timeFmt.format(previewEnd);
+      $("endDay").textContent = relDay(previewEnd);
       if (lastStageIdx !== -2) { renderStages(null); lastStageIdx = -2; }
       return;
     }
@@ -427,8 +445,20 @@ section h2 { font-family: var(--font-display); font-size: 17px; font-weight: 700
     let m = MOTTOS[0][1]; MOTTOS.forEach(([t, s]) => { if (p >= t) m = s; });
     $("motto").textContent = m;
     $("startV").textContent = relDay(a.start) + ", " + timeFmt.format(a.start);
-    $("goalV").textContent = timeFmt.format(a.start + goalMs);
-    $("goalDay").textContent = relDay(a.start + goalMs);
+    if (a.goal < 24) {
+      const winEnd = a.start + 24 * H;
+      $("goalLabel").textContent = "Eating window until";
+      $("goalV").textContent = timeFmt.format(winEnd);
+      $("goalDay").textContent = relDay(winEnd) + " · " + (24 - a.goal) + "h to eat";
+    } else {
+      $("goalLabel").textContent = "Fast length";
+      $("goalV").textContent = a.goal + " hours";
+      $("goalDay").textContent = "No set eating window";
+    }
+    $("endPill").classList.toggle("done", p >= 1);
+    $("endLabel").textContent = p >= 1 ? "Goal reached at" : "Your fast ends at";
+    $("endTime").textContent = timeFmt.format(a.start + goalMs);
+    $("endDay").textContent = relDay(a.start + goalMs);
 
     const idx = renderStagesIfChanged(el / H);
     if (lastStageIdx !== null && lastStageIdx >= 0 && idx > lastStageIdx) toast("New stage: " + STAGES[idx].t);
