@@ -23,6 +23,12 @@ Five tabs: **Fast · Water · Meals · Progress · Zoe**
 - Light & dark mode, works great on phones
 - Data is saved in your browser (localStorage) — no account needed
 
+## Food data
+Foods marked **✓ USDA** use values from [USDA FoodData Central](https://fdc.nal.usda.gov) (SR Legacy), which is public domain.
+Suggested citation: U.S. Department of Agriculture, Agricultural Research Service. FoodData Central. https://fdc.nal.usda.gov
+
+Foods marked **Estimate** (mostly cooked Filipino dishes) are approximate values for a typical home-cooked serving.
+
 ## Run it
 It's a single file. Open `index.html` in any browser, or turn on **GitHub Pages** (Settings → Pages → Deploy from branch → `main` / root) to use it on your phone.
 

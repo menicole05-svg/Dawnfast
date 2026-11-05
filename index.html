@@ -319,6 +319,10 @@ section h2 { font-family: var(--font-display); font-size: 17px; font-weight: 700
 .macros-in .m-pro span::before { background: var(--dawn-1); }
 .macros-in .m-carb span::before { background: #3aa0e8; }
 .macros-in .m-fat span::before { background: var(--dusk); }
+.src-tag { margin-top: 4px; font-weight: 700; font-size: 12px; }
+.src-tag.usda { color: var(--good); }
+.src-tag.est { color: var(--muted); }
+.sub a { color: var(--dusk); font-weight: 700; }
 .macro-legend { font-size: 13px; color: var(--muted); margin-top: 10px; display: flex; flex-wrap: wrap; gap: 4px 10px; align-items: baseline; }
 .macro-legend b { color: var(--fg); }
 
@@ -519,7 +523,7 @@ section h2 { font-family: var(--font-display); font-size: 17px; font-weight: 700
       </div>
       <div class="sub" id="goalPreview"></div>
       <button type="button" id="saveKcal" class="save-btn" style="margin-top:0">Save goals</button>
-      <p class="sub" style="margin:0">Calories and macros in the food list are rough estimates for a typical serving. Adjust them to match your portions.</p>
+      <p class="sub" style="margin:0">Foods marked <b>✓ USDA</b> use values from <a href="https://fdc.nal.usda.gov" target="_blank" rel="noopener">USDA FoodData Central</a> (SR Legacy, public domain). Foods marked <b>Estimate</b>, mostly cooked Filipino dishes, are approximate because recipes vary a lot. Adjust any number to match your portions.</p>
     </div>
   </section>
 
@@ -706,87 +710,94 @@ section h2 { font-family: var(--font-display); font-size: 17px; font-weight: 700
     { id: "veggies", n: "🥦 Veggies" }, { id: "cheat", n: "🍩 Cheat meal" }
   ];
   /* Approximate calories for one typical serving */
-  /* [name, kcal, grams, protein g, carbs g, fat g] per typical serving — rough estimates */
+  /* [name, kcal, grams, protein g, carbs g, fat g, source] per serving.
+     Source text = values from USDA FoodData Central (SR Legacy, public domain).
+     Empty source = estimate for a typical home-cooked serving. */
   const FOODS = [
-    ["Rice (1 cup)", 205, 158, 4.3, 45, 0.4],
-    ["Garlic rice (1 cup)", 270, 160, 5, 46, 7],
-    ["Brown rice (1 cup)", 215, 195, 5, 45, 1.8],
-    ["Chicken adobo (1 serving)", 330, 200, 30, 5, 21],
-    ["Pork adobo (1 serving)", 450, 200, 28, 5, 35],
-    ["Sinigang na baboy (1 bowl)", 300, 400, 22, 12, 18],
-    ["Sinigang na hipon (1 bowl)", 200, 400, 24, 12, 5],
-    ["Tinolang manok (1 bowl)", 250, 400, 26, 10, 11],
-    ["Nilagang baka (1 bowl)", 320, 400, 30, 15, 15],
-    ["Bulalo (1 bowl)", 450, 450, 35, 12, 29],
-    ["Kare-kare (1 serving)", 450, 250, 25, 15, 32],
-    ["Bicol express (1 serving)", 450, 200, 20, 8, 38],
-    ["Pork sisig (1 serving)", 450, 150, 22, 5, 38],
-    ["Lechon kawali (100 g)", 500, 100, 20, 0, 46],
-    ["Inihaw na liempo (100 g)", 400, 100, 18, 3, 35],
-    ["Chicken inasal (1 pc)", 350, 200, 38, 4, 20],
-    ["Fried chicken (1 pc)", 320, 130, 24, 11, 20],
-    ["Grilled chicken breast (100 g)", 165, 100, 31, 0, 3.6],
-    ["Daing na bangus (1/2 fish)", 300, 150, 30, 0, 20],
-    ["Fried tilapia (1 pc)", 230, 150, 30, 2, 11],
-    ["Grilled fish (100 g)", 150, 100, 26, 0, 5],
-    ["Menudo (1 serving)", 350, 200, 22, 15, 22],
-    ["Afritada (1 serving)", 330, 200, 24, 14, 19],
-    ["Caldereta (1 serving)", 400, 200, 26, 12, 27],
-    ["Giniling (1 serving)", 300, 180, 20, 12, 19],
-    ["Tortang talong (1 pc)", 220, 150, 10, 10, 16],
-    ["Ginisang monggo (1 bowl)", 250, 300, 14, 30, 8],
-    ["Pinakbet (1 serving)", 200, 200, 8, 18, 11],
-    ["Chopsuey (1 serving)", 150, 200, 10, 14, 6],
-    ["Laing (1 serving)", 280, 150, 7, 12, 23],
-    ["Lumpiang shanghai (5 pcs)", 300, 100, 12, 20, 19],
-    ["Lumpiang sariwa (1 pc)", 180, 150, 6, 28, 5],
-    ["Pancit canton (1 plate)", 400, 250, 15, 55, 13],
-    ["Pancit bihon (1 plate)", 330, 250, 12, 55, 7],
-    ["Spaghetti, sweet style (1 plate)", 450, 300, 16, 65, 14],
-    ["Arroz caldo (1 bowl)", 300, 350, 18, 40, 7],
-    ["Lugaw (1 bowl)", 180, 350, 4, 38, 1],
-    ["Goto (1 bowl)", 320, 350, 18, 40, 9],
-    ["Tapsilog", 750, 400, 40, 65, 35],
-    ["Longsilog", 800, 400, 28, 70, 45],
-    ["Tocilog", 750, 400, 30, 80, 33],
-    ["Bangsilog", 650, 400, 35, 60, 28],
-    ["Hotsilog", 650, 350, 22, 60, 35],
-    ["Boiled egg (1 pc)", 78, 50, 6.3, 0.6, 5.3],
-    ["Fried egg (1 pc)", 90, 46, 6, 0.4, 7],
-    ["Hotdog (1 pc)", 150, 45, 5, 3, 13],
-    ["Corned beef (1/2 can)", 220, 130, 20, 3, 14],
-    ["Canned tuna in water (1 can)", 120, 120, 26, 0, 1],
-    ["Pandesal (1 pc)", 120, 40, 3.5, 22, 2],
-    ["Ensaymada (1 pc)", 350, 90, 6, 42, 17],
-    ["Bread slice (1 pc)", 80, 30, 2.7, 14, 1],
-    ["Peanut butter (1 tbsp)", 95, 16, 3.5, 3.5, 8],
-    ["Siopao asado (1 pc)", 300, 120, 11, 45, 8],
-    ["Siomai (4 pcs)", 200, 100, 12, 12, 11],
-    ["Turon (1 pc)", 200, 90, 1.5, 38, 5],
-    ["Banana cue (1 stick)", 250, 120, 1.5, 52, 5],
-    ["Kamote, boiled (1 medium)", 115, 130, 2, 27, 0.1],
-    ["Saging na saba, boiled (1 pc)", 110, 100, 1.3, 29, 0.3],
-    ["Lakatan banana (1 pc)", 105, 100, 1.3, 27, 0.4],
-    ["Mango (1 pc)", 150, 200, 1.6, 37, 0.8],
-    ["Apple (1 pc)", 95, 180, 0.5, 25, 0.3],
-    ["Papaya (1 cup)", 60, 145, 0.7, 16, 0.4],
-    ["Oatmeal (1 cup cooked)", 160, 234, 6, 27, 3.5],
-    ["Greek yogurt (150 g)", 130, 150, 14, 6, 5],
-    ["Taho (1 cup)", 200, 250, 8, 38, 2.5],
-    ["Halo-halo (1 glass)", 450, 400, 8, 85, 10],
-    ["Leche flan (1 slice)", 220, 100, 6, 32, 7.5],
-    ["Milk tea with pearls (large)", 450, 700, 3, 85, 11],
-    ["Black coffee (1 cup)", 5, 240, 0.3, 0, 0],
-    ["3-in-1 coffee (1 sachet)", 90, 20, 0.7, 15, 3],
-    ["Soft drink (1 can)", 140, 330, 0, 35, 0],
-    ["Fresh milk (1 cup)", 150, 244, 8, 12, 8],
-    ["Salad with dressing (1 bowl)", 200, 200, 4, 12, 15],
-    ["Burger (1 pc)", 500, 200, 25, 40, 26],
-    ["Pizza (1 slice)", 285, 107, 12, 36, 10],
-    ["French fries (medium)", 340, 117, 4, 44, 16],
-    ["Chicharon (30 g)", 160, 30, 18, 0, 10]
+    ["Rice (1 cup)", 205, 158, 4.3, 44.5, 0.4, "USDA FoodData Central, SR Legacy #20045 (white rice, cooked)"],
+    ["Garlic rice (1 cup)", 270, 160, 5, 46, 7, ""],
+    ["Brown rice (1 cup)", 240, 195, 5.3, 49.9, 1.9, "USDA FoodData Central, SR Legacy #20037 (brown rice, cooked)"],
+    ["Chicken adobo (1 serving)", 330, 200, 30, 5, 21, ""],
+    ["Pork adobo (1 serving)", 450, 200, 28, 5, 35, ""],
+    ["Sinigang na baboy (1 bowl)", 300, 400, 22, 12, 18, ""],
+    ["Sinigang na hipon (1 bowl)", 200, 400, 24, 12, 5, ""],
+    ["Tinolang manok (1 bowl)", 250, 400, 26, 10, 11, ""],
+    ["Nilagang baka (1 bowl)", 320, 400, 30, 15, 15, ""],
+    ["Bulalo (1 bowl)", 450, 450, 35, 12, 29, ""],
+    ["Kare-kare (1 serving)", 450, 250, 25, 15, 32, ""],
+    ["Bicol express (1 serving)", 450, 200, 20, 8, 38, ""],
+    ["Pork sisig (1 serving)", 450, 150, 22, 5, 38, ""],
+    ["Lechon kawali (100 g)", 500, 100, 20, 0, 46, ""],
+    ["Inihaw na liempo (100 g)", 400, 100, 18, 3, 35, ""],
+    ["Chicken inasal (1 pc)", 368, 200, 48.1, 0, 18, "USDA FoodData Central, SR Legacy #05078 (closest match: roasted chicken leg with skin)"],
+    ["Fried chicken, battered (1 pc)", 338, 130, 32.3, 11.7, 17.2, "USDA FoodData Central, SR Legacy #05058 (fried chicken breast with skin, battered)"],
+    ["Grilled chicken breast (100 g)", 165, 100, 31, 0, 3.6, "USDA FoodData Central, SR Legacy #05064 (chicken breast, roasted, no skin)"],
+    ["Daing na bangus (1/2 fish)", 300, 150, 30, 0, 20, ""],
+    ["Fried tilapia (1 pc)", 230, 150, 30, 2, 11, ""],
+    ["Grilled tilapia (100 g)", 128, 100, 26.1, 0, 2.6, "USDA FoodData Central, SR Legacy #15262 (tilapia, cooked dry heat)"],
+    ["Menudo (1 serving)", 350, 200, 22, 15, 22, ""],
+    ["Afritada (1 serving)", 330, 200, 24, 14, 19, ""],
+    ["Caldereta (1 serving)", 400, 200, 26, 12, 27, ""],
+    ["Giniling (1 serving)", 300, 180, 20, 12, 19, ""],
+    ["Tortang talong (1 pc)", 220, 150, 10, 10, 16, ""],
+    ["Ginisang monggo (1 bowl)", 250, 300, 14, 30, 8, ""],
+    ["Pinakbet (1 serving)", 200, 200, 8, 18, 11, ""],
+    ["Chopsuey (1 serving)", 150, 200, 10, 14, 6, ""],
+    ["Laing (1 serving)", 280, 150, 7, 12, 23, ""],
+    ["Lumpiang shanghai (5 pcs)", 300, 100, 12, 20, 19, ""],
+    ["Lumpiang sariwa (1 pc)", 180, 150, 6, 28, 5, ""],
+    ["Pancit canton (1 plate)", 400, 250, 15, 55, 13, ""],
+    ["Pancit bihon (1 plate)", 330, 250, 12, 55, 7, ""],
+    ["Spaghetti, sweet style (1 plate)", 450, 300, 16, 65, 14, ""],
+    ["Arroz caldo (1 bowl)", 300, 350, 18, 40, 7, ""],
+    ["Lugaw (1 bowl)", 180, 350, 4, 38, 1, ""],
+    ["Goto (1 bowl)", 320, 350, 18, 40, 9, ""],
+    ["Tapsilog", 750, 400, 40, 65, 35, ""],
+    ["Longsilog", 800, 400, 28, 70, 45, ""],
+    ["Tocilog", 750, 400, 30, 80, 33, ""],
+    ["Bangsilog", 650, 400, 35, 60, 28, ""],
+    ["Hotsilog", 650, 350, 22, 60, 35, ""],
+    ["Boiled egg (1 pc)", 78, 50, 6.3, 0.6, 5.3, "USDA FoodData Central, SR Legacy #01129 (egg, hard-boiled)"],
+    ["Fried egg (1 pc)", 90, 46, 6.3, 0.4, 6.8, "USDA FoodData Central, SR Legacy #01128 (egg, fried)"],
+    ["Hotdog (1 pc)", 121, 45, 5.8, 0.1, 10.7, "USDA FoodData Central, SR Legacy #07939 (closest match: pork frankfurter)"],
+    ["Corned beef (1/2 can)", 220, 130, 20, 3, 14, ""],
+    ["Canned tuna in water, drained (1 can)", 103, 120, 23.3, 0, 1.2, "USDA FoodData Central, SR Legacy #15121 (light tuna in water, drained)"],
+    ["Pandesal (1 pc)", 120, 40, 3.5, 22, 2, ""],
+    ["Ensaymada (1 pc)", 350, 90, 6, 42, 17, ""],
+    ["White bread (1 slice)", 74, 28, 2.5, 13.8, 0.9, "USDA FoodData Central, SR Legacy #18069 (white bread)"],
+    ["Peanut butter (1 tbsp)", 96, 16, 3.6, 3.6, 8.2, "USDA FoodData Central, SR Legacy #16098 (peanut butter, smooth)"],
+    ["Siopao asado (1 pc)", 300, 120, 11, 45, 8, ""],
+    ["Siomai (4 pcs)", 200, 100, 12, 12, 11, ""],
+    ["Turon (1 pc)", 200, 90, 1.5, 38, 5, ""],
+    ["Banana cue (1 stick)", 250, 120, 1.5, 52, 5, ""],
+    ["Kamote, boiled (1 medium)", 114, 150, 2.1, 26.6, 0.2, "USDA FoodData Central, SR Legacy #11510 (sweet potato, boiled, no skin)"],
+    ["Saging na saba, boiled (1 pc)", 116, 100, 0.8, 31.1, 0.2, "USDA FoodData Central, SR Legacy #09278 (closest match: plantain, cooked)"],
+    ["Lakatan banana (1 pc)", 89, 100, 1.1, 22.8, 0.3, "USDA FoodData Central, SR Legacy #09040 (banana, raw)"],
+    ["Mango (1 pc)", 120, 200, 1.6, 30, 0.8, "USDA FoodData Central, SR Legacy #09176 (mango, raw)"],
+    ["Apple (1 pc)", 94, 180, 0.5, 24.9, 0.3, "USDA FoodData Central, SR Legacy #09003 (apple with skin, raw)"],
+    ["Papaya (1 cup)", 62, 145, 0.7, 15.7, 0.4, "USDA FoodData Central, SR Legacy #09226 (papaya, raw)"],
+    ["Oatmeal (1 cup cooked)", 166, 234, 5.9, 28.1, 3.6, "USDA FoodData Central, SR Legacy #08121 (oats cooked in water)"],
+    ["Greek yogurt, plain nonfat (150 g)", 88, 150, 15.3, 5.4, 0.6, "USDA FoodData Central, SR Legacy #01256 (Greek yogurt, plain, nonfat)"],
+    ["Taho (1 cup)", 200, 250, 8, 38, 2.5, ""],
+    ["Halo-halo (1 glass)", 450, 400, 8, 85, 10, ""],
+    ["Leche flan (1 slice)", 220, 100, 6, 32, 7.5, ""],
+    ["Milk tea with pearls (large)", 450, 700, 3, 85, 11, ""],
+    ["Black coffee (1 cup)", 2, 240, 0.3, 0, 0, "USDA FoodData Central, SR Legacy #14209 (brewed coffee)"],
+    ["3-in-1 coffee (1 sachet)", 90, 20, 0.7, 15, 3, ""],
+    ["Cola (1 can)", 143, 340, 0, 35.2, 0.8, "USDA FoodData Central, SR Legacy #14148 (cola, regular)"],
+    ["Fresh milk, whole (1 cup)", 149, 244, 7.7, 11.7, 7.9, "USDA FoodData Central, SR Legacy #01077 (whole milk)"],
+    ["Salad with dressing (1 bowl)", 200, 200, 4, 12, 15, ""],
+    ["Hamburger, single patty (1 pc)", 297, 100, 16.5, 31.5, 12, "USDA FoodData Central, SR Legacy #21107 (fast-food hamburger, single patty, plain)"],
+    ["Cheese pizza (1 slice)", 285, 107, 12.2, 35.7, 10.4, "USDA FoodData Central, SR Legacy #21299 (chain-restaurant cheese pizza)"],
+    ["French fries (medium)", 338, 117, 4.1, 43.5, 16.4, "USDA FoodData Central, SR Legacy #36014 (restaurant french fries)"],
+    ["Chicharon (30 g)", 163, 30, 18.4, 0, 9.4, "USDA FoodData Central, SR Legacy #19041 (pork skins, plain)"],
+    ["Grilled bangus (100 g)", 190, 100, 26.3, 0, 8.6, "USDA FoodData Central, SR Legacy #15202 (milkfish, cooked dry heat)"],
+    ["Tokwa / firm tofu (100 g)", 78, 100, 9, 2.9, 4.2, "USDA FoodData Central, SR Legacy #16126 (tofu, firm)"],
+    ["Fried tokwa (100 g)", 270, 100, 18.8, 8.9, 20.2, "USDA FoodData Central, SR Legacy #16129 (tofu, fried)"],
+    ["Mung beans, boiled (1 cup)", 212, 202, 14.2, 38.7, 0.8, "USDA FoodData Central, SR Legacy #16081 (mung beans, boiled)"],
+    ["Eggplant, boiled (1 cup)", 35, 99, 0.8, 8.6, 0.2, "USDA FoodData Central, SR Legacy #11210 (eggplant, boiled)"]
   ];
-  const FOOD_MAP = new Map(FOODS.map(f => [f[0].toLowerCase(), { name: f[0], kcal: f[1], g: f[2], p: f[3], c: f[4], f: f[5] }]));
+  const FOOD_MAP = new Map(FOODS.map(f => [f[0].toLowerCase(), { name: f[0], kcal: f[1], g: f[2], p: f[3], c: f[4], f: f[5], src: f[6] }]));
   const stageOf = xp => { let i = 0; PET_STAGES.forEach((s, k) => { if (xp >= s.min) i = k; }); return i; };
 
   let svgUid = 0;
@@ -1603,7 +1614,7 @@ section h2 { font-family: var(--font-display); font-size: 17px; font-weight: 700
 
   (function fillFoods() {
     const dl = $("foods");
-    FOODS.forEach(([n, kc, g, p]) => { const o = document.createElement("option"); o.value = n; o.label = kc + " kcal · " + g + " g · " + p + " g protein"; dl.appendChild(o); });
+    FOODS.forEach(([n, kc, g, p, c, f, src]) => { const o = document.createElement("option"); o.value = n; o.label = (src ? "✓ USDA · " : "Estimate · ") + kc + " kcal · " + g + " g · " + p + " g protein"; dl.appendChild(o); });
   })();
   let mealUnit = "g", lastFood = null;
   const HINT0 = "Pick a food from the list to fill in calories and macros, or type your own.";
@@ -1638,7 +1649,13 @@ section h2 { font-family: var(--font-display); font-size: 17px; font-weight: 700
         $("mealP").value = round1(f.p * factor); $("mealC").value = round1(f.c * factor); $("mealF").value = round1(f.f * factor);
       }
       const per = v => round1(v / f.g * 100);
-      $("foodHint").textContent = "Per 100 g: " + Math.round(f.kcal / f.g * 100) + " kcal · P " + per(f.p) + " g · C " + per(f.c) + " g · F " + per(f.f) + " g. A typical serving is " + f.g + " g. You can edit any number.";
+      $("foodHint").innerHTML = "";
+      const line1 = document.createElement("div");
+      line1.textContent = "Per 100 g: " + Math.round(f.kcal / f.g * 100) + " kcal · P " + per(f.p) + " g · C " + per(f.c) + " g · F " + per(f.f) + " g. A typical serving is " + f.g + " g. You can edit any number.";
+      const line2 = document.createElement("div");
+      line2.className = f.src ? "src-tag usda" : "src-tag est";
+      line2.textContent = f.src ? "✓ Source: " + f.src : "≈ Estimate for a typical home-cooked serving. Recipes vary, so adjust if you know better.";
+      $("foodHint").append(line1, line2);
     } else $("foodHint").textContent = $("mealName").value.trim() ? "Not in the list? Type the calories and macros for this amount yourself." : HINT0;
   }
   $("mealName").addEventListener("input", autoKcal);
