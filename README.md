@@ -34,6 +34,17 @@ The app also includes 116 plain ingredients (meats, fish, vegetables, oils, sauc
 
 Foods marked **Estimate** (mostly cooked Filipino dishes) are approximate values for a typical home-cooked serving.
 
+## Install on your phone (Vercel)
+1. Go to [vercel.com/new](https://vercel.com/new) and sign in with GitHub.
+2. Import the **Dawnfast** repository. Framework preset: **Other**. No build command needed.
+3. Click **Deploy**. Every push to `main` redeploys automatically.
+4. Open your Vercel link on your phone:
+   - **iPhone (Safari):** Share → **Add to Home Screen**
+   - **Android (Chrome):** ⋮ menu → **Install app** / **Add to Home screen**
+
+Dawnfast is a PWA: it opens full screen with its own icon and works offline after the first visit.
+Your data is saved on your phone in that browser, so keep using the same browser.
+
 ## Run it
 It's a single file. Open `index.html` in any browser, or turn on **GitHub Pages** (Settings → Pages → Deploy from branch → `main` / root) to use it on your phone.
 
