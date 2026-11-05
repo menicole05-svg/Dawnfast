@@ -15,7 +15,7 @@ Six tabs: **Fast · Water · Meals · Workout · Progress · Me**
 - **Body-stage timeline** (fed state → fat burning → ketosis → autophagy) showing where you are now
 - **Motivational messages** that change as you progress, plus a toast when you hit a new stage
 - **Streak counter**, stats (total, longest, average), weekly bar chart vs. your goal
-- **Your avatar (Me tab):** a customizable character whose body follows your real weight progress toward your goal and whose muscles grow with the exercises you log. Level & EXP, per-muscle stats (Arms, Chest, Back, Core, Legs, Glutes, Cardio), 3 daily quests, and unlockable outfits and gym gear
+- **Your avatar (Me tab):** a customizable character whose body follows your real weight progress toward your goal and whose muscles grow with the exercises you log. Level & EXP, per-muscle stats (Arms, Chest, Back, Core, Legs, Glutes, Cardio), daily quests that follow the routine you train that day (or a rest day), and unlockable outfits and gym gear
 - **Zoe, your pet:** she grows from an egg to a Sun Spirit (5 stages) as you earn sunlight by hitting goals
 - **Badges** for goals, streaks (3/7/14/30 days) and milestones (fasts and total hours), some unlock outfits for Zoe
 - **Streak freeze:** 1 per week, used automatically if you miss a day

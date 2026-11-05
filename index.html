@@ -481,6 +481,7 @@ body.sheet-open { overflow: hidden; }
 .stage-dots { display: flex; gap: 4px; margin-top: 8px; }
 .stage-dots i { flex: 1; height: 6px; border-radius: 99px; background: var(--track); }
 .stage-dots i.on { background: linear-gradient(90deg, var(--dawn-1), var(--dawn-2)); }
+.plan-row { display: flex; gap: 10px; align-items: flex-end; }
 .quests { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px; }
 .quest { display: grid; grid-template-columns: 40px 1fr auto; gap: 10px; align-items: center; padding: 10px 12px; border-radius: 16px; background: var(--surface-2); }
 .quest.ok { background: color-mix(in srgb, var(--good) 16%, transparent); }
@@ -861,6 +862,10 @@ body.sheet-open { overflow: hidden; }
 
   <section class="card">
     <h2>Daily quests<span class="badge-count" id="questReset"></span></h2>
+    <div class="plan-row" id="planRow">
+      <label class="field" style="flex:1"><span>Today's plan</span><select id="planSel" aria-label="Today's workout plan"></select></label>
+    </div>
+    <p class="sub" id="planNote" style="margin:6px 0 12px"></p>
     <ul class="quests" id="questList"></ul>
   </section>
 
@@ -2837,6 +2842,7 @@ Stretching|Full body|Bodyweight|dur|2.3
     const a = { id: "w" + Math.random().toString(36).slice(2, 9), name: routine ? routine.name : timeOfDayName(), routineId: routine ? routine.id : null, start: Date.now(), items: [] };
     if (routine) a.items = routine.items.map(it => ({ ex: it.ex, rest: it.rest ?? 90, sets: Array.from({ length: it.sets }, (_, j) => newSet(it.ex, j, it)) }));
     state.wk.active = a; finishArmed = false;
+    if (routine && state.me) { state.me.plan = state.me.plan || {}; state.me.plan[todayKey()] = routine.id; }
     save(); go("workout"); renderWorkout(); renderResumePill();
     toast(routine ? "Let's go! " + routine.name + " started 💪" : "Empty workout started. Add your first exercise.");
     if (!routine) setTimeout(() => openPicker("active"), 250);
@@ -3301,37 +3307,80 @@ Stretching|Full body|Bodyweight|dur|2.3
     return o + "</svg>";
   }
 
-  /* Daily quests */
-  const QUESTS = [
-    { id: "push30", ic: "💪", t: "Do 30 push ups", exp: 40, p: () => [repsToday(e => /push-up/.test(e.id)), 30] },
-    { id: "squat40", ic: "🦵", t: "Do 40 squats", exp: 40, p: () => [repsToday(e => /squat/.test(e.id)), 40] },
-    { id: "plank60", ic: "🧱", t: "Hold planks for 60 seconds total", exp: 35, p: () => [secToday(e => /plank/.test(e.id)), 60] },
-    { id: "sets12", ic: "📈", t: "Complete 12 sets today", exp: 40, p: () => [setsToday(() => true), 12] },
-    { id: "legday", ic: "🍑", t: "Do 3 sets for legs or glutes", exp: 35, p: () => [setsToday(e => ["Quads", "Hamstrings", "Glutes", "Calves"].includes(e.m)), 3] },
-    { id: "upper", ic: "🛡️", t: "Do 4 sets for chest, back or arms", exp: 35, p: () => [setsToday(e => ["Chest", "Back", "Biceps", "Triceps", "Shoulders"].includes(e.m)), 4] },
-    { id: "cardio15", ic: "❤️", t: "Do 15 minutes of cardio", exp: 40, p: () => [cardioMinToday(), 15] },
-    { id: "workout", ic: "🏋️", t: "Finish a workout", exp: 50, p: () => [state.wk.history.filter(h => dayKey(h.end) === todayKey()).length, 1] },
+  /* Daily quests: built from today's workout plan, plus lifestyle quests */
+  const LIFE_QUESTS = [
     { id: "water", ic: "💧", t: "Hit your water goal", exp: 30, p: () => [waterTotal(todayKey()), state.water.goal] },
     { id: "fast", ic: "🌅", t: "Reach your fasting goal", exp: 45, p: () => [hitDaySet().has(todayKey()) ? 1 : 0, 1] },
     { id: "meals3", ic: "🍽️", t: "Log 3 meals or snacks", exp: 25, p: () => [state.meals.filter(m => dayKey(m.t) === todayKey()).length, 3] },
-    { id: "protein", ic: "🍗", t: "Eat 80 g of protein", exp: 35, p: () => [Math.round(dayTotals(todayKey()).p), 80] }
+    { id: "protein", ic: "🍗", t: "Hit your protein goal", exp: 35, p: () => { const g = macroGoals(); return [Math.round(dayTotals(todayKey()).p), g ? Math.round(g.p) : 80]; } }
   ];
+  function todaySessions() {
+    const k = todayKey();
+    return state.wk.history.filter(h => dayKey(h.end) === k).concat(state.wk.active && dayKey(state.wk.active.start) === k ? [state.wk.active] : []);
+  }
   function todaySets(pred) {
-    const out = [], k = todayKey();
-    const sessions = state.wk.history.filter(h => dayKey(h.end) === k).concat(state.wk.active ? [state.wk.active] : []);
-    sessions.forEach(h => h.items.forEach(i => { const ex = exById(i.ex); if (pred(ex)) i.sets.forEach(s => { if (s.done) out.push([ex, s]); }); }));
+    const out = [];
+    todaySessions().forEach(h => h.items.forEach(i => { const ex = exById(i.ex); if (pred(ex)) i.sets.forEach(s => { if (s.done) out.push([ex, s]); }); }));
     return out;
   }
-  const repsToday = pred => todaySets(pred).reduce((a, [, s]) => a + (+s.r || 0), 0);
-  const secToday = pred => todaySets(pred).reduce((a, [, s]) => a + (+s.sec || 0), 0);
   const setsToday = pred => todaySets(pred).length;
-  const cardioMinToday = () => Math.round(todaySets(e => e.m === "Cardio").reduce((a, [ex, s]) => a + (ex.t === "cardio" ? (+s.min || 0) : (+s.sec || 0) / 60), 0));
+  const minutesToday = pred => Math.round(todaySets(pred).reduce((a, [ex, s]) => a + (ex.t === "cardio" ? (+s.min || 0) : (+s.sec || 0) / 60), 0));
   function hashStr(str) { let h = 2166136261; for (let i = 0; i < str.length; i++) { h ^= str.charCodeAt(i); h = Math.imul(h, 16777619); } return h >>> 0; }
+  /* What you're training today: a workout already started/finished today wins, then the plan you picked */
+  function todaysPlan() {
+    const sess = todaySessions();
+    if (sess.length) {
+      const items = []; sess.forEach(h => h.items.forEach(i => { if (!items.some(x => x.ex === i.ex)) items.push({ ex: i.ex, sets: i.sets.length }); }));
+      return { kind: "workout", name: sess[0].name, routineId: sess[0].routineId, items, fromWorkout: true };
+    }
+    const pid = state.me && state.me.plan && state.me.plan[todayKey()];
+    if (pid === "rest") return { kind: "rest" };
+    const r = pid && state.wk.routines.find(x => x.id === pid);
+    if (r) return { kind: "workout", name: r.name, routineId: r.id, items: r.items.map(i => ({ ex: i.ex, sets: i.sets })), fromWorkout: false };
+    return { kind: "none" };
+  }
+  function lastSessionOf(routineId, name) {
+    return state.wk.history.find(h => dayKey(h.end) !== todayKey() && ((routineId && h.routineId === routineId) || h.name === name)) || null;
+  }
+  function workoutQuests(plan) {
+    const qs = [];
+    const items = plan.items.map(i => ({ ...i, e: exById(i.ex) }));
+    const groups = [...new Set(items.map(i => i.e.m))];
+    const groupText = groups.slice(0, 3).join(", ").toLowerCase();
+    qs.push({ id: "finish-" + (plan.routineId || slug(plan.name)), ic: "🏋️", t: "Finish " + plan.name, exp: 50,
+      p: () => [state.wk.history.filter(h => dayKey(h.end) === todayKey()).length ? 1 : 0, 1] });
+    const main = items.find(i => i.e.t === "wr" || i.e.t === "bw") || items[0];
+    if (main) {
+      const n = Math.max(1, main.sets || 3);
+      qs.push({ id: "sets-" + main.ex, ic: "🎯", t: "Complete all " + n + " sets of " + main.e.n, exp: 35, p: () => [setsToday(e => e.id === main.ex), n] });
+    }
+    const prev = lastSessionOf(plan.routineId, plan.name);
+    const prevVol = prev ? sessionStats(prev).vol : 0;
+    const beatable = items.filter(i => i.e.t === "wr" && i.ex !== (main && main.ex) && bestOf(i.ex).one > 0)[0] || items.filter(i => i.e.t === "wr" && bestOf(i.ex).one > 0)[0];
+    if (prevVol > 0) {
+      const tgt = Math.round(prevVol / 50) * 50;
+      qs.push({ id: "vol-" + (plan.routineId || slug(plan.name)), ic: "📈", t: "Match last time: " + nf.format(tgt) + " kg on " + groupText, exp: 40,
+        p: () => [todaySets(e => plan.items.some(i => i.ex === e.id)).reduce((a, [ex, s]) => a + setVolume(ex, s), 0), tgt] });
+    } else if (beatable) {
+      const before = bestOf(beatable.ex, state.wk.history.filter(h => dayKey(h.end) !== todayKey()));
+      qs.push({ id: "beat-" + beatable.ex, ic: "🏆", t: "Beat your best on " + beatable.e.n + " (" + Math.round(before.one) + " kg est. 1RM)", exp: 45,
+        p: () => [todaySets(e => e.id === beatable.ex).some(([, s]) => e1rm(+s.w, +s.r) > before.one + 0.01) ? 1 : 0, 1] });
+    } else {
+      const second = items.find(i => i !== main && (i.e.t === "wr" || i.e.t === "bw"));
+      if (second) { const n2 = Math.max(1, second.sets || 3); qs.push({ id: "sets-" + second.ex, ic: "🎯", t: "Complete all " + n2 + " sets of " + second.e.n, exp: 35, p: () => [setsToday(e => e.id === second.ex), n2] }); }
+    }
+    return qs;
+  }
   function todaysQuests() {
+    if (!state.me || !state.wk) return [];
     let seed = hashStr("dawnfast-" + todayKey());
-    const pool = QUESTS.slice(), pick = [];
-    while (pick.length < 3 && pool.length) { seed = Math.imul(seed ^ (seed >>> 15), 2246822507) >>> 0; pick.push(pool.splice(seed % pool.length, 1)[0]); }
-    return pick;
+    const life = LIFE_QUESTS.slice(), picks = [];
+    const plan = todaysPlan();
+    const lifeCount = plan.kind === "workout" ? 1 : 2;
+    while (picks.length < lifeCount && life.length) { seed = Math.imul(seed ^ (seed >>> 15), 2246822507) >>> 0; picks.push(life.splice(seed % life.length, 1)[0]); }
+    if (plan.kind === "workout") return workoutQuests(plan).slice(0, 3).concat(picks);
+    if (plan.kind === "rest") return [{ id: "recover", ic: "🧘", t: "Recovery: 10 minutes of stretching, yoga or a walk", exp: 30, p: () => [minutesToday(e => ["Stretching", "Yoga", "Walking"].includes(e.n)), 10] }].concat(picks);
+    return picks;
   }
   /* Called from evaluate(): quest completions, gear unlocks, level-ups */
   function meEvents() {
@@ -3406,7 +3455,17 @@ Stretching|Full body|Bodyweight|dur|2.3
       return '<div class="st-row"><span>' + s.ic + " " + s.n + '</span><span class="st-bar"><i style="width:' + Math.max(0, Math.min(100, pc)) + '%"></i></span><b>Lv ' + lv + '</b></div>'; }).join("");
     // quests
     const k = todayKey(), done = (me.quests[k] || []);
-    $("questList").innerHTML = todaysQuests().map(q => {
+    const plan = todaysPlan(), sel = $("planSel");
+    const pid = (me.plan && me.plan[k]) || "";
+    sel.innerHTML = '<option value="">Choose today\'s plan…</option>' + state.wk.routines.map(r => '<option value="' + r.id + '">' + esc(r.name) + ' · ' + (r.place === "Home" ? "Home" : "Gym") + '</option>').join("") + '<option value="rest">😴 Rest day</option>';
+    sel.value = plan.fromWorkout ? "" : pid;
+    sel.disabled = !!plan.fromWorkout;
+    $("planNote").textContent = plan.fromWorkout ? "Quests follow today's workout: " + plan.name + "." :
+      plan.kind === "workout" ? "Workout quests are based on " + plan.name + ". Starting a different workout updates them." :
+      plan.kind === "rest" ? "Rest day: no workout quests, just recovery. Enjoy it!" : "Pick a routine or a rest day to get quests that match what you're training today.";
+    const qs = todaysQuests();
+    if (!qs.length) { $("questList").innerHTML = ""; }
+    $("questList").innerHTML = qs.map(q => {
       const [cur, tgt] = q.p(), ok = done.includes(q.id) || cur >= tgt;
       return '<li class="quest' + (ok ? " ok" : "") + '"><span class="q-ic">' + q.ic + '</span><div class="q-body"><div class="q-t">' + esc(q.t) + '</div><div class="q-bar"><i style="width:' + Math.min(100, cur / tgt * 100) + '%"></i></div><div class="q-p">' + nf.format(Math.min(cur, tgt)) + " / " + nf.format(tgt) + '</div></div><span class="q-exp">' + (ok ? "✓ Done" : "+" + q.exp + " EXP") + '</span></li>';
     }).join("");
@@ -3435,6 +3494,14 @@ Stretching|Full body|Bodyweight|dur|2.3
     const me = state.me;
     if (b.dataset.k) { me[b.dataset.k] = b.dataset.v; if (b.dataset.k === "gender" && b.dataset.v === "m" && me.hair === "long") me.hair = "short"; save(); renderMe(); renderNavPet(); return; }
     if (b.dataset.slot) { const slot = b.dataset.slot, v = b.dataset.v; if (slot === "acc") { me.acc = me.acc.includes(v) ? me.acc.filter(x => x !== v) : me.acc.concat(v); } else me[slot] = v; save(); renderMe(); return; }
+  });
+  $("planSel").addEventListener("change", e => {
+    state.me.plan = state.me.plan || {};
+    const k = todayKey();
+    if (e.target.value) state.me.plan[k] = e.target.value; else delete state.me.plan[k];
+    Object.keys(state.me.plan).forEach(d => { if (d !== k && Object.keys(state.me.plan).length > 14) delete state.me.plan[d]; });
+    save(); renderMe();
+    const items = evaluate(); save(); if (items.length) celebrate(items);
   });
   $("zoeToggle").onclick = () => { state.me.zoe = !state.me.zoe; save(); renderMe(); };
   $("meWeightSave").onclick = () => {
