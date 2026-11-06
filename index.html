@@ -2338,11 +2338,32 @@ Stretching|Full body|Bodyweight|dur|2.3
   }
 
   let actx = null;
-  function sound(kind) {
-    if (!state.sound) return;
+  function unlockAudio() {
     try {
       actx = actx || new (window.AudioContext || window.webkitAudioContext)();
       if (actx.state === "suspended") actx.resume();
+    } catch (e) {}
+  }
+  ["pointerdown", "touchstart", "keydown"].forEach(ev => document.addEventListener(ev, unlockAudio, { passive: true }));
+  /* Rest finished: three clear beeps (louder than the little chimes), plus a soft tick for the last 3 seconds */
+  function restBeep(n) {
+    if (!state.sound) return;
+    try {
+      unlockAudio();
+      const beeps = n === "tick" ? [[988, 0, 0.12, 0.2]] : [[880, 0, 0.18, 0.45], [880, 0.26, 0.18, 0.45], [1318.5, 0.52, 0.4, 0.5]];
+      beeps.forEach(([f, d, len, vol]) => {
+        const o = actx.createOscillator(), g = actx.createGain(), st = actx.currentTime + d;
+        o.type = "sine"; o.frequency.value = f;
+        g.gain.setValueAtTime(0, st); g.gain.linearRampToValueAtTime(vol, st + 0.01);
+        g.gain.setValueAtTime(vol, st + len - 0.05); g.gain.linearRampToValueAtTime(0.001, st + len);
+        o.connect(g); g.connect(actx.destination); o.start(st); o.stop(st + len + 0.02);
+      });
+    } catch (e) {}
+  }
+  function sound(kind) {
+    if (!state.sound) return;
+    try {
+      unlockAudio();
       const notes = kind === "rest" ? [880, 1174.66, 1174.66] : kind === "evo" ? [523.25, 659.25, 783.99, 1046.5, 1318.5, 1568] : [659.25, 783.99, 1046.5, 1318.5];
       notes.forEach((f, i) => {
         const o = actx.createOscillator(), g = actx.createGain();
@@ -3201,12 +3222,14 @@ Stretching|Full body|Bodyweight|dur|2.3
   }
 
   /* Rest timer */
-  function startRest(sec) { rest = { end: Date.now() + sec * 1000, total: sec * 1000 }; $("restBar").hidden = false; document.body.classList.add("resting"); tickRest(); }
+  function startRest(sec) { unlockAudio(); rest = { end: Date.now() + sec * 1000, total: sec * 1000 }; $("restBar").hidden = false; document.body.classList.add("resting"); tickRest(); }
   function stopRest() { rest = { end: 0, total: 0 }; $("restBar").hidden = true; document.body.classList.remove("resting"); }
   function tickRest() {
     if (!rest.end) return;
     const left = rest.end - Date.now();
-    if (left <= 0) { stopRest(); sound("rest"); try { navigator.vibrate && navigator.vibrate([120, 80, 120]); } catch (e) {} toast("Rest's over. Next set! 💪"); return; }
+    if (left <= 0) { stopRest(); restBeep(); try { navigator.vibrate && navigator.vibrate([200, 100, 200, 100, 300]); } catch (e) {} toast("Rest's over. Next set! 💪"); return; }
+    const sec = Math.ceil(left / 1000);
+    if (sec <= 3 && rest.tick !== sec) { rest.tick = sec; restBeep("tick"); }
     $("restTime").textContent = fmtClock(left + 999);
     $("restFill").style.width = (left / rest.total * 100) + "%";
   }
